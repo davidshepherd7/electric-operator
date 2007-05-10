@@ -1,11 +1,10 @@
-;;; smart-operator.el --- Beautify the operators in codes
+;;; smart-operator.el --- Insert operators packed with whitespaces smartly
 
 ;; Copyright (C) 2004, 2005, 2007 William Xu
 
-;; Author: William XWL <william.xwl@gmail.com>
-;; $Id: smart-operator.el,v 0.93 2005/09/19 01:04:05 xwl Exp $
-
-;; This file is not part of GNU Emacs.
+;; Author: William Xu <william.xwl@gmail.com>
+;; Version: 0.9
+;; Last updated: 2007/05/10 17:25:13
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -46,17 +45,6 @@
 ;; Put this file into your load-path and the following into your ~/.emacs:
 ;;   (require 'smart-operator)
 
-;;; Change Log:
-
-;; v 0.93 [2005/09/19 01:00:58] Some minor improvements on
-;;        `smart-insert-operator'.
-
-;; v 0.92 [2005/08/19 19:53:22] Fix bugs when at the beginning of line
-;;        or beginning of buffer. Should insert only one whitespace at back
-;;        here.
-
-;; v 0.91 [2005/08/01 17:52:09] Correct some mistakes in Commentary.
-
 ;;; Todo:
 
 ;; Some unresolved issues in `smart-beautify-operator', such as:
@@ -64,12 +52,8 @@
 
 ;;; Code:
 
-;;; Variables:
-
 (defvar smart-operator-alist
   '( "=" "<" ">" "%" "\\+" "-" "\\*" "/" "&" "|" "!" ":"))
-
-;;; Functions:
 
 (defun smart-insert-operator (op &optional only-back)
   "Automatically insert whitespaces before and after '=', '>=', etc.
@@ -96,6 +80,10 @@ whitespace at back. When confused, try C-q."
 	(insert op)
       (insert (concat " " op))))
   (delete-horizontal-space)
+  (backward-char)                ; indent the symbol if it's at the bol.
+  (when (bolp)
+    (indent-according-to-mode))
+  (forward-char)
   (insert " "))
 
 (defun smart-operator-replace-regexp (regexp to-string &optional enhance)
@@ -181,14 +169,17 @@ e.g.
 
 (defun smart-insert-c-style-< ()
   "Insert `<>' or ` < ' smartly.
-If there are some keywords(like #include, std::vector) ahead on the same
+If there are some keywords(like #include, vector) ahead on the same
 line, possibly we have to insert a `<>' instead of ` < '."
   (interactive)
   (if (save-excursion
         (re-search-backward
          (regexp-opt '("#include" "vector" "deque" "list" "map" "multimap"
-                       "set" "hash_map" "iterator"))
-         (save-excursion (beginning-of-line))
+                       "set" "hash_map" "iterator" "template" "pair"
+                       "auto_ptr"))
+         (save-excursion
+           (beginning-of-line)
+           (point))
          t
          1))
       (progn (insert "<>")
