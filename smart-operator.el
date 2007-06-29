@@ -4,7 +4,6 @@
 
 ;; Author: William Xu <william.xwl@gmail.com>
 ;; Version: 0.9
-;; Last updated: 2007/05/10 17:25:13
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -47,14 +46,16 @@
 
 ;;; Todo:
 
-;; Some unresolved issues in `smart-beautify-operator', such as:
-;; 2. printf("%s")
+;; - Some unresolved issues in `smart-beautify-operator', such as:
+;;   printf("%s")
+;; - Clean fun/var names with respect to package name
 
 ;;; Code:
 
 (defvar smart-operator-alist
   '( "=" "<" ">" "%" "\\+" "-" "\\*" "/" "&" "|" "!" ":"))
 
+;;;###autoload
 (defun smart-insert-operator (op &optional only-back)
   "Automatically insert whitespaces before and after '=', '>=', etc.
 Make it look nicer: ' = ', ' >= '.
@@ -105,6 +106,7 @@ functionity."
     (while (search-forward from nil t)
       (replace-match to nil t))))
 
+;;;###autoload
 (defun smart-beautify-operator (beg end)
   "Beautify the codes to my style, such as add whitespaces before
 and after operators. Three steps:
@@ -135,6 +137,7 @@ would become \" #include < stdio.h > \" incorrectly!"
     (message "beautifying operators...done")
     (widen)))
 
+;;;###autoload
 (defun smart-insert-operator-hook ()
 "Set all the operators smart at one time, then you can ajust some by hand,
 e.g.
@@ -167,6 +170,7 @@ e.g.
 
 ;;; C & C++
 
+;;;###autoload
 (defun smart-insert-c-style-< ()
   "Insert `<>' or ` < ' smartly.
 If there are some keywords(like #include, vector) ahead on the same
