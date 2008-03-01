@@ -39,29 +39,36 @@
 ;; reimplementing as a minor mode and providing an initial patch for
 ;; that.
 
+;;; TODO
+
+;; - add tips: If you want it to insert spaces before and after
+;;   automatically, you'd better not type the front space yourself,
+;;   instead, type operator directly. smart-operator-mode will also take
+;;   this as a hint on how to properly generating spaces.
+
 ;;; Code:
 
 ;;; smart-operator minor mode
 
-(defvar smart-operator-mode-map
+(setq smart-operator-mode-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "=" 'smart-operator-self-insert-command)
     (define-key keymap "<" 'smart-operator-<)
-    (define-key keymap ">" 'smart-operator-self-insert-command)
+    (define-key keymap ">" 'smart-operator->)
     (define-key keymap "%" 'smart-operator-self-insert-command)
-    (define-key keymap "+" 'smart-operator-self-insert-command)
-    (define-key keymap "-" 'smart-operator-self-insert-command)
-    (define-key keymap "*" 'smart-operator-self-insert-command)
+    (define-key keymap "+" 'smart-operator-+)
+    (define-key keymap "-" 'smart-operator--)
+    (define-key keymap "*" 'smart-operator-*)
     (define-key keymap "/" 'smart-operator-self-insert-command)
-    (define-key keymap "&" 'smart-operator-self-insert-command)
+    (define-key keymap "&" 'smart-operator-&)
     (define-key keymap "|" 'smart-operator-self-insert-command)
     (define-key keymap "!" 'smart-operator-self-insert-command)
     (define-key keymap ":" 'smart-operator-:)
     (define-key keymap "?" 'smart-operator-self-insert-command)
     (define-key keymap "," 'smart-operator-,)
     (define-key keymap "." 'smart-operator-.)
-    keymap)
-  "Keymap used my `smart-operator-mode'.")
+    keymap))
+;  "Keymap used my `smart-operator-mode'.")
 
 ;;;###autoload
 (define-minor-mode smart-operator-mode
@@ -98,21 +105,38 @@ When ONLY-AFTER, insert space at back only."
                  (indent-according-to-mode))))
     (insert (concat " " op " "))))
 
-;; fine tunings
+(defun smart-operator-bol ()
+  (save-excursion
+    (beginning-of-line)
+    (point)))
+
+
+;;; Fine Tunings
 
 (defun smart-operator-< ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((memq major-mode '(c-mode c++-mode))
-         (smart-operator-c-mode-<))
+  (cond ((and (memq major-mode '(c-mode c++-mode))
+              (looking-back
+               (concat "\\("
+                       (regexp-opt
+                        '("#include" "vector" "deque" "list" "map"
+                          "multimap" "set" "hash_map" "iterator" "template"
+                          "pair" "auto_ptr"))
+                       "\\)\\ *")
+               (smart-operator-bol)))
+         (insert "<>")
+         (backward-char))
         (t
-         (call-interactively 'smart-operator-self-insert-command))))
+         (smart-operator-insert "<"))))
 
 (defun smart-operator-: ()
   "See `smart-operator-insert'."
   (interactive)
   (cond ((memq major-mode '(c-mode c++-mode))
-         (smart-operator-c-mode-:))
+         (if (looking-back "\\?.+" (smart-operator-bol))
+             (smart-operator-c-mode-:)
+           (insert ":")))
         (t
          (smart-operator-insert ":" t))))
 
@@ -124,40 +148,70 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-. ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((looking-back "[0-9]" (1- (point)))
+  (cond ((or (looking-back "[0-9]" (1- (point)))
+             (and (memq major-mode '(c-mode c++-mode))
+                  (looking-back "[a-z]" (1- (point)))))
          (insert "."))
-        (t (smart-operator-insert "." t)
-           (insert " "))))
+        (t
+         (smart-operator-insert "." t)
+         (insert " "))))
 
-
-;;; c, c++
-
-(defun smart-operator-c-mode-< ()
-  "Insert `<>' or ` < '.
-
-If there are some preceding keywords, like #include, vector,
-probably we want to insert `<>'."
+(defun smart-operator-& ()
+  "See `smart-operator-insert'."
   (interactive)
-  (if (looking-back
-       (concat "\\("
-               (regexp-opt
-                '("#include" "vector" "deque" "list" "map"
-                  "multimap" "set" "hash_map" "iterator" "template"
-                  "pair" "auto_ptr"))
-               "\\)\\ *")
-       (save-excursion (beginning-of-line)
-                       (point)))
-      (progn (insert "<>")
-             (backward-char))
-    (smart-operator-insert "<")))
+  (cond ((memq major-mode '(c-mode c++-mode))
+         (if (or (looking-back " " (1- (point)))
+                 (bolp))
+             (insert "&")
+           (smart-operator-insert "&")))
+        (t
+         (smart-operator-insert "&"))))
 
-(defun smart-operator-c-mode-: ()
-  "Insert scope symbol `::' or ` : ' as part of ? operator."
+(defun smart-operator-* ()
+  "See `smart-operator-insert'."
   (interactive)
-  (if (looking-back "\\?.+" (save-excursion (beginning-of-line)
-                                            (point)))
-      (smart-insert-operator ":")
-    (insert ":")))
+  (cond ((memq major-mode '(c-mode c++-mode))
+         (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
+                 (bolp))
+             (smart-operator-insert "*")
+           (insert "*")))
+        (t
+         (smart-operator-insert "*"))))
+
+(defun smart-operator-> ()
+  "See `smart-operator-insert'."
+  (interactive)
+  (cond ((and (memq major-mode '(c-mode c++-mode))
+              (looking-back " - " (- (point) 3)))
+         (save-excursion
+           (delete-char -3)
+           (insert "->")))
+        (t
+         (smart-operator-insert ">"))))
+
+(defun smart-operator-+ ()
+  "See `smart-operator-insert'."
+  (interactive)
+  (cond ((and (memq major-mode '(c-mode c++-mode))
+              (looking-back "+ " (- (point) 2)))
+         (delete-char -2)
+         (delete-horizontal-space)
+         (insert "++")
+         (indent-according-to-mode))
+        (t
+         (smart-operator-insert "+"))))
+
+(defun smart-operator-- ()
+  "See `smart-operator-insert'."
+  (interactive)
+  (cond ((and (memq major-mode '(c-mode c++-mode))
+              (looking-back "- " (- (point) 2)))
+         (delete-char -2)
+         (delete-horizontal-space)
+         (insert "--")
+         (indent-according-to-mode))
+        (t
+         (smart-operator-insert "-"))))
 
 (provide 'smart-operator)
 
