@@ -33,24 +33,26 @@
 ;;
 ;; Then `M-x smart-operator-mode' for toggling this minor mode.
 
+;; Usage Tips
+;; ----------
+
+;; - If you want it to insert operator with surrounding spaces , you'd
+;;   better not type the front space yourself, instead, type operator
+;;   directly. smart-operator-mode will also take this as a hint on how
+;;   to properly generating spaces in some specific occasions. For
+;;   example, in c-mode, `a*' -> `a * ', `char *' -> `char *'.
+
 ;;; Acknowledgements
 
 ;; Nikolaj Schumacher <n_schumacher@web.de>, for suggesting
 ;; reimplementing as a minor mode and providing an initial patch for
 ;; that.
 
-;;; TODO
-
-;; - add tips: If you want it to insert spaces before and after
-;;   automatically, you'd better not type the front space yourself,
-;;   instead, type operator directly. smart-operator-mode will also take
-;;   this as a hint on how to properly generating spaces.
-
 ;;; Code:
 
 ;;; smart-operator minor mode
 
-(setq smart-operator-mode-map
+(defvar smart-operator-mode-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "=" 'smart-operator-self-insert-command)
     (define-key keymap "<" 'smart-operator-<)
@@ -67,8 +69,8 @@
     (define-key keymap "?" 'smart-operator-self-insert-command)
     (define-key keymap "," 'smart-operator-,)
     (define-key keymap "." 'smart-operator-.)
-    keymap))
-;  "Keymap used my `smart-operator-mode'.")
+    keymap)
+  "Keymap used my `smart-operator-mode'.")
 
 ;;;###autoload
 (define-minor-mode smart-operator-mode
