@@ -52,7 +52,7 @@
 
 ;;; smart-operator minor mode
 
-(defvar smart-operator-mode-map
+(setq smart-operator-mode-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "=" 'smart-operator-self-insert-command)
     (define-key keymap "<" 'smart-operator-<)
@@ -66,11 +66,11 @@
     (define-key keymap "|" 'smart-operator-self-insert-command)
     (define-key keymap "!" 'smart-operator-self-insert-command)
     (define-key keymap ":" 'smart-operator-:)
-    (define-key keymap "?" 'smart-operator-self-insert-command)
+    (define-key keymap "?" 'smart-operator-?)
     (define-key keymap "," 'smart-operator-,)
     (define-key keymap "." 'smart-operator-.)
-    keymap)
-  "Keymap used my `smart-operator-mode'.")
+    keymap))
+;  "Keymap used my `smart-operator-mode'.")
 
 ;;;###autoload
 (define-minor-mode smart-operator-mode
@@ -214,6 +214,14 @@ When ONLY-AFTER, insert space at back only."
          (indent-according-to-mode))
         (t
          (smart-operator-insert "-"))))
+
+(defun smart-operator-? ()
+  "See `smart-operator-insert'."
+  (interactive)
+  (cond ((memq major-mode '(c-mode c++-mode))
+         (smart-operator-insert "?"))
+        (t
+         (smart-operator-insert "?" t))))
 
 (provide 'smart-operator)
 
