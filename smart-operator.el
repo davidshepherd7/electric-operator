@@ -52,7 +52,7 @@
 
 ;;; smart-operator minor mode
 
-(setq smart-operator-mode-map
+(defvar smart-operator-mode-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "=" 'smart-operator-self-insert-command)
     (define-key keymap "<" 'smart-operator-<)
@@ -69,8 +69,8 @@
     (define-key keymap "?" 'smart-operator-?)
     (define-key keymap "," 'smart-operator-,)
     (define-key keymap "." 'smart-operator-.)
-    keymap))
-;  "Keymap used my `smart-operator-mode'.")
+    keymap)
+  "Keymap used my `smart-operator-mode'.")
 
 ;;;###autoload
 (define-minor-mode smart-operator-mode
