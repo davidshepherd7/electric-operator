@@ -185,9 +185,8 @@ When ONLY-AFTER, insert space at back only."
   (interactive)
   (cond ((and (memq major-mode '(c-mode c++-mode))
               (looking-back " - " (- (point) 3)))
-         (save-excursion
-           (delete-char -3)
-           (insert "->")))
+         (delete-char -3)
+         (insert "->"))
         (t
          (smart-operator-insert ">"))))
 
