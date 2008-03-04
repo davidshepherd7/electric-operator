@@ -129,6 +129,9 @@ When ONLY-AFTER, insert space at back only."
                (smart-operator-bol)))
          (insert "<>")
          (backward-char))
+        ((eq major-mode 'sgml-mode)
+         (insert "<>")
+         (backward-char))
         (t
          (smart-operator-insert "<"))))
 
