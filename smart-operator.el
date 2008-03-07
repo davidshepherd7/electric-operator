@@ -57,7 +57,7 @@
     (define-key keymap "=" 'smart-operator-self-insert-command)
     (define-key keymap "<" 'smart-operator-<)
     (define-key keymap ">" 'smart-operator->)
-    (define-key keymap "%" 'smart-operator-self-insert-command)
+    (define-key keymap "%" 'smart-operator-%)
     (define-key keymap "+" 'smart-operator-+)
     (define-key keymap "-" 'smart-operator--)
     (define-key keymap "*" 'smart-operator-*)
@@ -224,6 +224,16 @@ When ONLY-AFTER, insert space at back only."
          (smart-operator-insert "?"))
         (t
          (smart-operator-insert "?" t))))
+
+(defun smart-operator-% ()
+  "See `smart-operator-insert'."
+  (interactive)
+  (cond ((and (memq major-mode '(c-mode c++-mode))
+              (looking-back "\"" (smart-operator-bol))
+              (not (looking-back "\".*\"" (smart-operator-bol))))
+         (insert "%"))
+        (t
+         (smart-operator-insert "+"))))
 
 (provide 'smart-operator)
 
