@@ -233,7 +233,7 @@ When ONLY-AFTER, insert space at back only."
               (not (looking-back "\".*\"" (smart-operator-bol))))
          (insert "%"))
         (t
-         (smart-operator-insert "+"))))
+         (smart-operator-insert "%"))))
 
 (provide 'smart-operator)
 
