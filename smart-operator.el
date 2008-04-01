@@ -48,6 +48,10 @@
 ;; reimplementing as a minor mode and providing an initial patch for
 ;; that.
 
+;;; TODO:
+
+;; - for c mode, probaly it would be much better doing this in cc-mode.
+
 ;;; Code:
 
 ;;; smart-operator minor mode
@@ -118,13 +122,15 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-< ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((and (memq major-mode '(c-mode c++-mode))
+  (cond ((and (memq major-mode '(c-mode c++-mode objc-mode))
               (looking-back
                (concat "\\("
                        (regexp-opt
-                        '("#include" "vector" "deque" "list" "map"
-                          "multimap" "set" "hash_map" "iterator" "template"
-                          "pair" "auto_ptr"))
+                        (append
+                         '("#include" "vector" "deque" "list" "map"
+                           "multimap" "set" "hash_map" "iterator" "template"
+                           "pair" "auto_ptr")
+                         '("#import")))
                        "\\)\\ *")
                (smart-operator-bol)))
          (insert "<>")
@@ -140,7 +146,7 @@ When ONLY-AFTER, insert space at back only."
   (interactive)
   (cond ((memq major-mode '(c-mode c++-mode))
          (if (looking-back "\\?.+" (smart-operator-bol))
-             (smart-operator-c-mode-:)
+             (smart-operator-insert ":")
            (insert ":")))
         (t
          (smart-operator-insert ":" t))))
@@ -165,21 +171,18 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-operator-insert'."
   (interactive)
   (cond ((memq major-mode '(c-mode c++-mode))
-         (if (or (looking-back " " (1- (point)))
-                 (bolp))
-             (insert "&")
-           (smart-operator-insert "&")))
+         (insert "&"))
         (t
          (smart-operator-insert "&"))))
 
 (defun smart-operator-* ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((memq major-mode '(c-mode c++-mode))
-         (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
-                 (bolp))
-             (smart-operator-insert "*")
-           (insert "*")))
+  (cond ((memq major-mode '(c-mode c++-mode objc-mode))
+;;          (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
+;;                  (bolp))
+;;              (smart-operator-insert "*")
+           (insert "*"))
         (t
          (smart-operator-insert "*"))))
 
@@ -228,9 +231,7 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-% ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((and (memq major-mode '(c-mode c++-mode))
-              (looking-back "\"" (smart-operator-bol))
-              (not (looking-back "\".*\"" (smart-operator-bol))))
+  (cond ((and (memq major-mode '(c-mode c++-mode objc-mode)))
          (insert "%"))
         (t
          (smart-operator-insert "%"))))
