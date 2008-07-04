@@ -68,7 +68,7 @@
     (define-key keymap "/" 'smart-operator-self-insert-command)
     (define-key keymap "&" 'smart-operator-&)
     (define-key keymap "|" 'smart-operator-self-insert-command)
-    (define-key keymap "!" 'smart-operator-self-insert-command)
+    ;; (define-key keymap "!" 'smart-operator-self-insert-command)
     (define-key keymap ":" 'smart-operator-:)
     (define-key keymap "?" 'smart-operator-?)
     (define-key keymap "," 'smart-operator-,)
@@ -129,7 +129,8 @@ When ONLY-AFTER, insert space at back only."
                         (append
                          '("#include" "vector" "deque" "list" "map"
                            "multimap" "set" "hash_map" "iterator" "template"
-                           "pair" "auto_ptr")
+                           "pair" "auto_ptr" "static_cast"
+                           "dynmaic_cast" "const_cast" "reintepret_cast")
                          '("#import")))
                        "\\)\\ *")
                (smart-operator-bol)))
@@ -202,7 +203,7 @@ When ONLY-AFTER, insert space at back only."
   (cond ((and (memq major-mode '(c-mode c++-mode))
               (looking-back "+ " (- (point) 2)))
          (delete-char -2)
-         (delete-horizontal-space)
+         ;; (delete-horizontal-space)
          (insert "++")
          (indent-according-to-mode))
         (t
