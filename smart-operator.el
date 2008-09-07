@@ -127,7 +127,7 @@ When ONLY-AFTER, insert space at back only."
                (concat "\\("
                        (regexp-opt
                         (append
-                         '("#include" "vector" "deque" "list" "map"
+                         '("#include" "vector" "deque" "list" "map" "stack"
                            "multimap" "set" "hash_map" "iterator" "template"
                            "pair" "auto_ptr" "static_cast"
                            "dynmaic_cast" "const_cast" "reintepret_cast")
