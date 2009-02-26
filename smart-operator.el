@@ -1,10 +1,10 @@
 ;;; smart-operator.el --- Insert operators with surrounding spaces smartly
 
-;; Copyright (C) 2004, 2005, 2007, 2008 William Xu
+;; Copyright (C) 2004, 2005, 2007, 2008, 2009 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
-;; Version: 1.0
-;; Url: http://williamxu.net9.org/ref/smart-operator.el
+;; Version: 1.0.1
+;; Url: http://xwl.appspot.com/ref/smart-operator.el
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 ;; - If you want it to insert operator with surrounding spaces , you'd
 ;;   better not type the front space yourself, instead, type operator
 ;;   directly. smart-operator-mode will also take this as a hint on how
-;;   to properly generating spaces in some specific occasions. For
+;;   to properly insert spaces in some specific occasions. For
 ;;   example, in c-mode, `a*' -> `a * ', `char *' -> `char *'.
 
 ;;; Acknowledgements
@@ -50,7 +50,7 @@
 
 ;;; TODO:
 
-;; - for c mode, probaly it would be much better doing this in cc-mode.
+;; - for c mode, probably it would be much better doing this in cc-mode.
 
 ;;; Code:
 
@@ -161,7 +161,7 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-operator-insert'."
   (interactive)
   (cond ((or (looking-back "[0-9]" (1- (point)))
-             (and (memq major-mode '(c-mode c++-mode))
+             (and (memq major-mode '(c-mode c++-mode python-mode))
                   (looking-back "[a-z]" (1- (point)))))
          (insert "."))
         (t
@@ -180,10 +180,10 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-operator-insert'."
   (interactive)
   (cond ((memq major-mode '(c-mode c++-mode objc-mode))
-;;          (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
-;;                  (bolp))
-;;              (smart-operator-insert "*")
-           (insert "*"))
+         (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
+                 (bolp))
+             (smart-operator-insert "*")
+           (insert "*")))
         (t
          (smart-operator-insert "*"))))
 
