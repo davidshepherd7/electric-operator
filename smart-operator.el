@@ -116,6 +116,17 @@ When ONLY-AFTER, insert space at back only."
     (beginning-of-line)
     (point)))
 
+(if (fboundp 'python-comment-line-p)
+    (defalias 'smart-operator-comment-line-p 'python-comment-line-p)
+  (defun smart-operator-comment-line-p ()
+    "Return non-nil if and only if current line has only a comment."
+    (save-excursion
+      (end-of-line)
+      (when (eq 'comment (syntax-ppss-context (syntax-ppss)))
+        (back-to-indentation)
+        (looking-at (rx (or (syntax comment-start) line-end))))))
+  )
+
 
 ;;; Fine Tunings
 
@@ -160,13 +171,16 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-. ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((or (looking-back "[0-9]" (1- (point)))
+  (cond ((smart-operator-comment-line-p)
+         (insert ".  "))
+        ((or (looking-back "[0-9]" (1- (point)))
              (and (memq major-mode '(c-mode c++-mode python-mode))
                   (looking-back "[a-z]" (1- (point)))))
          (insert "."))
+        ((memq major-mode '(cperl-mode perl-mode))
+         (insert " . "))
         (t
-         (smart-operator-insert "." t)
-         (insert " "))))
+         (insert ".  "))))
 
 (defun smart-operator-& ()
   "See `smart-operator-insert'."
