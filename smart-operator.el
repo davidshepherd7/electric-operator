@@ -3,7 +3,7 @@
 ;; Copyright (C) 2004, 2005, 2007, 2008, 2009 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
-;; Version: 1.0.1
+;; Version: 1.1
 ;; Url: http://xwl.appspot.com/ref/smart-operator.el
 
 ;; This program is free software; you can redistribute it and/or modify
