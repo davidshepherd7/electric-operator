@@ -79,7 +79,7 @@
 ;;;###autoload
 (define-minor-mode smart-operator-mode
   "Insert operators with surrounding spaces smartly."
-  nil "_+_ " smart-operator-mode-map)
+  nil " _+_" smart-operator-mode-map)
 
 (defun smart-operator-mode-on ()
   (smart-operator-mode 1))
