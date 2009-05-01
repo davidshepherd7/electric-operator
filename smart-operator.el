@@ -88,7 +88,7 @@
 (defun smart-operator-self-insert-command (arg)
   "Insert the entered operator plus surrounding spaces."
   (interactive "p")
-  (smart-operator-insert (string last-command-char)))
+  (smart-operator-insert (string last-command-event)))
 
 (defvar smart-operator-list
   '("=" "<" ">" "%" "+" "-" "*" "/" "&" "|" "!" ":" "?" "," "."))
@@ -172,7 +172,8 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-operator-insert'."
   (interactive)
   (cond ((smart-operator-comment-line-p)
-         (insert ".  "))
+         (smart-operator-insert "." t)
+         (insert " "))
         ((or (looking-back "[0-9]" (1- (point)))
              (and (memq major-mode '(c-mode c++-mode python-mode))
                   (looking-back "[a-z]" (1- (point)))))
@@ -180,7 +181,8 @@ When ONLY-AFTER, insert space at back only."
         ((memq major-mode '(cperl-mode perl-mode))
          (insert " . "))
         (t
-         (insert ".  "))))
+         (smart-operator-insert "." t)
+         (insert " "))))
 
 (defun smart-operator-& ()
   "See `smart-operator-insert'."
