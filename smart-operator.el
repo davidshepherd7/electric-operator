@@ -3,7 +3,7 @@
 ;; Copyright (C) 2004, 2005, 2007, 2008, 2009 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
-;; Version: 1.0.1
+;; Version: 1.1
 ;; Url: http://xwl.appspot.com/ref/smart-operator.el
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@
 ;;;###autoload
 (define-minor-mode smart-operator-mode
   "Insert operators with surrounding spaces smartly."
-  nil "_+_ " smart-operator-mode-map)
+  nil " _+_" smart-operator-mode-map)
 
 (defun smart-operator-mode-on ()
   (smart-operator-mode 1))
@@ -88,7 +88,7 @@
 (defun smart-operator-self-insert-command (arg)
   "Insert the entered operator plus surrounding spaces."
   (interactive "p")
-  (smart-operator-insert (string last-command-char)))
+  (smart-operator-insert (string last-command-event)))
 
 (defvar smart-operator-list
   '("=" "<" ">" "%" "+" "-" "*" "/" "&" "|" "!" ":" "?" "," "."))
@@ -172,7 +172,8 @@ When ONLY-AFTER, insert space at back only."
   "See `smart-operator-insert'."
   (interactive)
   (cond ((smart-operator-comment-line-p)
-         (insert ".  "))
+         (smart-operator-insert "." t)
+         (insert " "))
         ((or (looking-back "[0-9]" (1- (point)))
              (and (memq major-mode '(c-mode c++-mode python-mode))
                   (looking-back "[a-z]" (1- (point)))))
@@ -180,7 +181,8 @@ When ONLY-AFTER, insert space at back only."
         ((memq major-mode '(cperl-mode perl-mode))
          (insert " . "))
         (t
-         (insert ".  "))))
+         (smart-operator-insert "." t)
+         (insert " "))))
 
 (defun smart-operator-& ()
   "See `smart-operator-insert'."
