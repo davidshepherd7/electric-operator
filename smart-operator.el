@@ -156,12 +156,15 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-: ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((memq major-mode '(c-mode c++-mode))
-         (if (looking-back "\\?.+" (smart-operator-bol))
-             (smart-operator-insert ":")
-           (insert ":")))
-        (t
-         (smart-operator-insert ":" t))))
+  (case major-mode
+    ((c-mode c++-mode)
+     (if (looking-back "\\?.+" (smart-operator-bol))
+         (smart-operator-insert ":")
+       (insert ":")))
+    ((major-mode '(haskell-mode))
+     (smart-operator-insert ":"))
+    (t
+     (smart-operator-insert ":" t))))
 
 (defun smart-operator-, ()
   "See `smart-operator-insert'."
