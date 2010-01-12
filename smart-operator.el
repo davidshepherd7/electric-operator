@@ -1,6 +1,6 @@
 ;;; smart-operator.el --- Insert operators with surrounding spaces smartly
 
-;; Copyright (C) 2004, 2005, 2007, 2008, 2009 William Xu
+;; Copyright (C) 2004, 2005, 2007, 2008, 2009, 2010 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
 ;; Version: 1.1
@@ -161,7 +161,7 @@ When ONLY-AFTER, insert space at back only."
      (if (looking-back "\\?.+" (smart-operator-bol))
          (smart-operator-insert ":")
        (insert ":")))
-    ((major-mode '(haskell-mode))
+    ((haskell-mode)
      (smart-operator-insert ":"))
     (t
      (smart-operator-insert ":" t))))
