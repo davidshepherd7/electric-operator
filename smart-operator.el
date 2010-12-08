@@ -3,7 +3,7 @@
 ;; Copyright (C) 2004, 2005, 2007, 2008, 2009, 2010 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
-;; Version: 1.1
+;; Version: 2.0a
 ;; Url: http://xwl.appspot.com/ref/smart-operator.el
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,9 @@
 
 ;;; Commentary:
 
-;; When typing operators, this package can automatically insert spaces
-;; before and after operators. For instance, `=' will become ` = ', `+='
-;; will become ` += '. This is handy for writing C-style sources.
+;; This extension tries to insert operators with surrounding spaces smartly.
+;; e.g., `=' becomes ` = ', `+=' becomes ` += '.  This is handy for writing
+;; C-style sources.
 
 ;; To use, put this file to your load-path and the following to your
 ;; ~/.emacs:
@@ -33,26 +33,15 @@
 ;;
 ;; Then `M-x smart-operator-mode' for toggling this minor mode.
 
-;; Usage Tips
-;; ----------
-
-;; - If you want it to insert operator with surrounding spaces , you'd
-;;   better not type the front space yourself, instead, type operator
-;;   directly. smart-operator-mode will also take this as a hint on how
-;;   to properly insert spaces in some specific occasions. For
-;;   example, in c-mode, `a*' -> `a * ', `char *' -> `char *'.
-
 ;;; Acknowledgements
 
 ;; Nikolaj Schumacher <n_schumacher@web.de>, for suggesting
 ;; reimplementing as a minor mode and providing an initial patch for
 ;; that.
 
-;;; TODO:
-
-;; - for c mode, probably it would be much better doing this in cc-mode.
-
 ;;; Code:
+
+(require 'cc-mode)
 
 ;;; smart-operator minor mode
 
@@ -81,7 +70,9 @@
   "Insert operators with surrounding spaces smartly."
   nil " _+_" smart-operator-mode-map)
 
+;;;###autoload
 (defun smart-operator-mode-on ()
+  "Turn on `smart-operator-mode'.  "
   (smart-operator-mode 1))
 
 ;;;###autoload
@@ -93,28 +84,30 @@
 (defvar smart-operator-list
   '("=" "<" ">" "%" "+" "-" "*" "/" "&" "|" "!" ":" "?" "," "."))
 
-(defun smart-operator-insert (op &optional only-after)
+(defun smart-operator-insert (op &optional only-where)
   "Insert operator OP with surrounding spaces.
-e.g., `=' will become ` = ', `+=' will become ` += '.
+e.g., `=' becomes ` = ', `+=' becomes ` += '.
 
-When ONLY-AFTER, insert space at back only."
+When `only-where' is 'after, we will insert space at back only;
+when `only-where' is 'before, we will insert space at front only;
+when `only-where' is 'middle, we will not insert space."
   (delete-horizontal-space)
-  (if (or (looking-back (regexp-opt smart-operator-list)
-                        (save-excursion (beginning-of-line)
-                                        (point)))
-          only-after
-          (bolp))
-      (progn (insert (concat op " "))
-             (save-excursion
-               (backward-char 2)
-               (when (bolp)
-                 (indent-according-to-mode))))
-    (insert (concat " " op " "))))
+  (case only-where
+    ((before) (insert " " op))
+    ((middle) (insert op))
+    ((after) (insert op " "))
+    (t
+     (let ((begin? (bolp)))
+       (unless (or (looking-back (regexp-opt smart-operator-list)
+                                 (line-beginning-position))
+                   begin?)
+         (insert " "))
+       (insert op " ")
+       (when begin?
+         (indent-according-to-mode))))))
 
-(defun smart-operator-bol ()
-  (save-excursion
-    (beginning-of-line)
-    (point)))
+(defun smart-operator-c-types ()
+  (concat c-primitive-type-key "?"))
 
 (if (fboundp 'python-comment-line-p)
     (defalias 'smart-operator-comment-line-p 'python-comment-line-p)
@@ -133,84 +126,109 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-< ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((and (memq major-mode '(c-mode c++-mode objc-mode))
-              (looking-back
-               (concat "\\("
-                       (regexp-opt
-                        (append
-                         '("#include" "vector" "deque" "list" "map" "stack"
-                           "multimap" "set" "hash_map" "iterator" "template"
-                           "pair" "auto_ptr" "static_cast"
-                           "dynmaic_cast" "const_cast" "reintepret_cast")
-                         '("#import")))
-                       "\\)\\ *")
-               (smart-operator-bol)))
-         (insert "<>")
-         (backward-char))
-        ((eq major-mode 'sgml-mode)
-         (insert "<>")
-         (backward-char))
-        (t
-         (smart-operator-insert "<"))))
+  (cond
+   ((or (and c-buffer-is-cc-mode
+             (looking-back
+              (concat "\\("
+                      (regexp-opt
+                       '("#include" "vector" "deque" "list" "map" "stack"
+                          "multimap" "set" "hash_map" "iterator" "template"
+                          "pair" "auto_ptr" "static_cast"
+                          "dynmaic_cast" "const_cast" "reintepret_cast"
+
+                          "#import"))
+                      "\\)\\ *")
+              (line-beginning-position)))
+        (eq major-mode 'sgml-mode))
+    (insert "<>")
+    (backward-char))
+   (t
+    (smart-operator-insert "<"))))
 
 (defun smart-operator-: ()
   "See `smart-operator-insert'."
   (interactive)
-  (case major-mode
-    ((c-mode c++-mode)
-     (if (looking-back "\\?.+" (smart-operator-bol))
-         (smart-operator-insert ":")
-       (insert ":")))
-    ((haskell-mode)
-     (smart-operator-insert ":"))
-    (t
-     (smart-operator-insert ":" t))))
+  (cond (c-buffer-is-cc-mode
+         (if (looking-back "\\?.+")
+             (smart-operator-insert ":")
+           (smart-operator-insert ":" 'middle)))
+        ((memq major-mode '(haskell-mode))
+         (smart-operator-insert ":"))
+        (t
+         (smart-operator-insert ":" 'after))))
 
 (defun smart-operator-, ()
   "See `smart-operator-insert'."
   (interactive)
-  (smart-operator-insert "," t))
+  (smart-operator-insert "," 'after))
 
 (defun smart-operator-. ()
   "See `smart-operator-insert'."
   (interactive)
   (cond ((smart-operator-comment-line-p)
-         (smart-operator-insert "." t)
+         (smart-operator-insert "." 'after)
          (insert " "))
-        ((or (looking-back "[0-9]" (1- (point)))
-             (and (memq major-mode '(c-mode c++-mode python-mode))
-                  (looking-back "[a-z]" (1- (point)))))
+        ((or (looking-back "[0-9]")
+             (and (or c-buffer-is-cc-mode
+                      (memq major-mode '(python-mode)))
+                  (looking-back "[a-z]")))
          (insert "."))
         ((memq major-mode '(cperl-mode perl-mode))
          (insert " . "))
         (t
-         (smart-operator-insert "." t)
+         (smart-operator-insert "." 'after)
          (insert " "))))
 
 (defun smart-operator-& ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((memq major-mode '(c-mode c++-mode))
-         (insert "&"))
+  (cond (c-buffer-is-cc-mode
+         ;; ,----[ cases ]
+         ;; | char &a = b; // FIXME
+         ;; | void foo(const int& a);
+         ;; | char *a = &b;
+         ;; | int c = a & b;
+         ;; | a && b;
+         ;; `----
+         (cond ((looking-back (concat (smart-operator-c-types) " *" ))
+                (smart-operator-insert "&" 'after))
+               ((looking-back "= *")
+                (smart-operator-insert "&" 'before))
+               (t
+                (smart-operator-insert "&"))))
         (t
          (smart-operator-insert "&"))))
 
 (defun smart-operator-* ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((memq major-mode '(c-mode c++-mode objc-mode))
-         (if (or (looking-back "[0-9a-zA-Z]" (1- (point)))
-                 (bolp))
-             (smart-operator-insert "*")
-           (insert "*")))
+  (cond (c-buffer-is-cc-mode
+         ;; ,----
+         ;; | a * b;
+         ;; | char *a;
+         ;; | char **b;
+         ;; | (*a)->func();
+         ;; | *p++;
+         ;; | *a = *b;
+         ;; `----
+         (cond ((looking-back (concat (smart-operator-c-types) " *" ))
+                (smart-operator-insert "*" 'before))
+               ((looking-back "\\* *")
+                (smart-operator-insert "*" 'middle))
+               ((looking-back "^[ (]*")
+                (smart-operator-insert "*" 'middle)
+                (indent-according-to-mode))
+               ((looking-back "= *")
+                (smart-operator-insert "*" 'before))
+               (t
+                (smart-operator-insert "*"))))
         (t
          (smart-operator-insert "*"))))
 
 (defun smart-operator-> ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((and (memq major-mode '(c-mode c++-mode))
-              (looking-back " - " (- (point) 3)))
+  (cond ((and c-buffer-is-cc-mode (looking-back " - "))
          (delete-char -3)
          (insert "->"))
         (t
@@ -219,11 +237,12 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-+ ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((and (memq major-mode '(c-mode c++-mode))
-              (looking-back "+ " (- (point) 2)))
-         (delete-char -2)
-         ;; (delete-horizontal-space)
-         (insert "++")
+  (cond ((and c-buffer-is-cc-mode (looking-back "\\+ *"))
+         (when (looking-back "[a-zA-Z0-9_] +\\+ *")
+           (save-excursion
+             (backward-char 2)
+             (delete-horizontal-space)))
+         (smart-operator-insert "+" 'middle)
          (indent-according-to-mode))
         (t
          (smart-operator-insert "+"))))
@@ -231,11 +250,12 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-- ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((and (memq major-mode '(c-mode c++-mode))
-              (looking-back "- " (- (point) 2)))
-         (delete-char -2)
-         (delete-horizontal-space)
-         (insert "--")
+  (cond ((and c-buffer-is-cc-mode (looking-back "\\- *"))
+         (when (looking-back "[a-zA-Z0-9_] +\\- *")
+           (save-excursion
+             (backward-char 2)
+             (delete-horizontal-space)))
+         (smart-operator-insert "-" 'middle)
          (indent-according-to-mode))
         (t
          (smart-operator-insert "-"))))
@@ -243,16 +263,22 @@ When ONLY-AFTER, insert space at back only."
 (defun smart-operator-? ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((memq major-mode '(c-mode c++-mode))
+  (cond (c-buffer-is-cc-mode
          (smart-operator-insert "?"))
         (t
-         (smart-operator-insert "?" t))))
+         (smart-operator-insert "?" 'after))))
 
 (defun smart-operator-% ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((and (memq major-mode '(c-mode c++-mode objc-mode)))
-         (insert "%"))
+  (cond (c-buffer-is-cc-mode
+         ;; ,----
+         ;; | a % b;
+         ;; | printf("%d\n", a % b);
+         ;; `----
+         (if (looking-back "\"[^,]*")
+             (smart-operator-insert "%" 'middle)
+           (smart-operator-insert "%")))
         (t
          (smart-operator-insert "%"))))
 
