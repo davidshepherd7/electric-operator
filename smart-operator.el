@@ -1,6 +1,6 @@
 ;;; smart-operator.el --- Insert operators with surrounding spaces smartly
 
-;; Copyright (C) 2004, 2005, 2007, 2008, 2009, 2010 William Xu
+;; Copyright (C) 2004, 2005, 2007, 2008, 2009, 2010, 2011 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
 ;; Version: 2.0a
@@ -274,10 +274,11 @@ when `only-where' is 'middle, we will not insert space."
   (cond (c-buffer-is-cc-mode
          ;; ,----
          ;; | a % b;
-         ;; | printf("%d\n", a % b);
+         ;; | printf("%d %d\n", a % b);
          ;; `----
-         (if (looking-back "\"[^,]*")
-             (smart-operator-insert "%" 'middle)
+         (if (and (looking-back "\".*")
+                  (not (looking-back "\",.*")))
+             (insert "%")
            (smart-operator-insert "%")))
         (t
          (smart-operator-insert "%"))))
