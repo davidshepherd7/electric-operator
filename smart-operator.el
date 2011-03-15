@@ -60,7 +60,7 @@
     ;; (define-key keymap "!" 'smart-operator-self-insert-command)
     (define-key keymap ":" 'smart-operator-:)
     (define-key keymap "?" 'smart-operator-?)
-    (define-key keymap "," 'smart-operator-,)
+    (define-key keymap "," 'smart-operator-\,)
     (define-key keymap "." 'smart-operator-.)
     keymap)
   "Keymap used my `smart-operator-mode'.")
@@ -157,7 +157,7 @@ when `only-where' is 'middle, we will not insert space."
         (t
          (smart-operator-insert ":" 'after))))
 
-(defun smart-operator-, ()
+(defun smart-operator-\, ()
   "See `smart-operator-insert'."
   (interactive)
   (smart-operator-insert "," 'after))
