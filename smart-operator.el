@@ -122,6 +122,15 @@ when `only-where' is 'middle, we will not insert space."
 
 
 ;;; Fine Tunings
+(defun smart-operator-lispy (op)
+  "We're in a Lisp-ish mode, so let's look for parenthesis.
+Meanwhile, if not found after ( operators are more likely to be function names,
+so let's not get too insert-happy."
+  (if (save-excursion
+        (backward-char 1)
+        (looking-at "\("))
+      (smart-operator-insert op 'after)
+    (smart-operator-insert op 'middle)))
 
 (defun smart-operator-< ()
   "See `smart-operator-insert'."
@@ -142,6 +151,9 @@ when `only-where' is 'middle, we will not insert space."
         (eq major-mode 'sgml-mode))
     (insert "<>")
     (backward-char))
+   ((or (memq major-mode '(emacs-lisp-mode))
+        (memq major-mode '(lisp-mode)))
+    (smart-operator-lispy "<"))
    (t
     (smart-operator-insert "<"))))
 
@@ -222,6 +234,9 @@ when `only-where' is 'middle, we will not insert space."
                 (smart-operator-insert "*" 'before))
                (t
                 (smart-operator-insert "*"))))
+        ((or (memq major-mode '(emacs-lisp-mode))
+             (memq major-mode '(lisp-mode)))
+         (smart-operator-lispy "*"))
         (t
          (smart-operator-insert "*"))))
 
@@ -231,6 +246,9 @@ when `only-where' is 'middle, we will not insert space."
   (cond ((and c-buffer-is-cc-mode (looking-back " - "))
          (delete-char -3)
          (insert "->"))
+        ((or (memq major-mode '(emacs-lisp-mode))
+             (memq major-mode '(lisp-mode)))
+         (smart-operator-lispy ">"))
         (t
          (smart-operator-insert ">"))))
 
@@ -244,6 +262,9 @@ when `only-where' is 'middle, we will not insert space."
              (delete-horizontal-space)))
          (smart-operator-insert "+" 'middle)
          (indent-according-to-mode))
+        ((or (memq major-mode '(emacs-lisp-mode))
+             (memq major-mode '(lisp-mode)))
+         (smart-operator-lispy "+"))
         (t
          (smart-operator-insert "+"))))
 
@@ -257,6 +278,9 @@ when `only-where' is 'middle, we will not insert space."
              (delete-horizontal-space)))
          (smart-operator-insert "-" 'middle)
          (indent-according-to-mode))
+        ((or (memq major-mode '(emacs-lisp-mode))
+             (memq major-mode '(lisp-mode)))
+         (smart-operator-lispy "-"))
         (t
          (smart-operator-insert "-"))))
 
