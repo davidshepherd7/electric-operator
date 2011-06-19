@@ -85,13 +85,20 @@
   '("=" "<" ">" "%" "+" "-" "*" "/" "&" "|" "!" ":" "?" "," "."))
 
 (defun smart-operator-insert (op &optional only-where)
+  "See `smart-operator-insert-1'."
+  (delete-horizontal-space)
+  (if (and (smart-operator-lispy-mode?)
+           (not (smart-operator-document-line?)))
+      (smart-operator-lispy op)
+    (smart-operator-insert-1 op only-where)))
+
+(defun smart-operator-insert-1 (op &optional only-where)
   "Insert operator OP with surrounding spaces.
 e.g., `=' becomes ` = ', `+=' becomes ` += '.
 
 When `only-where' is 'after, we will insert space at back only;
 when `only-where' is 'before, we will insert space at front only;
 when `only-where' is 'middle, we will not insert space."
-  (delete-horizontal-space)
   (case only-where
     ((before) (insert " " op))
     ((middle) (insert op))
@@ -109,28 +116,33 @@ when `only-where' is 'middle, we will not insert space."
 (defun smart-operator-c-types ()
   (concat c-primitive-type-key "?"))
 
-(if (fboundp 'python-comment-line-p)
-    (defalias 'smart-operator-comment-line-p 'python-comment-line-p)
-  (defun smart-operator-comment-line-p ()
-    "Return non-nil if and only if current line has only a comment."
-    (save-excursion
-      (end-of-line)
-      (when (eq 'comment (syntax-ppss-context (syntax-ppss)))
-        (back-to-indentation)
-        (looking-at (rx (or (syntax comment-start) line-end))))))
-  )
+(defun smart-operator-document-line? ()
+  (memq (syntax-ppss-context (syntax-ppss)) '(comment string)))
 
-
-;;; Fine Tunings
+(defun smart-operator-lispy-mode? ()
+  (memq major-mode '(emacs-lisp-mode
+                     lisp-mode
+                     lisp-interaction-mode
+                     scheme-mode)))
+
 (defun smart-operator-lispy (op)
   "We're in a Lisp-ish mode, so let's look for parenthesis.
 Meanwhile, if not found after ( operators are more likely to be function names,
 so let's not get too insert-happy."
-  (if (save-excursion
-        (backward-char 1)
-        (looking-at "\("))
-      (smart-operator-insert op 'after)
-    (smart-operator-insert op 'middle)))
+  (cond
+   ((save-excursion
+      (backward-char 1)
+      (looking-at "("))
+    (if (equal op ",")
+        (smart-operator-insert-1 op 'middle)
+      (smart-operator-insert-1 op 'after)))
+   ((equal op ",")
+    (smart-operator-insert-1 op 'before))
+   (t
+    (smart-operator-insert-1 op 'middle))))
+
+
+;;; Fine Tunings
 
 (defun smart-operator-< ()
   "See `smart-operator-insert'."
@@ -151,9 +163,6 @@ so let's not get too insert-happy."
         (eq major-mode 'sgml-mode))
     (insert "<>")
     (backward-char))
-   ((or (memq major-mode '(emacs-lisp-mode))
-        (memq major-mode '(lisp-mode)))
-    (smart-operator-lispy "<"))
    (t
     (smart-operator-insert "<"))))
 
@@ -177,7 +186,7 @@ so let's not get too insert-happy."
 (defun smart-operator-. ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((smart-operator-comment-line-p)
+  (cond ((smart-operator-document-line?)
          (smart-operator-insert "." 'after)
          (insert " "))
         ((or (looking-back "[0-9]")
@@ -234,9 +243,6 @@ so let's not get too insert-happy."
                 (smart-operator-insert "*" 'before))
                (t
                 (smart-operator-insert "*"))))
-        ((or (memq major-mode '(emacs-lisp-mode))
-             (memq major-mode '(lisp-mode)))
-         (smart-operator-lispy "*"))
         (t
          (smart-operator-insert "*"))))
 
@@ -246,9 +252,6 @@ so let's not get too insert-happy."
   (cond ((and c-buffer-is-cc-mode (looking-back " - "))
          (delete-char -3)
          (insert "->"))
-        ((or (memq major-mode '(emacs-lisp-mode))
-             (memq major-mode '(lisp-mode)))
-         (smart-operator-lispy ">"))
         (t
          (smart-operator-insert ">"))))
 
@@ -262,9 +265,6 @@ so let's not get too insert-happy."
              (delete-horizontal-space)))
          (smart-operator-insert "+" 'middle)
          (indent-according-to-mode))
-        ((or (memq major-mode '(emacs-lisp-mode))
-             (memq major-mode '(lisp-mode)))
-         (smart-operator-lispy "+"))
         (t
          (smart-operator-insert "+"))))
 
@@ -278,9 +278,6 @@ so let's not get too insert-happy."
              (delete-horizontal-space)))
          (smart-operator-insert "-" 'middle)
          (indent-according-to-mode))
-        ((or (memq major-mode '(emacs-lisp-mode))
-             (memq major-mode '(lisp-mode)))
-         (smart-operator-lispy "-"))
         (t
          (smart-operator-insert "-"))))
 
