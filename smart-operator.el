@@ -190,12 +190,17 @@ so let's not get too insert-happy."
          (smart-operator-insert "." 'after)
          (insert " "))
         ((or (looking-back "[0-9]")
-             (and (or c-buffer-is-cc-mode
-                      (memq major-mode '(python-mode)))
-                  (looking-back "[a-z]")))
+             (or (and c-buffer-is-cc-mode
+                      (looking-back "[a-z]"))
+                 (and
+                  (memq major-mode '(python-mode ruby-mode js-mode js2-mode))
+                  (looking-back "[a-z\)]"))))
          (insert "."))
-        ((memq major-mode '(cperl-mode perl-mode))
-         (insert " . "))
+        ((memq major-mode '(cperl-mode perl-mode ruby-mode))
+         ;; Check for the .. range operator
+         (if (looking-back ".")
+               (insert ".")
+           (insert " . ")))
         (t
          (smart-operator-insert "." 'after)
          (insert " "))))
