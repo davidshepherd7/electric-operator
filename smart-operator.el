@@ -61,6 +61,7 @@
     (define-key keymap ":" 'smart-operator-:)
     (define-key keymap "?" 'smart-operator-?)
     (define-key keymap "," 'smart-operator-\,)
+    (define-key keymap "~" 'smart-operator-~)
     (define-key keymap "." 'smart-operator-.)
     keymap)
   "Keymap used my `smart-operator-mode'.")
@@ -308,6 +309,19 @@ so let's not get too insert-happy."
            (smart-operator-insert "%")))
         (t
          (smart-operator-insert "%"))))
+
+(defun smart-operator-~ ()
+  "See `smart-operator-insert'."
+  (interactive)
+  ;; First class regex operator =~ langs
+  (cond ((memq major-mode '(ruby-mode perl-mode cperl-mode))
+         (if (looking-back "= ")
+             (progn
+               (delete-char -2)
+               (insert "=~ "))
+           (insert "~")))
+        (t
+         (insert "~"))))
 
 (provide 'smart-operator)
 
