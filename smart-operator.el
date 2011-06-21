@@ -61,6 +61,7 @@
     (define-key keymap ":" 'smart-operator-:)
     (define-key keymap "?" 'smart-operator-?)
     (define-key keymap "," 'smart-operator-\,)
+    (define-key keymap "~" 'smart-operator-~)
     (define-key keymap "." 'smart-operator-.)
     keymap)
   "Keymap used my `smart-operator-mode'.")
@@ -190,12 +191,17 @@ so let's not get too insert-happy."
          (smart-operator-insert "." 'after)
          (insert " "))
         ((or (looking-back "[0-9]")
-             (and (or c-buffer-is-cc-mode
-                      (memq major-mode '(python-mode)))
-                  (looking-back "[a-z]")))
+             (or (and c-buffer-is-cc-mode
+                      (looking-back "[a-z]"))
+                 (and
+                  (memq major-mode '(python-mode ruby-mode js-mode js2-mode))
+                  (looking-back "[a-z\)]"))))
          (insert "."))
-        ((memq major-mode '(cperl-mode perl-mode))
-         (insert " . "))
+        ((memq major-mode '(cperl-mode perl-mode ruby-mode))
+         ;; Check for the .. range operator
+         (if (looking-back ".")
+               (insert ".")
+           (insert " . ")))
         (t
          (smart-operator-insert "." 'after)
          (insert " "))))
@@ -303,6 +309,19 @@ so let's not get too insert-happy."
            (smart-operator-insert "%")))
         (t
          (smart-operator-insert "%"))))
+
+(defun smart-operator-~ ()
+  "See `smart-operator-insert'."
+  (interactive)
+  ;; First class regex operator =~ langs
+  (cond ((memq major-mode '(ruby-mode perl-mode cperl-mode))
+         (if (looking-back "= ")
+             (progn
+               (delete-char -2)
+               (insert "=~ "))
+           (insert "~")))
+        (t
+         (insert "~"))))
 
 (provide 'smart-operator)
 
