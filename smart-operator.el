@@ -298,7 +298,8 @@ so let's not get too insert-happy."
 (defun smart-operator-% ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond (c-buffer-is-cc-mode
+  (cond ((or c-buffer-is-cc-mode
+             (memq major-mode '(python-mode)))
          ;; ,----
          ;; | a % b;
          ;; | printf("%d %d\n", a % b);
