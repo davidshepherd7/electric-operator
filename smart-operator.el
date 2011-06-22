@@ -66,6 +66,9 @@
     keymap)
   "Keymap used my `smart-operator-mode'.")
 
+(defvar smart-operator-double-space-docs t
+  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '")
+
 ;;;###autoload
 (define-minor-mode smart-operator-mode
   "Insert operators with surrounding spaces smartly."
@@ -187,7 +190,8 @@ so let's not get too insert-happy."
 (defun smart-operator-. ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((smart-operator-document-line?)
+  (cond ((and smart-operator-double-space-docs
+          (smart-operator-document-line?))
          (smart-operator-insert "." 'after)
          (insert " "))
         ((or (looking-back "[0-9]")
