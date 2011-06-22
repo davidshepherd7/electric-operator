@@ -302,8 +302,7 @@ so let's not get too insert-happy."
 (defun smart-operator-% ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((or c-buffer-is-cc-mode
-             (memq major-mode '(python-mode)))
+  (cond (c-buffer-is-cc-mode
          ;; ,----
          ;; | a % b;
          ;; | printf("%d %d\n", a % b);
@@ -312,6 +311,11 @@ so let's not get too insert-happy."
                   (not (looking-back "\",.*")))
              (insert "%")
            (smart-operator-insert "%")))
+        ;; If this is a comment or string, we most likely
+        ;; want no spaces - probably string formatting
+        ((and (memq major-mode '(python-mode))
+                    (smart-operator-document-line?))
+               (insert "%"))
         (t
          (smart-operator-insert "%"))))
 
