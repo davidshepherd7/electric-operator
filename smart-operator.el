@@ -54,7 +54,7 @@
     (define-key keymap "+" 'smart-operator-+)
     (define-key keymap "-" 'smart-operator--)
     (define-key keymap "*" 'smart-operator-*)
-    (define-key keymap "/" 'smart-operator-self-insert-command)
+    (define-key keymap "/" 'smart-operator-/)
     (define-key keymap "&" 'smart-operator-&)
     (define-key keymap "|" 'smart-operator-self-insert-command)
     ;; (define-key keymap "!" 'smart-operator-self-insert-command)
@@ -323,6 +323,19 @@ so let's not get too insert-happy."
            (insert "~")))
         (t
          (insert "~"))))
+
+(defun smart-operator-/ ()
+  "See `smart-operator-insert'."
+  (interactive)
+  ;; *nix shebangs #!
+  (cond ((and (eq 1 (line-number-at-pos))
+              (save-excursion
+                (move-beginning-of-line nil)
+                (looking-at "#!")))
+         (insert "/"))
+        (t
+         (message "t")
+         (smart-operator-insert "/"))))
 
 (provide 'smart-operator)
 
