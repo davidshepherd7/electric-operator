@@ -69,6 +69,9 @@
 (defvar smart-operator-double-space-docs t
   "Enable double spacing of . in document lines - e,g, type '.' => get '.  '")
 
+(defvar smart-operator-docs t
+  "Enable smart-operator in strings and comments")
+
 ;;;###autoload
 (define-minor-mode smart-operator-mode
   "Insert operators with surrounding spaces smartly."
@@ -91,10 +94,13 @@
 (defun smart-operator-insert (op &optional only-where)
   "See `smart-operator-insert-1'."
   (delete-horizontal-space)
-  (if (and (smart-operator-lispy-mode?)
+  (cond ((and (smart-operator-lispy-mode?)
            (not (smart-operator-document-line?)))
-      (smart-operator-lispy op)
-    (smart-operator-insert-1 op only-where)))
+         (smart-operator-lispy op))
+        ((not smart-operator-docs)
+         (smart-operator-insert-1 op 'middle))
+        (t
+         (smart-operator-insert-1 op only-where))))
 
 (defun smart-operator-insert-1 (op &optional only-where)
   "Insert operator OP with surrounding spaces.
