@@ -204,9 +204,12 @@ so let's not get too insert-happy."
              (or (and c-buffer-is-cc-mode
                       (looking-back "[a-z]"))
                  (and
-                  (memq major-mode '(python-mode ruby-mode js-mode js2-mode))
-                  (looking-back "[a-z\)]"))))
-         (insert "."))
+                  (memq major-mode '(python-mode ruby-mode))
+                  (looking-back "[a-z\)]"))
+                 (and
+                  (memq major-mode '(js-mode js2-mode))
+                  (looking-back "[a-z\)$]"))))
+             (insert "."))
         ((memq major-mode '(cperl-mode perl-mode ruby-mode))
          ;; Check for the .. range operator
          (if (looking-back ".")
