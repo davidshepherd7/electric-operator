@@ -351,7 +351,6 @@ so let's not get too insert-happy."
                 (looking-at "#!")))
          (insert "/"))
         (t
-         (message "t")
          (smart-operator-insert "/"))))
 
 (provide 'smart-operator)
