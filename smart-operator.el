@@ -54,7 +54,7 @@
     (define-key keymap "+" 'smart-operator-+)
     (define-key keymap "-" 'smart-operator--)
     (define-key keymap "*" 'smart-operator-*)
-    (define-key keymap "/" 'smart-operator-self-insert-command)
+    (define-key keymap "/" 'smart-operator-/)
     (define-key keymap "&" 'smart-operator-&)
     (define-key keymap "|" 'smart-operator-self-insert-command)
     ;; (define-key keymap "!" 'smart-operator-self-insert-command)
@@ -65,6 +65,12 @@
     (define-key keymap "." 'smart-operator-.)
     keymap)
   "Keymap used my `smart-operator-mode'.")
+
+(defvar smart-operator-double-space-docs t
+  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '")
+
+(defvar smart-operator-docs t
+  "Enable smart-operator in strings and comments")
 
 ;;;###autoload
 (define-minor-mode smart-operator-mode
@@ -88,10 +94,13 @@
 (defun smart-operator-insert (op &optional only-where)
   "See `smart-operator-insert-1'."
   (delete-horizontal-space)
-  (if (and (smart-operator-lispy-mode?)
+  (cond ((and (smart-operator-lispy-mode?)
            (not (smart-operator-document-line?)))
-      (smart-operator-lispy op)
-    (smart-operator-insert-1 op only-where)))
+         (smart-operator-lispy op))
+        ((not smart-operator-docs)
+         (smart-operator-insert-1 op 'middle))
+        (t
+         (smart-operator-insert-1 op only-where))))
 
 (defun smart-operator-insert-1 (op &optional only-where)
   "Insert operator OP with surrounding spaces.
@@ -187,16 +196,20 @@ so let's not get too insert-happy."
 (defun smart-operator-. ()
   "See `smart-operator-insert'."
   (interactive)
-  (cond ((smart-operator-document-line?)
+  (cond ((and smart-operator-double-space-docs
+          (smart-operator-document-line?))
          (smart-operator-insert "." 'after)
          (insert " "))
         ((or (looking-back "[0-9]")
              (or (and c-buffer-is-cc-mode
                       (looking-back "[a-z]"))
                  (and
-                  (memq major-mode '(python-mode ruby-mode js-mode js2-mode))
-                  (looking-back "[a-z\)]"))))
-         (insert "."))
+                  (memq major-mode '(python-mode ruby-mode))
+                  (looking-back "[a-z\)]"))
+                 (and
+                  (memq major-mode '(js-mode js2-mode))
+                  (looking-back "[a-z\)$]"))))
+             (insert "."))
         ((memq major-mode '(cperl-mode perl-mode ruby-mode))
          ;; Check for the .. range operator
          (if (looking-back ".")
@@ -307,6 +320,11 @@ so let's not get too insert-happy."
                   (not (looking-back "\",.*")))
              (insert "%")
            (smart-operator-insert "%")))
+        ;; If this is a comment or string, we most likely
+        ;; want no spaces - probably string formatting
+        ((and (memq major-mode '(python-mode))
+                    (smart-operator-document-line?))
+               (insert "%"))
         (t
          (smart-operator-insert "%"))))
 
@@ -322,6 +340,18 @@ so let's not get too insert-happy."
            (insert "~")))
         (t
          (insert "~"))))
+
+(defun smart-operator-/ ()
+  "See `smart-operator-insert'."
+  (interactive)
+  ;; *nix shebangs #!
+  (cond ((and (eq 1 (line-number-at-pos))
+              (save-excursion
+                (move-beginning-of-line nil)
+                (looking-at "#!")))
+         (insert "/"))
+        (t
+         (smart-operator-insert "/"))))
 
 (provide 'smart-operator)
 
