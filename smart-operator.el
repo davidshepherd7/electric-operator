@@ -1,9 +1,9 @@
 ;;; smart-operator.el --- Insert operators with surrounding spaces smartly
 
-;; Copyright (C) 2004, 2005, 2007, 2008, 2009, 2010, 2011 William Xu
+;; Copyright (C) 2004, 2005, 2007, 2008, 2009, 2010, 2011, 2012 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
-;; Version: 2.0a
+;; Version: 4.0
 ;; Url: http://xwl.appspot.com/ref/smart-operator.el
 
 ;; This program is free software; you can redistribute it and/or modify
