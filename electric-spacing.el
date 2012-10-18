@@ -44,32 +44,40 @@
 
 ;;; electric-spacing minor mode
 
-(defvar electric-spacing-double-space-docs t
-  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '")
+(defcustom electric-spacing-double-space-docs t
+  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
+  :type 'boolean
+  :group 'electricity)
 
-(defvar electric-spacing-docs t
-  "Enable electric-spacing in strings and comments")
+(defcustom electric-spacing-docs t
+  "Enable electric-spacing in strings and comments."
+  :type 'boolean
+  :group 'electricity)
+
+(defvar electric-spacing-rules
+  '((?= . electric-spacing-self-insert-command)
+    (?< . electric-spacing-<)
+    (?> . electric-spacing->)
+    (?% . electric-spacing-%)
+    (?+ . electric-spacing-+)
+    (?- . electric-spacing--)
+    (?* . electric-spacing-*)
+    (?/ . electric-spacing-/)
+    (?& . electric-spacing-&)
+    (?| . electric-spacing-self-insert-command)
+    (?: . electric-spacing-:)
+    (?? . electric-spacing-?)
+    (?, . electric-spacing-\,)
+    (?~ . electric-spacing-~)
+    (?. . electric-spacing-.)))
 
 (defun electric-spacing-post-self-insert-function ()
-  (when (member (string last-command-event) electric-spacing-list)
-    (delete-char -1)
-    (case last-command-event
-      ((?=) (electric-spacing-self-insert-command (string last-command-event)))
-      ((?<) (electric-spacing-<))
-      ((?>) (electric-spacing->))
-      ((?%) (electric-spacing-%))
-      ((?+) (electric-spacing-+))
-      ((?-) (electric-spacing--))
-      ((?*) (electric-spacing-*))
-      ((?/) (electric-spacing-/))
-      ((?&) (electric-spacing-&))
-      ((?|) (electric-spacing-self-insert-command (string last-command-event)))
-      ;; (?!) (electric-spacing-self-insert-command (string last-command-event)))
-      ((?:) (electric-spacing-:))
-      ((??) (electric-spacing-?))
-      ((?,) (electric-spacing-\,))
-      ((?~) (electric-spacing-~))
-      ((?.) (electric-spacing-.)))))
+  (unless (derived-mode-p 'minibuffer-inactive-mode)
+    (let ((rule (cdr (assq last-command-event electric-spacing-rules))))
+      (when rule
+        (goto-char (electric--after-char-pos))
+        (delete-char -1)
+        (funcall rule)))))
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
@@ -80,7 +88,7 @@ the mode if ARG is omitted or nil.
 
 This is a global minor mode.  When enabled, typing an operator automatically
 inserts surrounding spaces.  e.g., `=' becomes ` = ',`+=' becomes ` += '.  This
-is especially handy for writing C-style sources."
+is very handy for many programming languages."
   :global t
   :group 'electricity
   :lighter " _+_"
@@ -90,25 +98,15 @@ is especially handy for writing C-style sources."
     (remove-hook 'post-self-insert-hook
                  #'electric-spacing-post-self-insert-function)))
 
-;;;###autoload
-(defun electric-spacing-mode-on ()
-  "Turn on `electric-spacing-mode'.  "
-  (electric-spacing-mode 1))
-
-;;;###autoload
-(defun electric-spacing-self-insert-command (op)
-  "Insert operator OP plus surrounding spaces."
-  (electric-spacing-insert op))
-
-(defvar electric-spacing-list
-  '("=" "<" ">" "%" "+" "-" "*" "/" "&" "|" ;; "!"
-    ":" "?" "," "~" "."))
+(defun electric-spacing-self-insert-command ()
+  "Insert character with surrounding spaces."
+  (electric-spacing-insert (string last-command-event)))
 
 (defun electric-spacing-insert (op &optional only-where)
   "See `electric-spacing-insert-1'."
   (delete-horizontal-space)
   (cond ((and (electric-spacing-lispy-mode?)
-              (not (electric-spacing-document-line?)))
+              (not (electric-spacing-document?)))
          (electric-spacing-lispy op))
         ((not electric-spacing-docs)
          (electric-spacing-insert-1 op 'middle))
@@ -128,7 +126,9 @@ when `only-where' is 'middle, we will not insert space."
     ((after) (insert op " "))
     (t
      (let ((begin? (bolp)))
-       (unless (or (looking-back (regexp-opt electric-spacing-list)
+       (unless (or (looking-back (regexp-opt
+                                  (mapcar 'char-to-string
+                                          (mapcar 'car electric-spacing-rules)))
                                  (line-beginning-position))
                    begin?)
          (insert " "))
@@ -139,15 +139,14 @@ when `only-where' is 'middle, we will not insert space."
 (defun electric-spacing-c-types ()
   (concat c-primitive-type-key "?"))
 
-(defun electric-spacing-document-line? ()
-  (memq (syntax-ppss-context (syntax-ppss)) '(comment string)))
+(defun electric-spacing-document? ()
+  (nth 8 (syntax-ppss)))
 
 (defun electric-spacing-lispy-mode? ()
   (derived-mode-p 'emacs-lisp-mode
                   'lisp-mode
                   'lisp-interaction-mode
-                  'scheme-mode
-                  'minibuffer-inactive-mode))
+                  'scheme-mode))
 
 (defun electric-spacing-lispy (op)
   "We're in a Lisp-ish mode, so let's look for parenthesis.
@@ -207,7 +206,7 @@ so let's not get too insert-happy."
 (defun electric-spacing-. ()
   "See `electric-spacing-insert'."
   (cond ((and electric-spacing-double-space-docs
-              (electric-spacing-document-line?))
+              (electric-spacing-document?))
          (electric-spacing-insert "." 'after)
          (insert " "))
         ((or (looking-back "[0-9]")
@@ -326,7 +325,7 @@ so let's not get too insert-happy."
         ;; If this is a comment or string, we most likely
         ;; want no spaces - probably string formatting
         ((and (derived-mode-p 'python-mode)
-              (electric-spacing-document-line?))
+              (electric-spacing-document?))
          (insert "%"))
         (t
          (electric-spacing-insert "%"))))
