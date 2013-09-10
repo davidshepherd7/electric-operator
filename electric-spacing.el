@@ -54,6 +54,11 @@
   :type 'boolean
   :group 'electricity)
 
+(defcustom electric-spacing-ignore-modes '(minibuffer-inactive-mode comint-mode)
+  "Don't do electric spacing for these modes. "
+  :type 'list
+  :group 'electricity)
+
 (defvar electric-spacing-rules
   '((?= . electric-spacing-self-insert-command)
     (?< . electric-spacing-<)
@@ -72,7 +77,7 @@
     (?. . electric-spacing-.)))
 
 (defun electric-spacing-post-self-insert-function ()
-  (unless (derived-mode-p 'minibuffer-inactive-mode)
+  (unless (some 'derived-mode-p electric-spacing-ignore-modes)
     (let ((rule (cdr (assq last-command-event electric-spacing-rules))))
       (when rule
         (goto-char (electric--after-char-pos))
