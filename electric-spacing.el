@@ -1,6 +1,6 @@
 ;;; electric-spacing.el --- Insert operators with surrounding spaces smartly
 
-;; Copyright (C) 2004, 2005, 2007-2012, 2014 William Xu
+;; Copyright (C) 2004, 2005, 2007-2014 Free Software Foundation, Inc.
 
 ;; Author: William Xu <william.xwl@gmail.com>
 ;; Version: 4.0
@@ -22,15 +22,12 @@
 
 ;;; Commentary:
 
-;; This extension tries to insert operators with surrounding spaces smartly.
-;; e.g., `=' becomes ` = ', `+=' becomes ` += '.  This is handy for writing
-;; C-style sources.
-
-;; To use, put this file to your load-path and the following to your
-;; ~/.emacs:
-;;             (require 'electric-spacing)
+;; Smart Operator mode is a minor mode which automatically inserts
+;; surrounding spaces around operator symbols.  For example, `='
+;; becomes ` = ', `+=' becomes ` += '.  This is most handy for writing
+;; C-style source code.
 ;;
-;; Then `M-x electric-spacing-mode' for toggling this minor mode.
+;; Type `M-x smart-operator-mode' to toggle this minor mode.
 
 ;;; Acknowledgements
 
@@ -117,11 +114,11 @@ e.g., `=' becomes ` = ', `+=' becomes ` += '.
 When `only-where' is 'after, we will insert space at back only;
 when `only-where' is 'before, we will insert space at front only;
 when `only-where' is 'middle, we will not insert space."
-  (case only-where
-    ((before) (insert " " op))
-    ((middle) (insert op))
-    ((after) (insert op " "))
-    (t
+  (pcase only-where
+    (`before (insert " " op))
+    (`middle (insert op))
+    (`after (insert op " "))
+    (_
      (let ((begin? (bolp)))
        (unless (or (looking-back (regexp-opt
                                   (mapcar 'char-to-string
