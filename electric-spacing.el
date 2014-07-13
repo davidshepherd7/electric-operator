@@ -1,6 +1,6 @@
 ;;; electric-spacing.el --- Insert operators with surrounding spaces smartly
 
-;; Copyright (C) 2004, 2005, 2007, 2008, 2009, 2010, 2011, 2012 William Xu
+;; Copyright (C) 2004, 2005, 2007-2012, 2014 William Xu
 
 ;; Author: William Xu <william.xwl@gmail.com>
 ;; Version: 4.0
@@ -54,11 +54,6 @@
   :type 'boolean
   :group 'electricity)
 
-(defcustom electric-spacing-ignore-modes '(minibuffer-inactive-mode comint-mode)
-  "Don't do electric spacing for these modes. "
-  :type 'list
-  :group 'electricity)
-
 (defvar electric-spacing-rules
   '((?= . electric-spacing-self-insert-command)
     (?< . electric-spacing-<)
@@ -77,31 +72,28 @@
     (?. . electric-spacing-.)))
 
 (defun electric-spacing-post-self-insert-function ()
-  (unless (some 'derived-mode-p electric-spacing-ignore-modes)
+  (when electric-spacing-mode
     (let ((rule (cdr (assq last-command-event electric-spacing-rules))))
       (when rule
         (goto-char (electric--after-char-pos))
         (delete-char -1)
         (funcall rule)))))
 
+(add-hook 'post-self-insert-hook #'electric-spacing-post-self-insert-function)
+
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
-  "Toggle automatic surrounding space insertion (Electric Spacing mode).  
+  "Toggle automatic surrounding space insertion (Electric Spacing mode).
 With a prefix argument ARG, enable Electric Spacing mode if ARG is
 positive, and disable it otherwise.  If called from Lisp, enable
 the mode if ARG is omitted or nil.
 
-This is a global minor mode.  When enabled, typing an operator automatically
+This is a local minor mode.  When enabled, typing an operator automatically
 inserts surrounding spaces.  e.g., `=' becomes ` = ',`+=' becomes ` += '.  This
 is very handy for many programming languages."
-  :global t
+  :global nil
   :group 'electricity
-  :lighter " _+_"
-  (if electric-spacing-mode
-      (add-hook 'post-self-insert-hook
-                #'electric-spacing-post-self-insert-function)
-    (remove-hook 'post-self-insert-hook
-                 #'electric-spacing-post-self-insert-function)))
+  :lighter " _+_")
 
 (defun electric-spacing-self-insert-command ()
   "Insert character with surrounding spaces."
