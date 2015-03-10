@@ -69,14 +69,12 @@
     (?. . electric-spacing-.)))
 
 (defun electric-spacing-post-self-insert-function ()
-  (when electric-spacing-mode
-    (let ((rule (cdr (assq last-command-event electric-spacing-rules))))
-      (when rule
-        (goto-char (electric--after-char-pos))
-        (delete-char -1)
-        (funcall rule)))))
+  (let ((rule (cdr (assq last-command-event electric-spacing-rules))))
+    (when rule
+      (goto-char (electric--after-char-pos))
+      (delete-char -1)
+      (funcall rule))))
 
-(add-hook 'post-self-insert-hook #'electric-spacing-post-self-insert-function)
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
@@ -90,7 +88,14 @@ inserts surrounding spaces.  e.g., `=' becomes ` = ',`+=' becomes ` += '.  This
 is very handy for many programming languages."
   :global nil
   :group 'electricity
-  :lighter " _+_")
+  :lighter " _+_"
+
+  ;; body
+  (if electric-spacing-mode
+      (add-hook 'post-self-insert-hook
+                #'electric-spacing-post-self-insert-function nil t)
+    (remove-hook 'post-self-insert-hook
+                 #'electric-spacing-post-self-insert-function t)))
 
 (defun electric-spacing-self-insert-command ()
   "Insert character with surrounding spaces."
