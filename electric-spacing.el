@@ -69,11 +69,12 @@
     (?. . electric-spacing-.)))
 
 (defun electric-spacing-post-self-insert-function ()
-  (let ((rule (cdr (assq last-command-event electric-spacing-rules))))
-    (when rule
-      (goto-char (electric--after-char-pos))
-      (delete-char -1)
-      (funcall rule))))
+  (when (electric-spacing-should-run?)
+    (let ((rule (cdr (assq last-command-event electric-spacing-rules))))
+      (when rule
+        (goto-char (electric--after-char-pos))
+        (delete-char -1)
+        (funcall rule)))))
 
 
 ;;;###autoload
@@ -107,8 +108,6 @@ is very handy for many programming languages."
   (cond ((and (electric-spacing-lispy-mode?)
               (not (electric-spacing-document?)))
          (electric-spacing-lispy op))
-        ((not electric-spacing-docs)
-         (electric-spacing-insert-1 op 'middle))
         (t
          (electric-spacing-insert-1 op only-where))))
 
@@ -140,6 +139,10 @@ when `only-where' is 'middle, we will not insert space."
 
 (defun electric-spacing-document? ()
   (nth 8 (syntax-ppss)))
+
+(defun electric-spacing-should-run? ()
+  (or (not electric-spacing-docs)
+      (not (electric-spacing-document?))))
 
 (defun electric-spacing-lispy-mode? ()
   (derived-mode-p 'emacs-lisp-mode
