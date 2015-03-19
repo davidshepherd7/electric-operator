@@ -300,6 +300,11 @@ so let's not get too insert-happy."
              (delete-horizontal-space)))
          (electric-spacing-insert "-" 'middle)
          (indent-according-to-mode))
+
+        ;; exponent notation, e.g. 1e-10: don't space
+        ((looking-back "[0-9.]+[eE]")
+         (insert "-"))
+
         (t
          (electric-spacing-insert "-"))))
 
