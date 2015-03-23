@@ -273,6 +273,16 @@ so let's not get too insert-happy."
                 (electric-spacing-insert "*" 'before))
                (t
                 (electric-spacing-insert "*"))))
+
+        ;; Handle python *args and **kwargs
+        ((derived-mode-p 'python-mode)
+         ;; Can only occur after '('; ','; or on a new line, so just check
+         ;; for those.
+         (cond ((looking-back "([ \t]*[*]?") (insert "*"))
+               ((looking-back ",[ \t]*[*]?") (insert " *"))
+               ((looking-back "^[ \t]*[*]?") (insert "*"))
+               ;; Othewise act as normal
+               (t (electric-spacing-insert "*"))))
         (t
          (electric-spacing-insert "*"))))
 
