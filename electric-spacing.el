@@ -195,7 +195,7 @@ so let's not get too insert-happy."
            (electric-spacing-insert ":" 'middle)))
         ((derived-mode-p 'haskell-mode)
          (electric-spacing-insert ":"))
-        ((derived-mode-p  'python-mode 'ess-mode)
+        ((derived-mode-p 'python-mode 'ess-mode)
          (insert ":"))
         (t
          (electric-spacing-insert ":" 'after))))
