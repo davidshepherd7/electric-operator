@@ -66,7 +66,8 @@
     (?? . electric-spacing-?)
     (?, . electric-spacing-\,)
     (?~ . electric-spacing-~)
-    (?. . electric-spacing-.)))
+    (?. . electric-spacing-.)
+    (?^ . electric-spacing-self-insert-command)))
 
 (defun electric-spacing-post-self-insert-function ()
   (when (electric-spacing-should-run?)
