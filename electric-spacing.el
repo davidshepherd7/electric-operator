@@ -385,7 +385,7 @@ so let's not get too insert-happy."
   (interactive)
   (if (and (not (in-string-p))
            (eq (enclosing-paren) ?\}))
-      (electric-spacing-insert ":")
+      (electric-spacing-insert ":" 'after)
     (insert ":")))
 
 (provide 'electric-spacing)
