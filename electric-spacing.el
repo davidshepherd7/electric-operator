@@ -199,7 +199,7 @@ so let's not get too insert-happy."
            (electric-spacing-insert ":" 'middle)))
         ((derived-mode-p 'haskell-mode)
          (electric-spacing-insert ":"))
-        ((derived-mode-p 'python-mode) (python-:))
+        ((derived-mode-p 'python-mode) (electric-spacing-python-:))
         ((derived-mode-p 'ess-mode)
          (insert ":"))
         (t
@@ -375,17 +375,16 @@ so let's not get too insert-happy."
          (electric-spacing-insert "/"))))
 
 
-(defun enclosing-paren ()
+(defun electric-spacing-enclosing-paren ()
   "Return the closing parenthesis of the enclosing parens, or nil if not inside any parens."
   (ignore-errors
     (save-excursion
       (up-list)
       (char-before))))
 
-(defun python-: ()
-  (interactive)
+(defun electric-spacing-python-: ()
   (if (and (not (in-string-p))
-           (eq (enclosing-paren) ?\}))
+           (eq (electric-spacing-enclosing-paren) ?\}))
       (electric-spacing-insert ":" 'after)
     (insert ":")))
 
