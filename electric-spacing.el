@@ -376,15 +376,15 @@ so let's not get too insert-happy."
 
 
 (defun electric-spacing-enclosing-paren ()
-  "Return the closing parenthesis of the enclosing parens, or nil if not inside any parens."
-  (ignore-errors
-    (save-excursion
-      (up-list)
-      (char-before))))
+  "Return the opening parenthesis of the enclosing parens, or nil if not inside any parens."
+  (interactive)
+  (let ((ppss (syntax-ppss)))
+    (when (nth 1 ppss)
+      (char-after (nth 1 ppss)))))
 
 (defun electric-spacing-python-: ()
   (if (and (not (in-string-p))
-           (eq (electric-spacing-enclosing-paren) ?\}))
+           (eq (electric-spacing-enclosing-paren) ?\{))
       (electric-spacing-insert ":" 'after)
     (insert ":")))
 
