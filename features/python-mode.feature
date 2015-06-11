@@ -1,5 +1,6 @@
 Feature: Python mode basics
   Background:
+    When the buffer is empty
     When I turn on python-mode
     When I turn on electric-spacing-mode
 
@@ -13,6 +14,7 @@ Feature: Python mode basics
 
 Feature: python *args and **kwargs
   Background:
+    When the buffer is empty
     When I turn on python-mode
     When I turn on electric-spacing-mode  
 
@@ -56,6 +58,7 @@ Feature: python *args and **kwargs
 
 Feature: python dictionaries
   Background:
+    When the buffer is empty
     When I turn on python-mode
     When I turn on electric-spacing-mode    
 
