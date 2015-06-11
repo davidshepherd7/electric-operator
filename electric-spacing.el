@@ -38,6 +38,7 @@
 ;;; Code:
 
 (require 'cc-mode)
+(require 'thingatpt)
 
 ;;; electric-spacing minor mode
 
