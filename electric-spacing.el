@@ -55,47 +55,50 @@
   :group 'electricity)
 
 (defvar electric-spacing-rules
-  '(("=" . electric-spacing-insert)
-    ("<" . electric-spacing-<)
-    (">" . electric-spacing-insert)
+  '(("=" . " = ")
+    ("<" . " < ")
+    (">" . " > ")
     ("%" . electric-spacing-%)
     ("+" . electric-spacing-+)
     ("-" . electric-spacing--)
     ("*" . electric-spacing-*)
     ("/" . electric-spacing-/)
     ("&" . electric-spacing-&)
-    ("|" . electric-spacing-insert)
+    ("|" . " | ")
     (":" . electric-spacing-:)
     ("?" . electric-spacing-?)
-    ("," . electric-spacing-\,)
+    ("," . ", ")
     ("." . electric-spacing-.)
-    ("^" . electric-spacing-insert)
+    ("^" . " ^ ")
 
-    ("==" . electric-spacing-insert)
-    ("!=" . electric-spacing-insert)
-    ("<=" . electric-spacing-insert)
-    (">=" . electric-spacing-insert)
+    ("==" . " == ")
+    ("!=" . " != ")
+    ("<=" . " <= ")
+    (">=" . " >= ")
 
-    ("*=" . electric-spacing-insert)
-    ("+=" . electric-spacing-insert)
-    ("/=" . electric-spacing-insert)
-    ("-=" . electric-spacing-insert)
+    ("*=" . " *= ")
+    ("+=" . " += ")
+    ("/=" . " /= ")
+    ("-=" . " -= ")
 
-    ("&&". electric-spacing-insert)
-    ("||" .electric-spacing-insert)
+    ("&&" . " && ")
+    ("||" . " || ")
 
     ;; C boolean + assign operations
-    ("&=" . electric-spacing-insert)
-    ("|=" . electric-spacing-insert)
+    ("&=" . " &= ")
+    ("|=" . " |= ")
+
+    ;; C pointer deref
+    ("->" . "->")
 
     ;; Python exponentiation
     ("**" . electric-spacing-**)
 
     ;; Python integer division
-    ("//" . electric-spacing-insert)
+    ("//" . " // ")
 
     ;; Regex equality (ruby, perl)
-    ("=~". electric-spacing-insert)))
+    ("=~" . " =~ ")))
 
 (defun rule-regex-with-whitespace (op)
   "Construct regex matching operator and any whitespace before/inside/after
@@ -122,8 +125,13 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
         (let ((match (match-data)))
           (delete-region (nth 0 match) (nth 1 match)))
 
+        ;; TODO: shouldn't need this, but it seems we do...
+        (delete-horizontal-space)
+
         ;; Insert correctly spaced operator
-        (funcall action operator)))))
+        (if (stringp action)
+            (insert action)
+          (funcall action operator))))))
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
@@ -244,10 +252,6 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert ":" 'after))))
 
-(defun electric-spacing-\, (_)
-  "See `electric-spacing-insert'."
-  (electric-spacing-insert "," 'after))
-
 (defun electric-spacing-. (_)
   "See `electric-spacing-insert'."
   (cond ((and electric-spacing-double-space-docs
@@ -340,13 +344,6 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "**"))))
 
-(defun electric-spacing-> (_)
-  "See `electric-spacing-insert'."
-  (cond ((and c-buffer-is-cc-mode (looking-back " - "))
-         (delete-char -3)
-         (insert "->"))
-        (t
-         (electric-spacing-insert ">"))))
 
 (defun electric-spacing-+ (_)
   "See `electric-spacing-insert'."
