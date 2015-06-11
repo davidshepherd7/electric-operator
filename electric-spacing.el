@@ -39,6 +39,7 @@
 
 (require 'cc-mode)
 (require 'thingatpt)
+(require 'dash)
 
 ;;; electric-spacing minor mode
 
@@ -53,7 +54,7 @@
   :group 'electricity)
 
 (defvar electric-spacing-rules
-  '(("=" . electric-spacing-self-insert-command)
+  '(("=" . electric-spacing-insert)
     ("<" . electric-spacing-<)
     (">" . electric-spacing->)
     ("%" . electric-spacing-%)
@@ -62,21 +63,31 @@
     ("*" . electric-spacing-*)
     ("/" . electric-spacing-/)
     ("&" . electric-spacing-&)
-    ("|" . electric-spacing-self-insert-command)
+    ("|" . electric-spacing-insert)
     (":" . electric-spacing-:)
     ("?" . electric-spacing-?)
     ("," . electric-spacing-\,)
     ("~" . electric-spacing-~)
     ("." . electric-spacing-.)
-    ("^" . electric-spacing-self-insert-command)))
+    ("^" . electric-spacing-insert)
+    ("!=" . electric-spacing-insert)))
+
+(defun longest-matching-rule ()
+  "Return the rule with the most characters that applies to text before point"
+  (->> electric-spacing-rules
+       (-filter (lambda (p) (looking-back (regexp-quote (car p)))))
+       (-sort (lambda (p1 p2) (>  (length (car p1)) (length (car p2)))))
+       car))
 
 (defun electric-spacing-post-self-insert-function ()
   (when (electric-spacing-should-run?)
-    (let ((rule (cdr (assoc (char-to-string last-command-event) electric-spacing-rules))))
+    (let* ((rule (longest-matching-rule))
+           (operator (car rule))
+           (action (cdr rule)))
       (when rule
         (goto-char (electric--after-char-pos))
-        (delete-char -1)
-        (funcall rule)))))
+        (delete-char (- (length operator)))
+        (funcall action operator)))))
 
 
 ;;;###autoload
@@ -99,10 +110,6 @@ is very handy for many programming languages."
                 #'electric-spacing-post-self-insert-function nil t)
     (remove-hook 'post-self-insert-hook
                  #'electric-spacing-post-self-insert-function t)))
-
-(defun electric-spacing-self-insert-command ()
-  "Insert character with surrounding spaces."
-  (electric-spacing-insert (string last-command-event)))
 
 (defun electric-spacing-insert (op &optional only-where)
   "See `electric-spacing-insert-1'."
@@ -170,7 +177,7 @@ so let's not get too insert-happy."
 
 ;;; Fine Tunings
 
-(defun electric-spacing-< ()
+(defun electric-spacing-< (_)
   "See `electric-spacing-insert'."
   (cond
    ((or (and c-buffer-is-cc-mode
@@ -191,7 +198,7 @@ so let's not get too insert-happy."
    (t
     (electric-spacing-insert "<"))))
 
-(defun electric-spacing-: ()
+(defun electric-spacing-: (_)
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          (if (looking-back "\\?.+")
@@ -205,11 +212,11 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert ":" 'after))))
 
-(defun electric-spacing-\, ()
+(defun electric-spacing-\, (_)
   "See `electric-spacing-insert'."
   (electric-spacing-insert "," 'after))
 
-(defun electric-spacing-. ()
+(defun electric-spacing-. (_)
   "See `electric-spacing-insert'."
   (cond ((and electric-spacing-double-space-docs
               (electric-spacing-document?))
@@ -234,7 +241,7 @@ so let's not get too insert-happy."
          (electric-spacing-insert "." 'after)
          (insert " "))))
 
-(defun electric-spacing-& ()
+(defun electric-spacing-& (_)
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          ;; ,----[ cases ]
@@ -253,7 +260,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "&"))))
 
-(defun electric-spacing-* ()
+(defun electric-spacing-* (_)
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          ;; ,----
@@ -288,7 +295,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "*"))))
 
-(defun electric-spacing-> ()
+(defun electric-spacing-> (_)
   "See `electric-spacing-insert'."
   (cond ((and c-buffer-is-cc-mode (looking-back " - "))
          (delete-char -3)
@@ -296,7 +303,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert ">"))))
 
-(defun electric-spacing-+ ()
+(defun electric-spacing-+ (_)
   "See `electric-spacing-insert'."
   (cond ((and c-buffer-is-cc-mode (looking-back "\\+ *"))
          (when (looking-back "[a-zA-Z0-9_] +\\+ *")
@@ -308,7 +315,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "+"))))
 
-(defun electric-spacing-- ()
+(defun electric-spacing-- (_)
   "See `electric-spacing-insert'."
   (cond ((and c-buffer-is-cc-mode (looking-back "\\- *"))
          (when (looking-back "[a-zA-Z0-9_] +\\- *")
@@ -325,14 +332,14 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "-"))))
 
-(defun electric-spacing-? ()
+(defun electric-spacing-? (_)
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          (electric-spacing-insert "?"))
         (t
          (electric-spacing-insert "?" 'after))))
 
-(defun electric-spacing-% ()
+(defun electric-spacing-% (_)
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          ;; ,----
@@ -351,7 +358,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "%"))))
 
-(defun electric-spacing-~ ()
+(defun electric-spacing-~ (_)
   "See `electric-spacing-insert'."
   ;; First class regex operator =~ langs
   (cond ((derived-mode-p 'ruby-mode 'perl-mode 'cperl-mode)
@@ -363,7 +370,7 @@ so let's not get too insert-happy."
         (t
          (insert "~"))))
 
-(defun electric-spacing-/ ()
+(defun electric-spacing-/ (_)
   "See `electric-spacing-insert'."
   ;; *nix shebangs #!
   (cond ((and (eq 1 (line-number-at-pos))
