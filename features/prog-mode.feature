@@ -46,3 +46,53 @@ Feature: Digraphs
     # Interesting because * and = are both operators
     When I type "a=*b"
     Then I should see "a = * b"
+
+
+Feature: Decimal numbers
+  Background:
+    When I turn on prog-mode
+    When I turn on electric-spacing-mode
+    When the buffer is empty
+
+  Scenario: Don't space decimals
+    When I type "0.235"
+    Then I should see "0.235"
+
+
+Feature: Negative exponents
+  Background:
+    When I turn on prog-mode
+    When I turn on electric-spacing-mode
+    When the buffer is empty
+
+  Scenario: Space - operator
+    When I type "e-b"
+    Then I should see "e - b"
+
+  Scenario: Don't space negative exponent (lower case)
+    When I type "1.2e-10"
+    Then I should see "1.2e-10"
+
+  Scenario: Don't space negative exponent (upper case)
+    When I type "1.2E-10"
+    Then I should see "1.2E-10"
+
+  Scenario: Don't space negative exponent (integer)
+    When I type "5e-10"
+    Then I should see "5e-10"
+
+
+# TODO:
+# Feature: Negative numbers
+#   Background:
+#     When I turn on prog-mode
+#     When I turn on electric-spacing-mode
+#     When the buffer is empty
+
+#   Scenario: Space - operator
+#     When I type "e-b"
+#     Then I should see "e - b"
+
+#   Scenario: Don't space -1
+#     When I type "-1"
+#     Then I should see "-1"
