@@ -104,14 +104,11 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 "
   (s-join "\s*" (-map #'regexp-quote (s-split "" op))))
 
-(defun rule-matches-at-point? (rule)
-  (looking-back (rule-regex-with-whitespace (car rule))))
-
 (defun longest-matching-rule ()
   "Return the rule with the most characters that applies to text before point"
   (->> electric-spacing-rules
-       (-filter #'rule-matches-at-point?)
-       (-sort (lambda (p1 p2) (>  (length (car p1)) (length (car p2)))))
+       (-filter (lambda (rule) (looking-back (rule-regex-with-whitespace (car rule)))))
+       (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))))
        car))
 
 (defun electric-spacing-post-self-insert-function ()
