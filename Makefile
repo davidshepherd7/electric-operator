@@ -2,7 +2,7 @@ EMACS=emacs
 CASK ?= cask
 
 build :
-	$(EMACS) -Q --batch --eval             \
+	cask exec $(EMACS) -Q --batch --eval             \
 	    "(progn                                \
 	      (setq byte-compile-error-on-warn t)  \
 	      (batch-byte-compile))" *.el
