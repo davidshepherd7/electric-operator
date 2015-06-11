@@ -131,7 +131,7 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
         ;; Insert correctly spaced operator
         (if (stringp action)
             (insert action)
-          (funcall action operator))))))
+          (funcall action))))))
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
@@ -217,7 +217,7 @@ so let's not get too insert-happy."
 
 ;;; Fine Tunings
 
-(defun electric-spacing-< (_)
+(defun electric-spacing-< ()
   "See `electric-spacing-insert'."
   (cond
    ((or (and c-buffer-is-cc-mode
@@ -238,7 +238,7 @@ so let's not get too insert-happy."
    (t
     (electric-spacing-insert "<"))))
 
-(defun electric-spacing-: (_)
+(defun electric-spacing-: ()
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          (if (looking-back "\\?.+")
@@ -252,7 +252,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert ":" 'after))))
 
-(defun electric-spacing-. (_)
+(defun electric-spacing-. ()
   "See `electric-spacing-insert'."
   (cond ((and electric-spacing-double-space-docs
               (electric-spacing-document?))
@@ -277,7 +277,7 @@ so let's not get too insert-happy."
          (electric-spacing-insert "." 'after)
          (insert " "))))
 
-(defun electric-spacing-& (_)
+(defun electric-spacing-& ()
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          ;; ,----[ cases ]
@@ -296,7 +296,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "&"))))
 
-(defun electric-spacing-* (_)
+(defun electric-spacing-* ()
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          ;; ,----
@@ -331,7 +331,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "*"))))
 
-(defun electric-spacing-** (_)
+(defun electric-spacing-** ()
   "See `electric-spacing-insert'."
   ;; Handle python **kwargs
   (cond ((derived-mode-p 'python-mode)
@@ -345,7 +345,7 @@ so let's not get too insert-happy."
          (electric-spacing-insert "**"))))
 
 
-(defun electric-spacing-+ (_)
+(defun electric-spacing-+ ()
   "See `electric-spacing-insert'."
   (cond ((and c-buffer-is-cc-mode (looking-back "\\+ *"))
          (when (looking-back "[a-zA-Z0-9_] +\\+ *")
@@ -357,7 +357,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "+"))))
 
-(defun electric-spacing-- (_)
+(defun electric-spacing-- ()
   "See `electric-spacing-insert'."
   (cond ((and c-buffer-is-cc-mode (looking-back "\\- *"))
          (when (looking-back "[a-zA-Z0-9_] +\\- *")
@@ -374,14 +374,14 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "-"))))
 
-(defun electric-spacing-? (_)
+(defun electric-spacing-? ()
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          (electric-spacing-insert "?"))
         (t
          (electric-spacing-insert "?" 'after))))
 
-(defun electric-spacing-% (_)
+(defun electric-spacing-% ()
   "See `electric-spacing-insert'."
   (cond (c-buffer-is-cc-mode
          ;; ,----
@@ -400,7 +400,7 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "%"))))
 
-(defun electric-spacing-/ (_)
+(defun electric-spacing-/ ()
   "See `electric-spacing-insert'."
   ;; *nix shebangs #!
   (cond ((and (eq 1 (line-number-at-pos))
