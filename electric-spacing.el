@@ -54,6 +54,8 @@
   :type 'boolean
   :group 'electricity)
 
+
+
 (defvar electric-spacing-rules
   '(("=" . " = ")
     ("<" . " < ")
@@ -80,25 +82,62 @@
     ("+=" . " += ")
     ("/=" . " /= ")
     ("-=" . " -= ")
+    ("&=" . " &= ")
+    ("|=" . " |= ")
 
     ("&&" . " && ")
     ("||" . " || ")
 
-    ;; C boolean + assign operations
-    ("&=" . " &= ")
-    ("|=" . " |= ")
-
-    ;; C pointer deref
-    ("->" . "->")
-
-    ;; Python exponentiation
-    ("**" . electric-spacing-**)
-
-    ;; Python integer division
-    ("//" . " // ")
-
     ;; Regex equality (ruby, perl)
     ("=~" . " =~ ")))
+
+(defun add-rule (initial new-rule)
+  "Replace or append a new rule"
+  (let* ((op (car new-rule))
+         (existing-rule (assoc op initial)))
+    (if existing-rule
+        (-replace-first existing-rule new-rule initial)
+      (-snoc initial new-rule))))
+
+(defun add-rules (initial &rest new-rules)
+  (add-rule-list initial new-rules))
+
+(defun add-rule-list (initial new-rules)
+  (-reduce #'add-rule (-concat (list initial) new-rules)))
+
+(defvar python-rules
+  (add-rules electric-spacing-rules
+             '("**" . electric-spacing-**)
+             '("*" . electric-spacing-*)
+             '("//" . " // ")))
+
+(defvar c-rules
+  (add-rules electric-spacing-rules
+             '("->" . "->")))
+
+(defvar prose-rules
+  (add-rules '()
+             ;; Spacing after '.'
+             (cond ((and electric-spacing-docs electric-spacing-double-space-docs)
+                    '("." . ".  "))
+                   (electric-spacing-docs
+                    '("." . ". "))
+                   (t nil))))
+
+(defun get-rules-list ()
+  (cond
+   ;; In comment or string?
+   ((electric-spacing-document?) prose-rules)
+
+   ;; Other modes
+   ((derived-mode-p 'python-mode) python-rules)
+   ((derived-mode-p 'c-mode 'c++-mode) c-rules)
+
+   ;; Default modes
+   ((derived-mode-p 'prog-mode) electric-spacing-rules)
+   (t prose-rules)))
+
+
 
 (defun rule-regex-with-whitespace (op)
   "Construct regex matching operator and any whitespace before/inside/after
@@ -107,16 +146,16 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 "
   (s-join "\s*" (-map #'regexp-quote (s-split "" op))))
 
-(defun longest-matching-rule ()
+(defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
-  (->> electric-spacing-rules
+  (->> rule-list
        (-filter (lambda (rule) (looking-back (rule-regex-with-whitespace (car rule)))))
        (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))))
        car))
 
 (defun electric-spacing-post-self-insert-function ()
   (when (electric-spacing-should-run?)
-    (let* ((rule (longest-matching-rule))
+    (let* ((rule (longest-matching-rule (get-rules-list)))
            (operator (car rule))
            (action (cdr rule)))
       (when rule
