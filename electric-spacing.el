@@ -40,6 +40,7 @@
 (require 'cc-mode)
 (require 'thingatpt)
 (require 'dash)
+(require 's)
 
 ;;; electric-spacing minor mode
 
@@ -56,7 +57,7 @@
 (defvar electric-spacing-rules
   '(("=" . electric-spacing-insert)
     ("<" . electric-spacing-<)
-    (">" . electric-spacing->)
+    (">" . electric-spacing-insert)
     ("%" . electric-spacing-%)
     ("+" . electric-spacing-+)
     ("-" . electric-spacing--)
@@ -67,15 +68,49 @@
     (":" . electric-spacing-:)
     ("?" . electric-spacing-?)
     ("," . electric-spacing-\,)
-    ("~" . electric-spacing-~)
     ("." . electric-spacing-.)
     ("^" . electric-spacing-insert)
-    ("!=" . electric-spacing-insert)))
+
+    ("==" . electric-spacing-insert)
+    ("!=" . electric-spacing-insert)
+    ("<=" . electric-spacing-insert)
+    (">=" . electric-spacing-insert)
+
+    ("*=" . electric-spacing-insert)
+    ("+=" . electric-spacing-insert)
+    ("/=" . electric-spacing-insert)
+    ("-=" . electric-spacing-insert)
+
+    ("&&". electric-spacing-insert)
+    ("||" .electric-spacing-insert)
+
+    ;; C boolean + assign operations
+    ("&=" . electric-spacing-insert)
+    ("|=" . electric-spacing-insert)
+
+    ;; Python exponentiation
+    ("**" . electric-spacing-**)
+
+    ;; Python integer division
+    ("//" . electric-spacing-insert)
+
+    ;; Regex equality (ruby, perl)
+    ("=~". electric-spacing-insert)))
+
+(defun rule-regex-with-whitespace (op)
+  "Construct regex matching operator and any whitespace before/inside/after
+
+For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
+"
+  (s-join "\s*" (-map #'regexp-quote (s-split "" op))))
+
+(defun rule-matches-at-point? (rule)
+  (looking-back (rule-regex-with-whitespace (car rule))))
 
 (defun longest-matching-rule ()
   "Return the rule with the most characters that applies to text before point"
   (->> electric-spacing-rules
-       (-filter (lambda (p) (looking-back (regexp-quote (car p)))))
+       (-filter #'rule-matches-at-point?)
        (-sort (lambda (p1 p2) (>  (length (car p1)) (length (car p2)))))
        car))
 
@@ -85,10 +120,13 @@
            (operator (car rule))
            (action (cdr rule)))
       (when rule
-        (goto-char (electric--after-char-pos))
-        (delete-char (- (length operator)))
-        (funcall action operator)))))
+        ;; Delete the characters matching this rule before point
+        (looking-back (rule-regex-with-whitespace (car rule)))
+        (let ((match (match-data)))
+          (delete-region (nth 0 match) (nth 1 match)))
 
+        ;; Insert correctly spaced operator
+        (funcall action operator)))))
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
@@ -122,7 +160,7 @@ is very handy for many programming languages."
 
 (defun electric-spacing-insert-1 (op &optional only-where)
   "Insert operator OP with surrounding spaces.
-e.g., `=' becomes ` = ', `+=' becomes ` += '.
+e.g., `=' becomes ` = '.
 
 When `only-where' is 'after, we will insert space at back only;
 when `only-where' is 'before, we will insert space at front only;
@@ -133,10 +171,7 @@ when `only-where' is 'middle, we will not insert space."
     (`after (insert op " "))
     (_
      (let ((begin? (bolp)))
-       (unless (or (looking-back (regexp-opt
-                                  (mapcar 'car electric-spacing-rules))
-                                 (line-beginning-position))
-                   begin?)
+       (unless begin?
          (insert " "))
        (insert op " ")
        (when begin?
@@ -283,17 +318,30 @@ so let's not get too insert-happy."
                (t
                 (electric-spacing-insert "*"))))
 
-        ;; Handle python *args and **kwargs
+        ;; Handle python *args
         ((derived-mode-p 'python-mode)
          ;; Can only occur after '(' ',' or on a new line, so just check
          ;; for those. If it's just after a comma then also insert a space
          ;; before the *.
          (cond ((looking-back ",") (insert " *"))
-               ((looking-back "[(,^)][ \t]*[*]?") (insert "*"))
+               ((looking-back "[(,^)][ \t]*") (insert "*"))
                ;; Othewise act as normal
                (t (electric-spacing-insert "*"))))
         (t
          (electric-spacing-insert "*"))))
+
+(defun electric-spacing-** (_)
+  "See `electric-spacing-insert'."
+  ;; Handle python **kwargs
+  (cond ((derived-mode-p 'python-mode)
+         (cond ((looking-back ",")
+                (insert " **"))
+               ((looking-back "[(,^)][ \t]*")
+                (insert "**"))
+               (t
+                (electric-spacing-insert "**"))))
+        (t
+         (electric-spacing-insert "**"))))
 
 (defun electric-spacing-> (_)
   "See `electric-spacing-insert'."
@@ -357,18 +405,6 @@ so let's not get too insert-happy."
          (insert "%"))
         (t
          (electric-spacing-insert "%"))))
-
-(defun electric-spacing-~ (_)
-  "See `electric-spacing-insert'."
-  ;; First class regex operator =~ langs
-  (cond ((derived-mode-p 'ruby-mode 'perl-mode 'cperl-mode)
-         (if (looking-back "= ")
-             (progn
-               (delete-char -2)
-               (insert "=~ "))
-           (insert "~")))
-        (t
-         (insert "~"))))
 
 (defun electric-spacing-/ (_)
   "See `electric-spacing-insert'."

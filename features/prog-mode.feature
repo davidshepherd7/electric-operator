@@ -41,3 +41,8 @@ Feature: Digraphs
   Scenario: But don't space =! as a single operator
     When I type "a=!b"
     Then I should see "a = !b"
+
+  Scenario: Don't space =* as single operator
+    # Interesting because * and = are both operators
+    When I type "a=*b"
+    Then I should see "a = * b"
