@@ -238,26 +238,6 @@ is very handy for many programming languages."
     (remove-hook 'post-self-insert-hook
                  #'electric-spacing-post-self-insert-function t)))
 
-(defun electric-spacing-insert (op &optional only-where)
-  "Insert operator OP with surrounding spaces.
-e.g., `=' becomes ` = '.
-
-When `only-where' is 'after, we will insert space at back only;
-when `only-where' is 'before, we will insert space at front only;
-when `only-where' is 'middle, we will not insert space."
-  (delete-horizontal-space)
-  (pcase only-where
-    (`before (insert " " op))
-    (`middle (insert op))
-    (`after (insert op " "))
-    (_
-     (let ((begin? (bolp)))
-       (unless begin?
-         (insert " "))
-       (insert op " ")
-       (when begin?
-         (indent-according-to-mode))))))
-
 (defun electric-spacing-c-types ()
   (concat c-primitive-type-key "?"))
 
@@ -286,13 +266,13 @@ when `only-where' is 'middle, we will not insert space."
          ;; | a && b;
          ;; `----
          (cond ((looking-back (concat (electric-spacing-c-types) " *" ))
-                (electric-spacing-insert "&" 'after))
+                (insert "& "))
                ((looking-back "= *")
-                (electric-spacing-insert "&" 'before))
+                (insert " &"))
                (t
-                (electric-spacing-insert "&"))))
+                (insert " & "))))
         (t
-         (electric-spacing-insert "&"))))
+         (insert " & "))))
 
 (defun electric-spacing-* ()
   "See `electric-spacing-insert'."
@@ -306,26 +286,26 @@ when `only-where' is 'middle, we will not insert space."
          ;; | *a = *b;
          ;; `----
          (cond ((looking-back (concat (electric-spacing-c-types) " *" ))
-                (electric-spacing-insert "*" 'before))
+                (insert " *"))
                ((looking-back "\\* *")
-                (electric-spacing-insert "*" 'middle))
+                (insert " * "))
                ((looking-back "^[ (]*")
-                (electric-spacing-insert "*" 'middle)
+                (insert " * ")
                 (indent-according-to-mode))
                ((looking-back "= *")
-                (electric-spacing-insert "*" 'before))
+                (insert " *"))
                (t
-                (electric-spacing-insert "*"))))
+                (insert " * "))))
 
         (t
-         (electric-spacing-insert "*"))))
+         (insert " * "))))
 
 (defun electric-spacing-- ()
   "See `electric-spacing-insert'."
   ;; exponent notation, e.g. 1e-10: don't space
   (if (looking-back "[0-9.]+[eE]")
       (insert "-")
-    (electric-spacing-insert "-")))
+    (insert " - ")))
 
 (defun electric-spacing-/ ()
   "See `electric-spacing-insert'."
@@ -336,7 +316,7 @@ when `only-where' is 'middle, we will not insert space."
                 (looking-at "#!")))
          (insert "/"))
         (t
-         (electric-spacing-insert "/"))))
+         (insert " / "))))
 
 
 
@@ -345,8 +325,8 @@ when `only-where' is 'middle, we will not insert space."
 (defun electric-spacing-c-: ()
   "Handle the : part of ternary operator"
   (if (looking-back "\\?.+")
-      (electric-spacing-insert ":")
-    (electric-spacing-insert ":" 'middle)))
+      (insert " : ")
+    (insert ":")))
 
 (defun electric-spacing-c-+ ()
   "Handle ++ operator"
@@ -356,7 +336,7 @@ when `only-where' is 'middle, we will not insert space."
           (save-excursion
             (backward-char 2)
             (delete-horizontal-space)))
-        (electric-spacing-insert "+" 'middle)
+        (insert "+")
         (indent-according-to-mode))
 
     ;; else
@@ -370,7 +350,7 @@ when `only-where' is 'middle, we will not insert space."
           (save-excursion
             (backward-char 2)
             (delete-horizontal-space)))
-        (electric-spacing-insert "-" 'middle)
+        (insert "-")
         (indent-according-to-mode))
 
     ;; else handle negative exponents
@@ -405,7 +385,7 @@ when `only-where' is 'middle, we will not insert space."
 (defun electric-spacing-python-: ()
   (if (and (not (in-string-p))
            (eq (electric-spacing-enclosing-paren) ?\{))
-      (electric-spacing-insert ":" 'after)
+      (insert ": ")
     (insert ":")))
 
 (defun electric-spacing-python-* ()
@@ -415,7 +395,7 @@ when `only-where' is 'middle, we will not insert space."
   (cond ((looking-back ",") (insert " *"))
         ((looking-back "[(,^)][ \t]*") (insert "*"))
         ;; Othewise act as normal
-        (t (electric-spacing-insert "*"))))
+        (t (insert " * "))))
 
 (defun electric-spacing-python-** ()
   "See `electric-spacing-insert'."
@@ -427,7 +407,7 @@ when `only-where' is 'middle, we will not insert space."
          (insert "**"))
 
         (t
-         (electric-spacing-insert "**"))))
+         (insert " ** "))))
 
 (provide 'electric-spacing)
 
