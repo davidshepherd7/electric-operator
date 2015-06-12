@@ -239,21 +239,13 @@ is very handy for many programming languages."
                  #'electric-spacing-post-self-insert-function t)))
 
 (defun electric-spacing-insert (op &optional only-where)
-  "See `electric-spacing-insert-1'."
-  (delete-horizontal-space)
-  (cond ((and (electric-spacing-lispy-mode?)
-              (not (electric-spacing-document?)))
-         (electric-spacing-lispy op))
-        (t
-         (electric-spacing-insert-1 op only-where))))
-
-(defun electric-spacing-insert-1 (op &optional only-where)
   "Insert operator OP with surrounding spaces.
 e.g., `=' becomes ` = '.
 
 When `only-where' is 'after, we will insert space at back only;
 when `only-where' is 'before, we will insert space at front only;
 when `only-where' is 'middle, we will not insert space."
+  (delete-horizontal-space)
   (pcase only-where
     (`before (insert " " op))
     (`middle (insert op))
@@ -272,27 +264,6 @@ when `only-where' is 'middle, we will not insert space."
 (defun electric-spacing-document? ()
   (nth 8 (syntax-ppss)))
 
-(defun electric-spacing-lispy-mode? ()
-  (derived-mode-p 'emacs-lisp-mode
-                  'lisp-mode
-                  'lisp-interaction-mode
-                  'scheme-mode))
-
-(defun electric-spacing-lispy (op)
-  "We're in a Lisp-ish mode, so let's look for parenthesis.
-Meanwhile, if not found after ( operators are more likely to be function names,
-so let's not get too insert-happy."
-  (cond
-   ((save-excursion
-      (backward-char 1)
-      (looking-at "("))
-    (if (equal op ",")
-        (electric-spacing-insert-1 op 'middle)
-      (electric-spacing-insert-1 op 'after)))
-   ((equal op ",")
-    (electric-spacing-insert-1 op 'before))
-   (t
-    (electric-spacing-insert-1 op 'middle))))
 
 
 ;;; Fine Tunings
