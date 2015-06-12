@@ -74,5 +74,12 @@ Feature: python dictionaries
   # commas? newlines? lists? These are probably automatically ok with the
   # current implementation though.
 
+Feature: Member access
+  Background:
+    When the buffer is empty
+    When I turn on python-mode
+    When I turn on electric-spacing-mode
 
-  
+  Scenario: Don't space accessing class members
+    When I type "my_class.a"
+    Then I should see "my_class.a"

@@ -70,7 +70,6 @@
     (":" . electric-spacing-:)
     ("?" . electric-spacing-?)
     ("," . ", ")
-    ("." . electric-spacing-.)
     ("^" . " ^ ")
 
     ("==" . " == ")
@@ -110,10 +109,11 @@
            initial-rules))
 
 (defvar python-rules
-  (add-rules electric-spacing-rules
-             '("**" . electric-spacing-python-**)
-             '("*" . electric-spacing-python-*)
-             '("//" . " // ")))
+  (--> electric-spacing-rules
+       (add-rule it '("**" . electric-spacing-python-**))
+       (add-rule it '("*" . electric-spacing-python-*))
+       (add-rule it '("//" . " // "))
+       ))
 
 (defvar c-rules
   (add-rules electric-spacing-rules
@@ -303,27 +303,6 @@ so let's not get too insert-happy."
          (insert ":"))
         (t
          (electric-spacing-insert ":" 'after))))
-
-(defun electric-spacing-. ()
-  "See `electric-spacing-insert'."
-  (cond ((or (looking-back "[0-9]")
-             (or (and c-buffer-is-cc-mode
-                      (looking-back "[a-z]"))
-                 (and
-                  (derived-mode-p 'ruby-mode)
-                  (looking-back "[a-z\)]"))
-                 (and
-                  (derived-mode-p 'js-mode 'js2-mode)
-                  (looking-back "[a-z\)$]"))))
-         (insert "."))
-        ((derived-mode-p 'cperl-mode 'perl-mode 'ruby-mode)
-         ;; Check for the .. range operator
-         (if (looking-back ".")
-             (insert ".")
-           (insert " . ")))
-        (t
-         (electric-spacing-insert "." 'after)
-         (insert " "))))
 
 (defun electric-spacing-docs-. ()
   ;; Double space if setting tells us to
