@@ -163,7 +163,9 @@ Returns a modified copy of the list."
 (defvar prose-rules
   (--> electric-spacing-rules
        (add-rule it '("." . electric-spacing-docs-.))
-       (remove-rule-for-operator it "%")) ;; For format strings
+       (remove-rule-for-operator it "%") ; format strings
+       (remove-rule-for-operator it "/") ; path separator
+       )
   "Spacing rules to use in comments, strings and text modes.")
 
 (defun get-rules-list ()
