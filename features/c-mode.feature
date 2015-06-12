@@ -17,6 +17,21 @@ Feature: Pointer dereference is unspaced
     Then I should see "a->b"
 
 
+Feature: #include directives
+  Background:
+    When the buffer is empty
+    When I turn on c-mode
+    When I turn on electric-spacing-mode
+
+  Scenario: Include statement
+    When I type "#include<stdio.h>"
+    Then I should see "#include <stdio.h>"
+
+  Scenario: Include statement with spaces
+    When I type "# include<stdio.h>"
+    Then I should see "# include <stdio.h>"
+
+
 Feature: Increment and decrement operators
   Background:
     When the buffer is empty

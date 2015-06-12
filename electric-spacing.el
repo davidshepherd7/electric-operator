@@ -129,6 +129,10 @@ Returns a modified copy of the list."
              '("-" . electric-spacing-c--)
              ;; TODO: clean these cases up by adding a way for rules that
              ;; don't change the existing spacing before the operator.
+
+             ;; #include statements
+             '("<" . electric-spacing-c-<)
+             '(">" . electric-spacing-c->)
              ))
 
 (defvar ruby-rules
@@ -294,26 +298,6 @@ so let's not get too insert-happy."
 
 ;;; Fine Tunings
 
-(defun electric-spacing-< ()
-  "See `electric-spacing-insert'."
-  (cond
-   ((and c-buffer-is-cc-mode
-         (looking-back
-          (concat "\\("
-                  (regexp-opt
-                   '("#include" "vector" "deque" "list" "map" "stack"
-                     "multimap" "set" "hash_map" "iterator" "template"
-                     "pair" "auto_ptr" "static_cast"
-                     "dynmaic_cast" "const_cast" "reintepret_cast"
-
-                     "#import"))
-                  "\\)\\ *")
-          (line-beginning-position)))
-    (insert "<>")
-    (backward-char))
-   (t
-    (electric-spacing-insert "<"))))
-
 (defun electric-spacing-docs-. ()
   ;; Double space if setting tells us to
   (if electric-spacing-double-space-docs
@@ -389,11 +373,13 @@ so let's not get too insert-happy."
 ;; C mode
 
 (defun electric-spacing-c-: ()
+  "Handle the : part of ternary operator"
   (if (looking-back "\\?.+")
       (electric-spacing-insert ":")
     (electric-spacing-insert ":" 'middle)))
 
 (defun electric-spacing-c-+ ()
+  "Handle ++ operator"
   (if (looking-back "\\+ *")
       (progn
         (when (looking-back "[a-zA-Z0-9_] +\\+ *")
@@ -407,6 +393,7 @@ so let's not get too insert-happy."
     (insert " + ")))
 
 (defun electric-spacing-c-- ()
+  "Handle -- operator"
   (if (looking-back "\\- *")
       (progn
         (when (looking-back "[a-zA-Z0-9_] +\\- *")
@@ -418,6 +405,21 @@ so let's not get too insert-happy."
 
     ;; else handle negative exponents
     (electric-spacing--)))
+
+(defun electric-spacing-c-< ()
+  "Handle #include brackets"
+  (if (looking-back "#\s*include\s*")
+      (insert " <")
+    ;; else
+    (insert " < ")))
+
+(defun electric-spacing-c-> ()
+  "Handle #include brackets"
+  (if (looking-back "#\s*include.*")
+      (insert ">")
+    ;; else
+    (insert " > ")))
+
 
 
 
