@@ -67,8 +67,7 @@
     ("/" . electric-spacing-/)
     ("&" . electric-spacing-&)
     ("|" . " | ")
-    (":" . electric-spacing-:)
-    ("?" . electric-spacing-?)
+    ("?" . "? ")
     ("," . ", ")
     ("^" . " ^ ")
 
@@ -113,12 +112,16 @@ Returns a modified copy of the list."
   (--> electric-spacing-rules
        (add-rule it '("**" . electric-spacing-python-**))
        (add-rule it '("*" . electric-spacing-python-*))
+       (add-rule it '(":" . electric-spacing-python-:))
        (add-rule it '("//" . " // "))
        ))
 
 (defvar c-rules
   (add-rules electric-spacing-rules
-             '("->" . "->")))
+             '("->" . "->")
+             '("?" . " ? ")  ; ternary operator
+             '(":" . electric-spacing-c-:) ; tenary op or case label
+             ))
 
 (defvar ruby-rules
   ;; Regex equality
@@ -303,17 +306,6 @@ so let's not get too insert-happy."
    (t
     (electric-spacing-insert "<"))))
 
-(defun electric-spacing-: ()
-  "See `electric-spacing-insert'."
-  (cond (c-buffer-is-cc-mode
-         (if (looking-back "\\?.+")
-             (electric-spacing-insert ":")
-           (electric-spacing-insert ":" 'middle)))
-        ((derived-mode-p 'ess-mode)
-         (insert ":"))
-        (t
-         (electric-spacing-insert ":" 'after))))
-
 (defun electric-spacing-docs-. ()
   ;; Double space if setting tells us to
   (if electric-spacing-double-space-docs
@@ -395,13 +387,6 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "-"))))
 
-(defun electric-spacing-? ()
-  "See `electric-spacing-insert'."
-  (cond (c-buffer-is-cc-mode
-         (electric-spacing-insert "?"))
-        (t
-         (electric-spacing-insert "?" 'after))))
-
 (defun electric-spacing-/ ()
   "See `electric-spacing-insert'."
   ;; *nix shebangs #!
@@ -412,6 +397,16 @@ so let's not get too insert-happy."
          (insert "/"))
         (t
          (electric-spacing-insert "/"))))
+
+
+
+;; C mode
+
+(defun electric-spacing-c-: ()
+  (if (looking-back "\\?.+")
+      (electric-spacing-insert ":")
+    (electric-spacing-insert ":" 'middle)))
+
 
 
 ;; Python mode
