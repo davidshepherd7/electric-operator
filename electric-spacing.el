@@ -146,18 +146,16 @@ Returns a modified copy of the list."
        ))
 
 (defvar prose-rules
-  (when electric-spacing-docs
-    (--> electric-spacing-rules
-         (add-rules it '("." . electric-spacing-docs-.))
-         (remove-rule-for-operator it "%")) ;; For format strings
-    )
+  (--> electric-spacing-rules
+       (add-rule it '("." . electric-spacing-docs-.))
+       (remove-rule-for-operator it "%")) ;; For format strings
   "Spacing rules to use in comments, strings and text modes.")
 
 (defun get-rules-list ()
   "Pick which rule list is appropriate for spacing operator at point"
   (cond
    ;; In comment or string?
-   ((electric-spacing-document?) prose-rules)
+   ((and electric-spacing-docs (electric-spacing-document?)) prose-rules)
 
    ;; Other modes
    ((derived-mode-p 'python-mode) python-rules)
