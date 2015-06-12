@@ -119,6 +119,23 @@
   (add-rules electric-spacing-rules
              '("->" . "->")))
 
+;; TODO: add tests based on the style guide? https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
+(defvar haskell-rules
+  ;; Health warning: I haven't written much Haskell recently so I'm likely
+  ;; to have missed some things, or gotten other things wrong. Submit bug
+  ;; reports/pull requests!
+  (--> electric-spacing-rules
+       (add-rule it '("." . " . ")) ;; function composition
+       (add-rule it '("++" . " ++ ")) ;; list concat
+       (add-rule it '("!!" . " !! ")) ;; indexing
+       (add-rule it '("$" . " $ "))
+       (add-rule it '("<-" . " <- "))
+       (add-rule it '("->" . " -> "))
+       (remove-rule-for-operator it ":") ;; list constructor
+       (add-rule it '("::" . " :: ")) ;; type specification
+       (remove-rule-for-operator it "!=") ;; not-equal is /=
+       ))
+
 (defvar prose-rules
   (when electric-spacing-docs
     (--> electric-spacing-rules
@@ -135,6 +152,7 @@
    ;; Other modes
    ((derived-mode-p 'python-mode) python-rules)
    ((derived-mode-p 'c-mode 'c++-mode) c-rules)
+   ((derived-mode-p 'haskell-mode) haskell-rules)
 
    ;; Default modes
    ((derived-mode-p 'prog-mode) electric-spacing-rules)
@@ -281,8 +299,6 @@ so let's not get too insert-happy."
          (if (looking-back "\\?.+")
              (electric-spacing-insert ":")
            (electric-spacing-insert ":" 'middle)))
-        ((derived-mode-p 'haskell-mode)
-         (electric-spacing-insert ":"))
         ((derived-mode-p 'ess-mode)
          (insert ":"))
         (t
