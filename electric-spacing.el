@@ -85,10 +85,7 @@
     ("|=" . " |= ")
 
     ("&&" . " && ")
-    ("||" . " || ")
-
-    ;; Regex equality (ruby, perl)
-    ("=~" . " =~ "))
+    ("||" . " || "))
   "Default spacing rules for programming modes")
 
 (defun add-rule (initial new-rule)
@@ -122,6 +119,14 @@ Returns a modified copy of the list."
 (defvar c-rules
   (add-rules electric-spacing-rules
              '("->" . "->")))
+
+(defvar ruby-rules
+  ;; Regex equality
+  (add-rules electric-spacing-rules '("=~" . " =~ ")))
+
+(defvar perl-rules
+  ;; Regex equality
+  (add-rules electric-spacing-rules '("=~" . " =~ ")))
 
 ;; TODO: add tests based on the style guide? https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
 (defvar haskell-rules
@@ -158,6 +163,9 @@ Returns a modified copy of the list."
    ((derived-mode-p 'python-mode) python-rules)
    ((derived-mode-p 'c-mode 'c++-mode) c-rules)
    ((derived-mode-p 'haskell-mode) haskell-rules)
+   ((derived-mode-p 'ruby-mode) ruby-rules)
+   ((or (derived-mode-p 'perl-mode)
+        (derived-mode-p 'cperl-mode)) perl-rules)
 
    ;; Default modes
    ((derived-mode-p 'prog-mode) electric-spacing-rules)
