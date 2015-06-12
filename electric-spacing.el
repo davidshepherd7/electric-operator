@@ -107,8 +107,8 @@
 
 (defvar python-rules
   (add-rules electric-spacing-rules
-             '("**" . electric-spacing-**)
-             '("*" . electric-spacing-*)
+             '("**" . electric-spacing-python-**)
+             '("*" . electric-spacing-python-*)
              '("//" . " // ")))
 
 (defvar c-rules
@@ -285,7 +285,6 @@ so let's not get too insert-happy."
            (electric-spacing-insert ":" 'middle)))
         ((derived-mode-p 'haskell-mode)
          (electric-spacing-insert ":"))
-        ((derived-mode-p 'python-mode) (electric-spacing-python-:))
         ((derived-mode-p 'ess-mode)
          (insert ":"))
         (t
@@ -301,7 +300,7 @@ so let's not get too insert-happy."
              (or (and c-buffer-is-cc-mode
                       (looking-back "[a-z]"))
                  (and
-                  (derived-mode-p 'python-mode 'ruby-mode)
+                  (derived-mode-p 'ruby-mode)
                   (looking-back "[a-z\)]"))
                  (and
                   (derived-mode-p 'js-mode 'js2-mode)
@@ -358,31 +357,8 @@ so let's not get too insert-happy."
                (t
                 (electric-spacing-insert "*"))))
 
-        ;; Handle python *args
-        ((derived-mode-p 'python-mode)
-         ;; Can only occur after '(' ',' or on a new line, so just check
-         ;; for those. If it's just after a comma then also insert a space
-         ;; before the *.
-         (cond ((looking-back ",") (insert " *"))
-               ((looking-back "[(,^)][ \t]*") (insert "*"))
-               ;; Othewise act as normal
-               (t (electric-spacing-insert "*"))))
         (t
          (electric-spacing-insert "*"))))
-
-(defun electric-spacing-** ()
-  "See `electric-spacing-insert'."
-  ;; Handle python **kwargs
-  (cond ((derived-mode-p 'python-mode)
-         (cond ((looking-back ",")
-                (insert " **"))
-               ((looking-back "[(,^)][ \t]*")
-                (insert "**"))
-               (t
-                (electric-spacing-insert "**"))))
-        (t
-         (electric-spacing-insert "**"))))
-
 
 (defun electric-spacing-+ ()
   "See `electric-spacing-insert'."
@@ -463,6 +439,27 @@ so let's not get too insert-happy."
            (eq (electric-spacing-enclosing-paren) ?\{))
       (electric-spacing-insert ":" 'after)
     (insert ":")))
+
+(defun electric-spacing-python-* ()
+  ;; Handle python *args. Can only occur after '(' ',' or on a new line, so
+  ;; just check for those. If it's just after a comma then also insert a
+  ;; space before the *.
+  (cond ((looking-back ",") (insert " *"))
+        ((looking-back "[(,^)][ \t]*") (insert "*"))
+        ;; Othewise act as normal
+        (t (electric-spacing-insert "*"))))
+
+(defun electric-spacing-python-** ()
+  "See `electric-spacing-insert'."
+  ;; Handle python **kwargs
+  (cond ((looking-back ",")
+         (insert " **"))
+
+        ((looking-back "[(,^)][ \t]*")
+         (insert "**"))
+
+        (t
+         (electric-spacing-insert "**"))))
 
 (provide 'electric-spacing)
 
