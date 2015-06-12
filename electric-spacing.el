@@ -116,13 +116,10 @@
              '("->" . "->")))
 
 (defvar prose-rules
-  (add-rules '()
-             ;; Spacing after '.'
-             (cond ((and electric-spacing-docs electric-spacing-double-space-docs)
-                    '("." . ".  "))
-                   (electric-spacing-docs
-                    '("." . ". "))
-                   (t nil))))
+  (when electric-spacing-docs
+    (add-rules electric-spacing-rules
+               '("." . electric-spacing-docs-.)))
+  "Spacing rules to use in comments, strings and text modes.")
 
 (defun get-rules-list ()
   (cond
@@ -314,6 +311,13 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "." 'after)
          (insert " "))))
+
+(defun electric-spacing-docs-. ()
+  ;; Double space if setting tells us to
+  (if electric-spacing-double-space-docs
+      (insert ".  ")
+    (insert ". "))
+  )
 
 (defun electric-spacing-& ()
   "See `electric-spacing-insert'."
