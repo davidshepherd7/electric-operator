@@ -61,7 +61,7 @@
     ("<" . " < ")
     (">" . " > ")
     ("%" . " % ")
-    ("+" . electric-spacing-+)
+    ("+" . " + ")
     ("-" . electric-spacing--)
     ("*" . electric-spacing-*)
     ("/" . electric-spacing-/)
@@ -119,8 +119,16 @@ Returns a modified copy of the list."
 (defvar c-rules
   (add-rules electric-spacing-rules
              '("->" . "->")
-             '("?" . " ? ")  ; ternary operator
-             '(":" . electric-spacing-c-:) ; tenary op or case label
+
+             ;; Ternary operator
+             '("?" . " ? ")
+             '(":" . electric-spacing-c-:) ; (or case label)
+
+             ;; Increment/decrement
+             '("+" . electric-spacing-c-+)
+             '("-" . electric-spacing-c--)
+             ;; TODO: clean these cases up by adding a way for rules that
+             ;; don't change the existing spacing before the operator.
              ))
 
 (defvar ruby-rules
@@ -358,34 +366,12 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "*"))))
 
-(defun electric-spacing-+ ()
-  "See `electric-spacing-insert'."
-  (cond ((and c-buffer-is-cc-mode (looking-back "\\+ *"))
-         (when (looking-back "[a-zA-Z0-9_] +\\+ *")
-           (save-excursion
-             (backward-char 2)
-             (delete-horizontal-space)))
-         (electric-spacing-insert "+" 'middle)
-         (indent-according-to-mode))
-        (t
-         (electric-spacing-insert "+"))))
-
 (defun electric-spacing-- ()
   "See `electric-spacing-insert'."
-  (cond ((and c-buffer-is-cc-mode (looking-back "\\- *"))
-         (when (looking-back "[a-zA-Z0-9_] +\\- *")
-           (save-excursion
-             (backward-char 2)
-             (delete-horizontal-space)))
-         (electric-spacing-insert "-" 'middle)
-         (indent-according-to-mode))
-
-        ;; exponent notation, e.g. 1e-10: don't space
-        ((looking-back "[0-9.]+[eE]")
-         (insert "-"))
-
-        (t
-         (electric-spacing-insert "-"))))
+  ;; exponent notation, e.g. 1e-10: don't space
+  (if (looking-back "[0-9.]+[eE]")
+      (insert "-")
+    (electric-spacing-insert "-")))
 
 (defun electric-spacing-/ ()
   "See `electric-spacing-insert'."
@@ -406,6 +392,32 @@ so let's not get too insert-happy."
   (if (looking-back "\\?.+")
       (electric-spacing-insert ":")
     (electric-spacing-insert ":" 'middle)))
+
+(defun electric-spacing-c-+ ()
+  (if (looking-back "\\+ *")
+      (progn
+        (when (looking-back "[a-zA-Z0-9_] +\\+ *")
+          (save-excursion
+            (backward-char 2)
+            (delete-horizontal-space)))
+        (electric-spacing-insert "+" 'middle)
+        (indent-according-to-mode))
+
+    ;; else
+    (insert " + ")))
+
+(defun electric-spacing-c-- ()
+  (if (looking-back "\\- *")
+      (progn
+        (when (looking-back "[a-zA-Z0-9_] +\\- *")
+          (save-excursion
+            (backward-char 2)
+            (delete-horizontal-space)))
+        (electric-spacing-insert "-" 'middle)
+        (indent-according-to-mode))
+
+    ;; else handle negative exponents
+    (electric-spacing--)))
 
 
 
