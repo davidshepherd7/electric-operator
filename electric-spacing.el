@@ -177,8 +177,7 @@ Returns a modified copy of the list."
    ((derived-mode-p 'c-mode 'c++-mode) c-rules)
    ((derived-mode-p 'haskell-mode) haskell-rules)
    ((derived-mode-p 'ruby-mode) ruby-rules)
-   ((or (derived-mode-p 'perl-mode)
-        (derived-mode-p 'cperl-mode)) perl-rules)
+   ((derived-mode-p 'perl-mode 'cperl-mode) perl-rules)
 
    ;; Default modes
    ((derived-mode-p 'prog-mode) electric-spacing-rules)
