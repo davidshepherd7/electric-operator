@@ -151,23 +151,22 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
        car))
 
 (defun electric-spacing-post-self-insert-function ()
-  (when (electric-spacing-should-run?)
-    (let* ((rule (longest-matching-rule (get-rules-list)))
-           (operator (car rule))
-           (action (cdr rule)))
-      (when rule
-        ;; Delete the characters matching this rule before point
-        (looking-back (rule-regex-with-whitespace (car rule)))
-        (let ((match (match-data)))
-          (delete-region (nth 0 match) (nth 1 match)))
+  (let* ((rule (longest-matching-rule (get-rules-list)))
+         (operator (car rule))
+         (action (cdr rule)))
+    (when rule
+      ;; Delete the characters matching this rule before point
+      (looking-back (rule-regex-with-whitespace (car rule)))
+      (let ((match (match-data)))
+        (delete-region (nth 0 match) (nth 1 match)))
 
-        ;; TODO: shouldn't need this, but it seems we do...
-        (delete-horizontal-space)
+      ;; TODO: shouldn't need this, but it seems we do...
+      (delete-horizontal-space)
 
-        ;; Insert correctly spaced operator
-        (if (stringp action)
-            (insert action)
-          (funcall action))))))
+      ;; Insert correctly spaced operator
+      (if (stringp action)
+          (insert action)
+        (funcall action)))))
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
@@ -223,10 +222,6 @@ when `only-where' is 'middle, we will not insert space."
 
 (defun electric-spacing-document? ()
   (nth 8 (syntax-ppss)))
-
-(defun electric-spacing-should-run? ()
-  (or (not electric-spacing-docs)
-      (not (electric-spacing-document?))))
 
 (defun electric-spacing-lispy-mode? ()
   (derived-mode-p 'emacs-lisp-mode
@@ -289,11 +284,7 @@ so let's not get too insert-happy."
 
 (defun electric-spacing-. ()
   "See `electric-spacing-insert'."
-  (cond ((and electric-spacing-double-space-docs
-              (electric-spacing-document?))
-         (electric-spacing-insert "." 'after)
-         (insert " "))
-        ((or (looking-back "[0-9]")
+  (cond ((or (looking-back "[0-9]")
              (or (and c-buffer-is-cc-mode
                       (looking-back "[a-z]"))
                  (and
