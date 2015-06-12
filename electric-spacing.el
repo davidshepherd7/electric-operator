@@ -60,7 +60,7 @@
   '(("=" . " = ")
     ("<" . " < ")
     (">" . " > ")
-    ("%" . electric-spacing-%)
+    ("%" . " % ")
     ("+" . electric-spacing-+)
     ("-" . electric-spacing--)
     ("*" . electric-spacing-*)
@@ -105,6 +105,10 @@
 (defun add-rule-list (initial new-rules)
   (-reduce #'add-rule (-concat (list initial) new-rules)))
 
+(defun remove-rule-for-operator (initial-rules operator)
+  (-filter (lambda (rule) (not (equal (car rule) operator)))
+           initial-rules))
+
 (defvar python-rules
   (add-rules electric-spacing-rules
              '("**" . electric-spacing-python-**)
@@ -117,8 +121,10 @@
 
 (defvar prose-rules
   (when electric-spacing-docs
-    (add-rules electric-spacing-rules
-               '("." . electric-spacing-docs-.)))
+    (--> electric-spacing-rules
+         (add-rules it '("." . electric-spacing-docs-.))
+         (remove-rule-for-operator it "%")) ;; For format strings
+    )
   "Spacing rules to use in comments, strings and text modes.")
 
 (defun get-rules-list ()
@@ -390,25 +396,6 @@ so let's not get too insert-happy."
          (electric-spacing-insert "?"))
         (t
          (electric-spacing-insert "?" 'after))))
-
-(defun electric-spacing-% ()
-  "See `electric-spacing-insert'."
-  (cond (c-buffer-is-cc-mode
-         ;; ,----
-         ;; | a % b;
-         ;; | printf("%d %d\n", a % b);
-         ;; `----
-         (if (and (looking-back "\".*")
-                  (not (looking-back "\",.*")))
-             (insert "%")
-           (electric-spacing-insert "%")))
-        ;; If this is a comment or string, we most likely
-        ;; want no spaces - probably string formatting
-        ((and (derived-mode-p 'python-mode)
-              (electric-spacing-document?))
-         (insert "%"))
-        (t
-         (electric-spacing-insert "%"))))
 
 (defun electric-spacing-/ ()
   "See `electric-spacing-insert'."
