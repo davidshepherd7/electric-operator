@@ -249,14 +249,14 @@ is very handy for many programming languages."
 ;;; Fine Tunings
 
 (defun electric-spacing-docs-. ()
-  ;; Double space if setting tells us to
+  "Double space if setting tells us to"
   (if electric-spacing-double-space-docs
       (insert ".  ")
     (insert ". "))
   )
 
 (defun electric-spacing-& ()
-  "See `electric-spacing-insert'."
+  "Handle C reference operator"
   (cond (c-buffer-is-cc-mode
          ;; ,----[ cases ]
          ;; | char &a = b; // FIXME
@@ -275,7 +275,7 @@ is very handy for many programming languages."
          (insert " & "))))
 
 (defun electric-spacing-* ()
-  "See `electric-spacing-insert'."
+  "Handle C dereference operator and pointer types"
   (cond (c-buffer-is-cc-mode
          ;; ,----
          ;; | a * b;
@@ -301,15 +301,14 @@ is very handy for many programming languages."
          (insert " * "))))
 
 (defun electric-spacing-- ()
-  "See `electric-spacing-insert'."
+  "Handle exponent notation"
   ;; exponent notation, e.g. 1e-10: don't space
   (if (looking-back "[0-9.]+[eE]")
       (insert "-")
     (insert " - ")))
 
 (defun electric-spacing-/ ()
-  "See `electric-spacing-insert'."
-  ;; *nix shebangs #!
+  "Handle path separators in hashbangs"
   (cond ((and (eq 1 (line-number-at-pos))
               (save-excursion
                 (move-beginning-of-line nil)
@@ -376,30 +375,31 @@ is very handy for many programming languages."
 ;; Python mode
 
 (defun electric-spacing-enclosing-paren ()
-  "Return the opening parenthesis of the enclosing parens, or nil if not inside any parens."
+  "Return the opening parenthesis of the enclosing parens, or nil
+if not inside any parens."
   (interactive)
   (let ((ppss (syntax-ppss)))
     (when (nth 1 ppss)
       (char-after (nth 1 ppss)))))
 
 (defun electric-spacing-python-: ()
+  "Handle python dict assignment"
   (if (and (not (in-string-p))
            (eq (electric-spacing-enclosing-paren) ?\{))
       (insert ": ")
     (insert ":")))
 
 (defun electric-spacing-python-* ()
-  ;; Handle python *args. Can only occur after '(' ',' or on a new line, so
-  ;; just check for those. If it's just after a comma then also insert a
-  ;; space before the *.
+  "Handle python *args"
+  ;; Can only occur after '(' ',' or on a new line, so just check for those.
+  ;; If it's just after a comma then also insert a space before the *.
   (cond ((looking-back ",") (insert " *"))
         ((looking-back "[(,^)][ \t]*") (insert "*"))
         ;; Othewise act as normal
         (t (insert " * "))))
 
 (defun electric-spacing-python-** ()
-  "See `electric-spacing-insert'."
-  ;; Handle python **kwargs
+  "Handle python **kwargs"
   (cond ((looking-back ",")
          (insert " **"))
 
