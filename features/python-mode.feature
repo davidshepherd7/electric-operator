@@ -16,7 +16,7 @@ Feature: python *args and **kwargs
   Background:
     When the buffer is empty
     When I turn on python-mode
-    When I turn on electric-spacing-mode  
+    When I turn on electric-spacing-mode
 
   # Make sure we haven't messed up normal multiplication or exponentiation
   Scenario: Space *
@@ -60,7 +60,7 @@ Feature: python dictionaries
   Background:
     When the buffer is empty
     When I turn on python-mode
-    When I turn on electric-spacing-mode    
+    When I turn on electric-spacing-mode
 
   Scenario: Don't space : in most cases
     When I type "if:"

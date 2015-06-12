@@ -88,7 +88,8 @@
     ("||" . " || ")
 
     ;; Regex equality (ruby, perl)
-    ("=~" . " =~ ")))
+    ("=~" . " =~ "))
+  "Default spacing rules for programming modes")
 
 (defun add-rule (initial new-rule)
   "Replace or append a new rule"
@@ -105,6 +106,9 @@
   (-reduce #'add-rule (-concat (list initial) new-rules)))
 
 (defun remove-rule-for-operator (initial-rules operator)
+  "Remove rule corresponding to operator for rule list
+
+Returns a modified copy of the list."
   (-filter (lambda (rule) (not (equal (car rule) operator)))
            initial-rules))
 
@@ -145,6 +149,7 @@
   "Spacing rules to use in comments, strings and text modes.")
 
 (defun get-rules-list ()
+  "Pick which rule list is appropriate for spacing operator at point"
   (cond
    ;; In comment or string?
    ((electric-spacing-document?) prose-rules)
@@ -403,6 +408,8 @@ so let's not get too insert-happy."
         (t
          (electric-spacing-insert "/"))))
 
+
+;; Python mode
 
 (defun electric-spacing-enclosing-paren ()
   "Return the opening parenthesis of the enclosing parens, or nil if not inside any parens."
