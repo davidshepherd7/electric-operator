@@ -1,6 +1,6 @@
 ;;; electric-spacing.el --- Insert operators with surrounding spaces smartly
 
-;; Copyright (C) 2004, 2005, 2007-2014 Free Software Foundation, Inc.
+;; Copyright (C) 2004, 2005, 2007-2015 Free Software Foundation, Inc.
 
 ;; Author: William Xu <william.xwl@gmail.com>
 ;; Version: 5.0
@@ -22,12 +22,11 @@
 
 ;;; Commentary:
 
-;; Smart Operator mode is a minor mode which automatically inserts
-;; surrounding spaces around operator symbols.  For example, `='
-;; becomes ` = ', `+=' becomes ` += '.  This is most handy for writing
-;; C-style source code.
+;; Electric spacing mode is a minor mode which automatically inserts
+;; surrounding spaces around operator symbols. For example, `=' becomes ` =
+;; ', `+=' becomes ` += '.
 ;;
-;; Type `M-x smart-operator-mode' to toggle this minor mode.
+;; Type `M-x electric-spacing-mode' to toggle this minor mode.
 
 ;;; Acknowledgements
 
@@ -47,12 +46,12 @@
 ;; Customisable variables
 
 (defcustom electric-spacing-double-space-docs t
-  "enable double spacing of . in document lines - e,g, type '.' => get '.  '."
+  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
   :type 'boolean
   :group 'electricity)
 
 (defcustom electric-spacing-docs t
-  "enable electric-spacing in strings and comments."
+  "Enable electric-spacing in strings and comments."
   :type 'boolean
   :group 'electricity)
 
@@ -61,7 +60,9 @@
 ;; rule list creation helper functions
 
 (defun add-rule (initial new-rule)
-  "replace or append a new rule"
+  "Replace or append a new rule
+
+Returns a modified copy of the rule list."
   (let* ((op (car new-rule))
          (existing-rule (assoc op initial)))
     (if existing-rule
@@ -69,21 +70,27 @@
       (-snoc initial new-rule))))
 
 (defun add-rules (initial &rest new-rules)
+  "Replace or append multiple rules
+
+Returns a modified copy of the rule list."
   (add-rule-list initial new-rules))
 
 (defun add-rule-list (initial new-rules)
+  "Replace or append a list of rules
+
+Returns a modified copy of the rule list."
   (-reduce #'add-rule (-concat (list initial) new-rules)))
 
 (defun remove-rule-for-operator (initial-rules operator)
-  "remove rule corresponding to operator for rule list
+  "Remove rule corresponding to operator from initial-rules
 
-returns a modified copy of the list."
+Returns a modified copy of the rule list."
   (-filter (lambda (rule) (not (equal (car rule) operator)))
            initial-rules))
 
 
 
-;; rule lists
+;; Rule lists
 
 (defvar electric-spacing-rules
   '(("=" . " = ")
@@ -115,7 +122,7 @@ returns a modified copy of the list."
     ("&&" . " && ")
     ("||" . " || ")
     )
-  "default spacing rules for programming modes")
+  "Default spacing rules for programming modes")
 
 
 (defvar python-rules
@@ -124,7 +131,8 @@ returns a modified copy of the list."
        (add-rule it '("*" . electric-spacing-python-*))
        (add-rule it '(":" . electric-spacing-python-:))
        (add-rule it '("//" . " // "))
-       ))
+       )
+  "Rules for python mode")
 
 (defvar c-rules
   (add-rules electric-spacing-rules
@@ -146,7 +154,8 @@ returns a modified copy of the list."
              ;; #include statements
              '("<" . electric-spacing-c-<)
              '(">" . electric-spacing-c->)
-             ))
+             )
+  "Rules for C and C++ modes")
 
 (defvar ruby-rules
   ;; regex equality
@@ -181,14 +190,14 @@ returns a modified copy of the list."
        (remove-rule-for-operator it "%") ; format strings
        (remove-rule-for-operator it "/") ; path separator
        )
-  "spacing rules to use in comments, strings and text modes.")
+  "Rules to use in comments, strings and text modes.")
 
 
 
-;; core functions
+;; Core functions
 
 (defun get-rules-list ()
-  "Pick which rule list is appropriate for spacing operator at point"
+  "Pick which rule list is appropriate for spacing at point"
   (cond
    ;; In comment or string?
    ((and electric-spacing-docs (electric-spacing-document?)) prose-rules)
@@ -219,6 +228,7 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
        car))
 
 (defun electric-spacing-post-self-insert-function ()
+  "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
           ((operator . action) rule))
     (when rule
@@ -235,14 +245,14 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
-  "Toggle automatic surrounding space insertion (Electric Spacing mode).
+  "Toggle automatic insertion of spaces around operators (Electric Spacing mode).
+
 With a prefix argument ARG, enable Electric Spacing mode if ARG is
 positive, and disable it otherwise.  If called from Lisp, enable
 the mode if ARG is omitted or nil.
 
 This is a local minor mode.  When enabled, typing an operator automatically
-inserts surrounding spaces.  e.g., `=' becomes ` = ',`+=' becomes ` += '.  This
-is very handy for many programming languages."
+inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
   :global nil
   :group 'electricity
   :lighter " _+_"
@@ -259,6 +269,7 @@ is very handy for many programming languages."
 ;; Helper functions
 
 (defun electric-spacing-document? ()
+  "Check if we are inside a string or comment"
   (nth 8 (syntax-ppss)))
 
 (defun hashbang-line? ()
@@ -277,6 +288,7 @@ if not inside any parens."
       (char-after (nth 1 ppss)))))
 
 
+
 ;; General tweaks
 
 (defun electric-spacing-docs-. ()
@@ -304,6 +316,7 @@ if not inside any parens."
 ;; C mode tweaks
 
 (defun electric-spacing-c-is-unary? ()
+  "Try to guess if this is the unary form of an operator"
   (or (looking-back "[=,]\s*")
       (looking-back "^\s*")))
 
