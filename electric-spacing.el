@@ -84,7 +84,10 @@
     ("|=" . " |= ")
 
     ("&&" . " && ")
-    ("||" . " || "))
+    ("||" . " || ")
+
+    ("#!" . "#! ") ; hashbang
+    )
   "Default spacing rules for programming modes")
 
 (defun add-rule (initial new-rule)
@@ -300,15 +303,19 @@ is very handy for many programming languages."
       "-"
     " - "))
 
+(defun hashbang-line? ()
+  "Does the current line contain a UNIX hashbang?"
+  (and (eq 1 (line-number-at-pos))
+       (save-excursion
+         (move-beginning-of-line nil)
+         (looking-at "#!"))))
+
 (defun electric-spacing-/ ()
-  "Handle path separators in hashbangs"
-  (cond ((and (eq 1 (line-number-at-pos))
-              (save-excursion
-                (move-beginning-of-line nil)
-                (looking-at "#!")))
-         "/")
-        (t
-         " / ")))
+  "Handle path separator in UNIX hashbangs"
+  ;; First / needs a space before it, rest don't need any spaces
+  (cond ((and (hashbang-line?) (looking-back "#!")) " /")
+        ((hashbang-line?) "/")
+        (t " / ")))
 
 
 
