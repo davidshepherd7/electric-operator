@@ -42,19 +42,48 @@
 (require 'dash)
 (require 's)
 
-;;; electric-spacing minor mode
+
+
+;; Customisable variables
 
 (defcustom electric-spacing-double-space-docs t
-  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
+  "enable double spacing of . in document lines - e,g, type '.' => get '.  '."
   :type 'boolean
   :group 'electricity)
 
 (defcustom electric-spacing-docs t
-  "Enable electric-spacing in strings and comments."
+  "enable electric-spacing in strings and comments."
   :type 'boolean
   :group 'electricity)
 
 
+
+;; rule list creation helper functions
+
+(defun add-rule (initial new-rule)
+  "replace or append a new rule"
+  (let* ((op (car new-rule))
+         (existing-rule (assoc op initial)))
+    (if existing-rule
+        (-replace-first existing-rule new-rule initial)
+      (-snoc initial new-rule))))
+
+(defun add-rules (initial &rest new-rules)
+  (add-rule-list initial new-rules))
+
+(defun add-rule-list (initial new-rules)
+  (-reduce #'add-rule (-concat (list initial) new-rules)))
+
+(defun remove-rule-for-operator (initial-rules operator)
+  "remove rule corresponding to operator for rule list
+
+returns a modified copy of the list."
+  (-filter (lambda (rule) (not (equal (car rule) operator)))
+           initial-rules))
+
+
+
+;; rule lists
 
 (defvar electric-spacing-rules
   '(("=" . " = ")
@@ -88,28 +117,8 @@
 
     ("#!" . "#! ") ; hashbang
     )
-  "Default spacing rules for programming modes")
+  "default spacing rules for programming modes")
 
-(defun add-rule (initial new-rule)
-  "Replace or append a new rule"
-  (let* ((op (car new-rule))
-         (existing-rule (assoc op initial)))
-    (if existing-rule
-        (-replace-first existing-rule new-rule initial)
-      (-snoc initial new-rule))))
-
-(defun add-rules (initial &rest new-rules)
-  (add-rule-list initial new-rules))
-
-(defun add-rule-list (initial new-rules)
-  (-reduce #'add-rule (-concat (list initial) new-rules)))
-
-(defun remove-rule-for-operator (initial-rules operator)
-  "Remove rule corresponding to operator for rule list
-
-Returns a modified copy of the list."
-  (-filter (lambda (rule) (not (equal (car rule) operator)))
-           initial-rules))
 
 (defvar python-rules
   (--> electric-spacing-rules
@@ -123,16 +132,16 @@ Returns a modified copy of the list."
   (add-rules electric-spacing-rules
              '("->" . "->")
 
-             ;; Ternary operator
+             ;; ternary operator
              '("?" . " ? ")
              '(":" . electric-spacing-c-:) ; (or case label)
 
-             ;; Pointers
+             ;; pointers
              '("*" . electric-spacing-c-*)
              '("&" . electric-spacing-c-&)
              '("**" . " **") ; pointer-to-pointer type
 
-             ;; Increment/decrement
+             ;; increment/decrement
              '("++" . electric-spacing-c-++)
              '("--" . electric-spacing-c---)
 
@@ -142,18 +151,20 @@ Returns a modified copy of the list."
              ))
 
 (defvar ruby-rules
-  ;; Regex equality
+  ;; regex equality
   (add-rules electric-spacing-rules '("=~" . " =~ ")))
 
 (defvar perl-rules
-  ;; Regex equality
+  ;; regex equality
   (add-rules electric-spacing-rules '("=~" . " =~ ")))
 
-;; TODO: add tests based on the style guide? https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
 (defvar haskell-rules
-  ;; Health warning: I haven't written much Haskell recently so I'm likely
-  ;; to have missed some things, or gotten other things wrong. Submit bug
+  ;; health warning: i haven't written much haskell recently so i'm likely
+  ;; to have missed some things, or gotten other things wrong. submit bug
   ;; reports/pull requests!
+
+  ;; todo: add tests based on the style guide?
+  ;; https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
   (--> electric-spacing-rules
        (add-rule it '("." . " . ")) ;; function composition
        (add-rule it '("++" . " ++ ")) ;; list concat
@@ -172,7 +183,11 @@ Returns a modified copy of the list."
        (remove-rule-for-operator it "%") ; format strings
        (remove-rule-for-operator it "/") ; path separator
        )
-  "Spacing rules to use in comments, strings and text modes.")
+  "spacing rules to use in comments, strings and text modes.")
+
+
+
+;; core functions
 
 (defun get-rules-list ()
   "Pick which rule list is appropriate for spacing operator at point"
@@ -190,8 +205,6 @@ Returns a modified copy of the list."
    ;; Default modes
    ((derived-mode-p 'prog-mode) electric-spacing-rules)
    (t prose-rules)))
-
-
 
 (defun rule-regex-with-whitespace (op)
   "Construct regex matching operator and any whitespace before/inside/after
@@ -243,15 +256,30 @@ is very handy for many programming languages."
     (remove-hook 'post-self-insert-hook
                  #'electric-spacing-post-self-insert-function t)))
 
-(defun electric-spacing-c-types ()
-  (concat c-primitive-type-key "?"))
+
+
+;; Helper functions
 
 (defun electric-spacing-document? ()
   (nth 8 (syntax-ppss)))
 
+(defun hashbang-line? ()
+  "Does the current line contain a UNIX hashbang?"
+  (and (eq 1 (line-number-at-pos))
+       (save-excursion
+         (move-beginning-of-line nil)
+         (looking-at "#!"))))
+
+(defun electric-spacing-enclosing-paren ()
+  "Return the opening parenthesis of the enclosing parens, or nil
+if not inside any parens."
+  (interactive)
+  (let ((ppss (syntax-ppss)))
+    (when (nth 1 ppss)
+      (char-after (nth 1 ppss)))))
 
 
-;;; Fine Tunings
+;; General tweaks
 
 (defun electric-spacing-docs-. ()
   "Double space if setting tells us to"
@@ -266,13 +294,6 @@ is very handy for many programming languages."
       "-"
     " - "))
 
-(defun hashbang-line? ()
-  "Does the current line contain a UNIX hashbang?"
-  (and (eq 1 (line-number-at-pos))
-       (save-excursion
-         (move-beginning-of-line nil)
-         (looking-at "#!"))))
-
 (defun electric-spacing-/ ()
   "Handle path separator in UNIX hashbangs"
   ;; First / needs a space before it, rest don't need any spaces
@@ -282,11 +303,14 @@ is very handy for many programming languages."
 
 
 
-;; C mode
+;; C mode tweaks
 
 (defun electric-spacing-c-is-unary? ()
   (or (looking-back "[=,]\s*")
       (looking-back "^\s*")))
+
+(defun electric-spacing-c-types ()
+  (concat c-primitive-type-key "?"))
 
 (defun electric-spacing-c-: ()
   "Handle the : part of ternary operator"
@@ -336,15 +360,7 @@ is very handy for many programming languages."
 
 
 
-;; Python mode
-
-(defun electric-spacing-enclosing-paren ()
-  "Return the opening parenthesis of the enclosing parens, or nil
-if not inside any parens."
-  (interactive)
-  (let ((ppss (syntax-ppss)))
-    (when (nth 1 ppss)
-      (char-after (nth 1 ppss)))))
+;; Python mode tweaks
 
 (defun electric-spacing-python-: ()
   "Handle python dict assignment"
@@ -367,6 +383,8 @@ if not inside any parens."
   (cond ((looking-back ",") " **")
         ((looking-back "[(,^)][ \t]*") "**")
         (t " ** ")))
+
+
 
 (provide 'electric-spacing)
 
