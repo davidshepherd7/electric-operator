@@ -114,8 +114,6 @@ returns a modified copy of the list."
 
     ("&&" . " && ")
     ("||" . " || ")
-
-    ("#!" . "#! ") ; hashbang
     )
   "default spacing rules for programming modes")
 
