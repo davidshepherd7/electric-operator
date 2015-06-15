@@ -63,9 +63,9 @@
     ("%" . " % ")
     ("+" . " + ")
     ("-" . electric-spacing--)
-    ("*" . electric-spacing-*)
+    ("*" . " * ")
     ("/" . electric-spacing-/)
-    ("&" . electric-spacing-&)
+    ("&" . " & ")
     ("|" . " | ")
     ("?" . "? ")
     ("," . ", ")
@@ -126,6 +126,11 @@ Returns a modified copy of the list."
              ;; Ternary operator
              '("?" . " ? ")
              '(":" . electric-spacing-c-:) ; (or case label)
+
+             ;; Pointers
+             '("*" . electric-spacing-c-*)
+             '("&" . electric-spacing-c-&)
+             '("**" . " **") ; pointer-to-pointer type
 
              ;; Increment/decrement
              '("++" . electric-spacing-c-++)
@@ -254,48 +259,6 @@ is very handy for many programming languages."
       ".  "
     ". "))
 
-(defun electric-spacing-& ()
-  "Handle C reference operator"
-  (cond (c-buffer-is-cc-mode
-         ;; ,----[ cases ]
-         ;; | char &a = b; // FIXME
-         ;; | void foo(const int& a);
-         ;; | char *a = &b;
-         ;; | int c = a & b;
-         ;; | a && b;
-         ;; `----
-         (cond ((looking-back (concat (electric-spacing-c-types) " *" ))
-                "& ")
-               ((looking-back "= *") " &")
-               (t " & ")))
-        (t " & ")))
-
-(defun electric-spacing-* ()
-  "Handle C dereference operator and pointer types"
-  (cond (c-buffer-is-cc-mode
-         ;; ,----
-         ;; | a * b;
-         ;; | char *a;
-         ;; | char **b;
-         ;; | (*a)->func();
-         ;; | *p++;
-         ;; | *a = *b;
-         ;; `----
-         (cond ((looking-back (concat (electric-spacing-c-types) " *" ))
-                " *")
-               ((looking-back "\\* *")
-                " * ")
-               ((looking-back "^[ (]*")
-                " * "
-                (indent-according-to-mode))
-               ((looking-back "= *")
-                " *")
-               (t
-                " * ")))
-
-        (t
-         " * ")))
-
 (defun electric-spacing-- ()
   "Handle exponent notation"
   ;; exponent notation, e.g. 1e-10: don't space
@@ -320,6 +283,10 @@ is very handy for many programming languages."
 
 
 ;; C mode
+
+(defun electric-spacing-c-is-unary? ()
+  (or (looking-back "[=,]\s*")
+      (looking-back "^\s*")))
 
 (defun electric-spacing-c-: ()
   "Handle the : part of ternary operator"
@@ -353,6 +320,19 @@ is very handy for many programming languages."
     ;; else
     " > "))
 
+(defun electric-spacing-c-& ()
+  "Handle C address-of operator and reference types"
+  (cond ((looking-back (electric-spacing-c-types)) " &")
+        ((electric-spacing-c-is-unary?) " &")
+        ((looking-back "(") "&")
+        (t " & ")))
+
+(defun electric-spacing-c-* ()
+  "Handle C dereference operator and pointer types"
+  (cond ((looking-back (electric-spacing-c-types)) " *")
+        ((electric-spacing-c-is-unary?) " *")
+        ((looking-back "(") "*")
+        (t " * ")))
 
 
 

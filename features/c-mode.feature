@@ -1,4 +1,4 @@
-Feature: Pointer dereference is unspaced
+Feature: -> operator
   Background:
     When the buffer is empty
     When I turn on c-mode
@@ -69,3 +69,64 @@ Feature: Ternary operator
     Scenario: Label
       When I type "error:"
       Then I should see "error:"
+
+
+Feature: * operator
+      Background:
+      When the buffer is empty
+      When I turn on c-mode
+      When I turn on electric-spacing-mode
+
+    Scenario: Multiplication
+      When I type "a*b"
+      Then I should see "a * b"
+
+    Scenario: Pointer type
+      When I type "char*a"
+      Then I should see "char *a"
+
+    Scenario: Assign pointer dereference
+      When I type "a=*b"
+      Then I should see "a = *b"
+
+    Scenario: Pointer dereference and increment
+      When I type "*p++"
+      Then I should see "*p++"
+
+    Scenario: Function call with dereference
+      Then I type "f(*p,*q)"
+      Then I should see "f(*p, *q)"
+
+
+Feature: & operator
+      Background:
+      When the buffer is empty
+      When I turn on c-mode
+      When I turn on electric-spacing-mode
+
+    Scenario: Bitwise and
+      When I type "a&b"
+      Then I should see "a & b"
+
+    Scenario: Reference type
+      When I type "char&a"
+      Then I should see "char &a"
+
+    Scenario: Assign address of
+      When I type "a=&b"
+      Then I should see "a = &b"
+
+    Scenario: Function call with address of
+      Then I type "f(&p,&q)"
+      Then I should see "f(&p, &q)"
+
+
+Feature: Pointer to pointer type
+  Background:
+      When the buffer is empty
+      When I turn on c-mode
+      When I turn on electric-spacing-mode
+
+  Scenario: pointer to pointer type
+    When I type "char**a"
+    Then I should see "char **a"
