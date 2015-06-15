@@ -206,13 +206,11 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
          (operator (car rule))
          (action (cdr rule)))
     (when rule
+
       ;; Delete the characters matching this rule before point
-      (looking-back (rule-regex-with-whitespace (car rule)))
+      (looking-back (rule-regex-with-whitespace (car rule)) nil t)
       (let ((match (match-data)))
         (delete-region (nth 0 match) (nth 1 match)))
-
-      ;; TODO: shouldn't need this, but it seems we do...
-      (delete-horizontal-space)
 
       ;; Insert correctly spaced operator
       (if (stringp action)
