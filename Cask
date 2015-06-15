@@ -5,6 +5,8 @@
 (depends-on "dash")
 (depends-on "s")
 
+(depends-on "names")
+
 (development
  (depends-on "ecukes")
  (depends-on "espuds"))

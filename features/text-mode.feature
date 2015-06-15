@@ -3,7 +3,7 @@ Feature: Double spacing when requested
     When the buffer is empty
     When I turn on text-mode
     When I turn on electric-spacing-mode
-    When I set electric-spacing-docs to t
+    When I set electric-spacing-enable-in-docs to t
 
   Scenario: Single space '.'
     When I set electric-spacing-double-space-docs to nil

@@ -40,24 +40,29 @@
 (require 'thingatpt)
 (require 'dash)
 (require 's)
+(require 'names)
+
+;; namespace using names.el:
+;;;###autoload
+(define-namespace electric-spacing-
 
 
 
 ;; Customisable variables
 
-(defcustom electric-spacing-double-space-docs t
+(defcustom double-space-docs t
   "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
   :type 'boolean
   :group 'electricity)
 
-(defcustom electric-spacing-docs t
+(defcustom enable-in-docs t
   "Enable electric-spacing in strings and comments."
   :type 'boolean
   :group 'electricity)
 
 
 
-;; rule list creation helper functions
+;; Rule list helper functions
 
 (defun add-rule (initial new-rule)
   "Replace or append a new rule
@@ -91,79 +96,77 @@ Returns a modified copy of the rule list."
 
 
 ;; Rule lists
+(defvar prog-mode-rules
+  (list (cons "=" " = ")
+        (cons "<" " < ")
+        (cons ">" " > ")
+        (cons "%" " % ")
+        (cons "+" " + ")
+        (cons "-" #'prog-mode--)
+        (cons "*" " * ")
+        (cons "/" #'prog-mode-/)
+        (cons "&" " & ")
+        (cons "|" " | ")
+        (cons "?" "? ")
+        (cons "," ", ")
+        (cons "^" " ^ ")
 
-(defvar electric-spacing-rules
-  '(("=" . " = ")
-    ("<" . " < ")
-    (">" . " > ")
-    ("%" . " % ")
-    ("+" . " + ")
-    ("-" . electric-spacing--)
-    ("*" . " * ")
-    ("/" . electric-spacing-/)
-    ("&" . " & ")
-    ("|" . " | ")
-    ("?" . "? ")
-    ("," . ", ")
-    ("^" . " ^ ")
+        (cons "==" " == ")
+        (cons "!=" " != ")
+        (cons "<=" " <= ")
+        (cons ">=" " >= ")
 
-    ("==" . " == ")
-    ("!=" . " != ")
-    ("<=" . " <= ")
-    (">=" . " >= ")
+        (cons "*=" " *= ")
+        (cons "+=" " += ")
+        (cons "/=" " /= ")
+        (cons "-=" " -= ")
+        (cons "&=" " &= ")
+        (cons "|=" " |= ")
 
-    ("*=" . " *= ")
-    ("+=" . " += ")
-    ("/=" . " /= ")
-    ("-=" . " -= ")
-    ("&=" . " &= ")
-    ("|=" . " |= ")
-
-    ("&&" . " && ")
-    ("||" . " || ")
-    )
+        (cons "&&" " && ")
+        (cons "||" " || ")
+        )
   "Default spacing rules for programming modes")
 
-
 (defvar python-rules
-  (--> electric-spacing-rules
-       (add-rule it '("**" . electric-spacing-python-**))
-       (add-rule it '("*" . electric-spacing-python-*))
-       (add-rule it '(":" . electric-spacing-python-:))
-       (add-rule it '("//" . " // "))
+  (--> prog-mode-rules
+       (add-rule it (cons "**" #'python-mode-**))
+       (add-rule it (cons "*" #'python-mode-*))
+       (add-rule it (cons ":" #'python-mode-:))
+       (add-rule it (cons "//" " // "))
        )
   "Rules for python mode")
 
 (defvar c-rules
-  (add-rules electric-spacing-rules
-             '("->" . "->")
+  (add-rules prog-mode-rules
+             (cons "->" "->")
 
              ;; ternary operator
-             '("?" . " ? ")
-             '(":" . electric-spacing-c-:) ; (or case label)
+             (cons "?" " ? ")
+             (cons ":" #'c-mode-:) ; (or case label)
 
              ;; pointers
-             '("*" . electric-spacing-c-*)
-             '("&" . electric-spacing-c-&)
-             '("**" . " **") ; pointer-to-pointer type
+             (cons "*" #'c-mode-*)
+             (cons "&" #'c-mode-&)
+             (cons "**" " **") ; pointer-to-pointer type
 
              ;; increment/decrement
-             '("++" . electric-spacing-c-++)
-             '("--" . electric-spacing-c---)
+             (cons "++" #'c-mode-++)
+             (cons "--" #'c-mode---)
 
              ;; #include statements
-             '("<" . electric-spacing-c-<)
-             '(">" . electric-spacing-c->)
+             (cons "<" #'c-mode-<)
+             (cons ">" #'c-mode->)
              )
   "Rules for C and C++ modes")
 
 (defvar ruby-rules
   ;; regex equality
-  (add-rules electric-spacing-rules '("=~" . " =~ ")))
+  (add-rules prog-mode-rules (cons "=~" " =~ ")))
 
 (defvar perl-rules
   ;; regex equality
-  (add-rules electric-spacing-rules '("=~" . " =~ ")))
+  (add-rules prog-mode-rules (cons "=~" " =~ ")))
 
 (defvar haskell-rules
   ;; health warning: i haven't written much haskell recently so i'm likely
@@ -172,21 +175,21 @@ Returns a modified copy of the rule list."
 
   ;; todo: add tests based on the style guide?
   ;; https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
-  (--> electric-spacing-rules
-       (add-rule it '("." . " . ")) ;; function composition
-       (add-rule it '("++" . " ++ ")) ;; list concat
-       (add-rule it '("!!" . " !! ")) ;; indexing
-       (add-rule it '("$" . " $ "))
-       (add-rule it '("<-" . " <- "))
-       (add-rule it '("->" . " -> "))
+  (--> prog-mode-rules
+       (add-rule it (cons "." " . ")) ;; function composition
+       (add-rule it (cons "++" " ++ ")) ;; list concat
+       (add-rule it (cons "!!" " !! ")) ;; indexing
+       (add-rule it (cons "$" " $ "))
+       (add-rule it (cons "<-" " <- "))
+       (add-rule it (cons "->" " -> "))
        (remove-rule-for-operator it ":") ;; list constructor
-       (add-rule it '("::" . " :: ")) ;; type specification
+       (add-rule it (cons "::" " :: ")) ;; type specification
        (remove-rule-for-operator it "!=") ;; not-equal is /=
        ))
 
 (defvar prose-rules
-  (--> electric-spacing-rules
-       (add-rule it '("." . electric-spacing-docs-.))
+  (--> prog-mode-rules
+       (add-rule it (cons "." #'docs-.))
        (remove-rule-for-operator it "%") ; format strings
        (remove-rule-for-operator it "/") ; path separator
        )
@@ -200,7 +203,7 @@ Returns a modified copy of the rule list."
   "Pick which rule list is appropriate for spacing at point"
   (cond
    ;; In comment or string?
-   ((and electric-spacing-docs (electric-spacing-document?)) prose-rules)
+   ((and enable-in-docs (in-docs?)) prose-rules)
 
    ;; Other modes
    ((derived-mode-p 'python-mode) python-rules)
@@ -210,7 +213,7 @@ Returns a modified copy of the rule list."
    ((derived-mode-p 'perl-mode 'cperl-mode) perl-rules)
 
    ;; Default modes
-   ((derived-mode-p 'prog-mode) electric-spacing-rules)
+   ((derived-mode-p 'prog-mode) prog-mode-rules)
    (t prose-rules)))
 
 (defun rule-regex-with-whitespace (op)
@@ -227,7 +230,7 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
        (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))))
        car))
 
-(defun electric-spacing-post-self-insert-function ()
+(defun post-self-insert-function ()
   "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
           ((operator . action) rule))
@@ -243,8 +246,8 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
           (insert action)
         (insert (funcall action))))))
 
-;;;###autoload
-(define-minor-mode electric-spacing-mode
+:autoload
+(define-minor-mode mode
   "Toggle automatic insertion of spaces around operators (Electric Spacing mode).
 
 With a prefix argument ARG, enable Electric Spacing mode if ARG is
@@ -258,17 +261,17 @@ inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
   :lighter " _+_"
 
   ;; body
-  (if electric-spacing-mode
+  (if mode
       (add-hook 'post-self-insert-hook
-                #'electric-spacing-post-self-insert-function nil t)
+                #'post-self-insert-function nil t)
     (remove-hook 'post-self-insert-hook
-                 #'electric-spacing-post-self-insert-function t)))
+                 #'post-self-insert-function t)))
 
 
 
 ;; Helper functions
 
-(defun electric-spacing-document? ()
+(defun in-docs? ()
   "Check if we are inside a string or comment"
   (nth 8 (syntax-ppss)))
 
@@ -279,7 +282,7 @@ inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
          (move-beginning-of-line nil)
          (looking-at "#!"))))
 
-(defun electric-spacing-enclosing-paren ()
+(defun enclosing-paren ()
   "Return the opening parenthesis of the enclosing parens, or nil
 if not inside any parens."
   (interactive)
@@ -291,20 +294,20 @@ if not inside any parens."
 
 ;; General tweaks
 
-(defun electric-spacing-docs-. ()
+(defun docs-. ()
   "Double space if setting tells us to"
-  (if electric-spacing-double-space-docs
+  (if double-space-docs
       ".  "
     ". "))
 
-(defun electric-spacing-- ()
+(defun prog-mode-- ()
   "Handle exponent notation"
   ;; exponent notation, e.g. 1e-10: don't space
   (if (looking-back "[0-9.]+[eE]")
       "-"
     " - "))
 
-(defun electric-spacing-/ ()
+(defun prog-mode-/ ()
   "Handle path separator in UNIX hashbangs"
   ;; First / needs a space before it, rest don't need any spaces
   (cond ((and (hashbang-line?) (looking-back "#!")) " /")
@@ -315,57 +318,57 @@ if not inside any parens."
 
 ;; C mode tweaks
 
-(defun electric-spacing-c-is-unary? ()
+(defun c-mode-is-unary? ()
   "Try to guess if this is the unary form of an operator"
   (or (looking-back "[=,]\s*")
       (looking-back "^\s*")))
 
-(defun electric-spacing-c-types ()
+(defun c-types-regex ()
   (concat c-primitive-type-key "?"))
 
-(defun electric-spacing-c-: ()
+(defun c-mode-: ()
   "Handle the : part of ternary operator"
   (if (looking-back "\\?.+")
       " : "
     ":"))
 
-(defun electric-spacing-c-++ ()
+(defun c-mode-++ ()
   "Handle ++ operator pre/postfix"
   (if (looking-back "[a-zA-Z0-9_]\s*")
       "++ "
     " ++"))
 
-(defun electric-spacing-c--- ()
+(defun c-mode--- ()
   "Handle -- operator pre/postfix"
   (if (looking-back "[a-zA-Z0-9_]\s*")
       "-- "
     " --"))
 
-(defun electric-spacing-c-< ()
+(defun c-mode-< ()
   "Handle #include brackets"
   (if (looking-back "#\s*include\s*")
       " <"
     ;; else
     " < "))
 
-(defun electric-spacing-c-> ()
+(defun c-mode-> ()
   "Handle #include brackets"
   (if (looking-back "#\s*include.*")
       ">"
     ;; else
     " > "))
 
-(defun electric-spacing-c-& ()
+(defun c-mode-& ()
   "Handle C address-of operator and reference types"
-  (cond ((looking-back (electric-spacing-c-types)) " &")
-        ((electric-spacing-c-is-unary?) " &")
+  (cond ((looking-back (c-types-regex)) " &")
+        ((c-mode-is-unary?) " &")
         ((looking-back "(") "&")
         (t " & ")))
 
-(defun electric-spacing-c-* ()
+(defun c-mode-* ()
   "Handle C dereference operator and pointer types"
-  (cond ((looking-back (electric-spacing-c-types)) " *")
-        ((electric-spacing-c-is-unary?) " *")
+  (cond ((looking-back (c-types-regex)) " *")
+        ((c-mode-is-unary?) " *")
         ((looking-back "(") "*")
         (t " * ")))
 
@@ -373,14 +376,14 @@ if not inside any parens."
 
 ;; Python mode tweaks
 
-(defun electric-spacing-python-: ()
+(defun python-mode-: ()
   "Handle python dict assignment"
   (if (and (not (in-string-p))
-           (eq (electric-spacing-enclosing-paren) ?\{))
+           (eq (enclosing-paren) ?\{))
       ": "
     ":"))
 
-(defun electric-spacing-python-* ()
+(defun python-mode-* ()
   "Handle python *args"
   ;; Can only occur after '(' ',' or on a new line, so just check for those.
   ;; If it's just after a comma then also insert a space before the *.
@@ -389,13 +392,14 @@ if not inside any parens."
         ;; Othewise act as normal
         (t  " * ")))
 
-(defun electric-spacing-python-** ()
+(defun python-mode-** ()
   "Handle python **kwargs"
   (cond ((looking-back ",") " **")
         ((looking-back "[(,^)][ \t]*") "**")
         (t " ** ")))
 
 
+) ; End of names
 
 (provide 'electric-spacing)
 
