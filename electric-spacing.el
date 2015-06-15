@@ -202,13 +202,12 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
        car))
 
 (defun electric-spacing-post-self-insert-function ()
-  (let* ((rule (longest-matching-rule (get-rules-list)))
-         (operator (car rule))
-         (action (cdr rule)))
+  (-let* ((rule (longest-matching-rule (get-rules-list)))
+          ((operator . action) rule))
     (when rule
 
       ;; Delete the characters matching this rule before point
-      (looking-back (rule-regex-with-whitespace (car rule)) nil t)
+      (looking-back (rule-regex-with-whitespace operator) nil t)
       (let ((match (match-data)))
         (delete-region (nth 0 match) (nth 1 match)))
 
