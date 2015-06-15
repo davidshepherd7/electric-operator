@@ -134,6 +134,7 @@ Returns a modified copy of the rule list."
        (add-rule it (cons "*" #'python-mode-*))
        (add-rule it (cons ":" #'python-mode-:))
        (add-rule it (cons "//" " // "))
+       (add-rule it (cons "=" #'python-mode-kwargs-=))
        )
   "Rules for python mode")
 
@@ -398,8 +399,13 @@ if not inside any parens."
         ((looking-back "[(,^)][ \t]*") "**")
         (t " ** ")))
 
-
-) ; End of names
+(defun python-mode-kwargs-= ()
+  (if (eq (electric-spacing-enclosing-paren) ?\()
+      "="
+    " = "))
+
+  
+  ) ; End of names
 
 (provide 'electric-spacing)
 
