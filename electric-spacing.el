@@ -62,6 +62,14 @@
 
 
 
+;; Other variables
+
+(defvar mode-rules-table
+  (make-hash-table)
+  "A hash table of replacement rule lists for specific major modes")
+
+
+
 ;; Rule list helper functions
 
 (defun -add-rule (initial new-rule)
@@ -86,9 +94,20 @@ Returns a modified copy of the rule list."
 Returns a modified copy of the rule list."
   (-add-rule-list initial new-rules))
 
+(defun add-rules-for-mode (major-mode &rest new-rules)
+  "Replace or add spacing rules for major mode
+
+Destructively modifies mode-rules-table to use the new rules for
+the given major mode."
+  (puthash major-mode
+           (-add-rule-list (gethash major-mode mode-rules-table)
+                           new-rules)
+           mode-rules-table))
+
 
 
-;; Rule lists
+;; Default rule lists
+
 (defvar prog-mode-rules
   (list (cons "=" " = ")
         (cons "<" " < ")
@@ -120,10 +139,6 @@ Returns a modified copy of the rule list."
         (cons "||" " || ")
         )
   "Default spacing rules for programming modes")
-
-(defvar mode-rules-table
-  (make-hash-table)
-  "A hash table of replacement rule lists for specific major modes")
 
 (defvar prose-rules
   (add-rules prog-mode-rules
@@ -264,8 +279,8 @@ if not inside any parens."
 
 ;; C mode tweaks
 
-(puthash 'c-mode
-         (add-rules prog-mode-rules
+(apply #'add-rules-for-mode 'c-mode prog-mode-rules)
+(add-rules-for-mode 'c-mode
                     (cons "->" "->")
 
                     ;; ternary operator
@@ -285,7 +300,7 @@ if not inside any parens."
                     (cons "<" #'c-mode-<)
                     (cons ">" #'c-mode->)
                     )
-         mode-rules-table)
+
 
 ;; Use the same rules for c++
 (puthash 'c++-mode (gethash 'c-mode mode-rules-table)
@@ -349,15 +364,14 @@ if not inside any parens."
 
 ;; Python mode tweaks
 
-(puthash 'python-mode
-         (add-rules prog-mode-rules
+(apply #'add-rules-for-mode 'python-mode prog-mode-rules)
+(add-rules-for-mode 'python-mode
                     (cons "**" #'python-mode-**)
                     (cons "*" #'python-mode-*)
                     (cons ":" #'python-mode-:)
                     (cons "//" " // ")
                     (cons "=" #'python-mode-kwargs-=)
                     )
-         mode-rules-table)
 
 (defun python-mode-: ()
   "Handle python dict assignment"
