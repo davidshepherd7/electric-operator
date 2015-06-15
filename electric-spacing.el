@@ -121,69 +121,9 @@ Returns a modified copy of the rule list."
         )
   "Default spacing rules for programming modes")
 
-(defvar python-rules
-  (add-rules prog-mode-rules
-             (cons "**" #'python-mode-**)
-             (cons "*" #'python-mode-*)
-             (cons ":" #'python-mode-:)
-             (cons "//" " // ")
-             (cons "=" #'python-mode-kwargs-=)
-             )
-  "Rules for python mode")
-
-(defvar c-rules
-  (add-rules prog-mode-rules
-             (cons "->" "->")
-
-             ;; ternary operator
-             (cons "?" " ? ")
-             (cons ":" #'c-mode-:) ; (or case label)
-
-             ;; pointers
-             (cons "*" #'c-mode-*)
-             (cons "&" #'c-mode-&)
-             (cons "**" " **") ; pointer-to-pointer type
-
-             ;; increment/decrement
-             (cons "++" #'c-mode-++)
-             (cons "--" #'c-mode---)
-
-             ;; #include statements
-             (cons "<" #'c-mode-<)
-             (cons ">" #'c-mode->)
-             )
-  "Rules for C and C++ modes")
-
-(defvar ruby-rules
-  (add-rules prog-mode-rules
-             ;; regex equality
-             (cons "=~" " =~ ")
-             ))
-
-(defvar perl-rules
-  (add-rules prog-mode-rules
-             ;; regex equality
-             (cons "=~" " =~ ")
-             ))
-
-(defvar haskell-rules
-  ;; health warning: i haven't written much haskell recently so i'm likely
-  ;; to have missed some things, or gotten other things wrong. submit bug
-  ;; reports/pull requests!
-
-  ;; todo: add tests based on the style guide?
-  ;; https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
-  (add-rules prog-mode-rules
-             (cons "." " . ") ;; function composition
-             (cons "++" " ++ ") ;; list concat
-             (cons "!!" " !! ") ;; indexing
-             (cons "$" " $ ")
-             (cons "<-" " <- ")
-             (cons "->" " -> ")
-             (cons ":" nil) ;; list constructor
-             (cons "::" " :: ") ;; type specification
-             (cons "!=" nil) ;; not-equal is /=
-             ))
+(defvar mode-rules-table
+  (make-hash-table)
+  "A hash table of replacement rule lists for specific major modes")
 
 (defvar prose-rules
   (add-rules prog-mode-rules
@@ -203,12 +143,8 @@ Returns a modified copy of the rule list."
    ;; In comment or string?
    ((and enable-in-docs (in-docs?)) prose-rules)
 
-   ;; Other modes
-   ((derived-mode-p 'python-mode) python-rules)
-   ((derived-mode-p 'c-mode 'c++-mode) c-rules)
-   ((derived-mode-p 'haskell-mode) haskell-rules)
-   ((derived-mode-p 'ruby-mode) ruby-rules)
-   ((derived-mode-p 'perl-mode 'cperl-mode) perl-rules)
+   ;; Try to find an entry for this mode in the table
+   ((gethash major-mode mode-rules-table))
 
    ;; Default modes
    ((derived-mode-p 'prog-mode) prog-mode-rules)
@@ -328,6 +264,33 @@ if not inside any parens."
 
 ;; C mode tweaks
 
+(puthash 'c-mode
+         (add-rules prog-mode-rules
+                    (cons "->" "->")
+
+                    ;; ternary operator
+                    (cons "?" " ? ")
+                    (cons ":" #'c-mode-:) ; (or case label)
+
+                    ;; pointers
+                    (cons "*" #'c-mode-*)
+                    (cons "&" #'c-mode-&)
+                    (cons "**" " **") ; pointer-to-pointer type
+
+                    ;; increment/decrement
+                    (cons "++" #'c-mode-++)
+                    (cons "--" #'c-mode---)
+
+                    ;; #include statements
+                    (cons "<" #'c-mode-<)
+                    (cons ">" #'c-mode->)
+                    )
+         mode-rules-table)
+
+;; Use the same rules for c++
+(puthash 'c++-mode (gethash 'c-mode mode-rules-table)
+         mode-rules-table)
+
 (defun c-mode-is-unary? ()
   "Try to guess if this is the unary form of an operator"
   (or (looking-back "[=,]\s*")
@@ -386,6 +349,16 @@ if not inside any parens."
 
 ;; Python mode tweaks
 
+(puthash 'python-mode
+         (add-rules prog-mode-rules
+                    (cons "**" #'python-mode-**)
+                    (cons "*" #'python-mode-*)
+                    (cons ":" #'python-mode-:)
+                    (cons "//" " // ")
+                    (cons "=" #'python-mode-kwargs-=)
+                    )
+         mode-rules-table)
+
 (defun python-mode-: ()
   "Handle python dict assignment"
   (if (and (not (in-string-p))
@@ -413,8 +386,44 @@ if not inside any parens."
       "="
     " = "))
 
-  
-  ) ; End of names
+
+
+;; Other major mode tweaks
+
+(puthash 'ruby-mode
+         (add-rules prog-mode-rules
+                    ;; regex equality
+                    (cons "=~" " =~ ")
+                    )
+         mode-rules-table)
+
+(puthash 'perl-mode
+         (add-rules prog-mode-rules
+                    ;; regex equality
+                    (cons "=~" " =~ ")
+                    )
+         mode-rules-table)
+(puthash 'cperl-mode (gethash 'cperl-mode mode-rules-table)
+         mode-rules-table)
+
+(puthash 'haskell-mode
+         ;; Health warning: i haven't written much haskell recently so i'm
+         ;; likely to have missed some things.
+         (add-rules prog-mode-rules
+                    (cons "." " . ") ;; function composition
+                    (cons "++" " ++ ") ;; list concat
+                    (cons "!!" " !! ") ;; indexing
+                    (cons "$" " $ ")
+                    (cons "<-" " <- ")
+                    (cons "->" " -> ")
+                    (cons ":" nil) ;; list constructor
+                    (cons "::" " :: ") ;; type specification
+                    (cons "!=" nil) ;; not-equal is /=
+                    )
+         mode-rules-table)
+
+
+) ; End of names
 
 (provide 'electric-spacing)
 
