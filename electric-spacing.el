@@ -223,10 +223,15 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
-  (->> rule-list
-       (-filter (lambda (rule) (looking-back (rule-regex-with-whitespace (car rule)))))
-       (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))))
-       car))
+  ;; Using a threading macro here would be much cleaner, but dash's
+  ;; threading macros don't work with Names at the moment.
+  (let* ((filtered
+          (-filter (lambda (rule) (looking-back (rule-regex-with-whitespace (car rule))))
+                   rule-list))
+         (sorted
+          (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2))))
+                 filtered)))
+    (car sorted)))
 
 (defun post-self-insert-function ()
   "Check for a matching rule and apply it"
