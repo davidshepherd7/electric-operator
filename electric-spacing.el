@@ -64,7 +64,7 @@
 
 ;; Rule list helper functions
 
-(defun add-rule (initial new-rule)
+(defun -add-rule (initial new-rule)
   "Replace or append a new rule
 
 Returns a modified copy of the rule list."
@@ -74,24 +74,17 @@ Returns a modified copy of the rule list."
         (-replace-first existing-rule new-rule initial)
       (-snoc initial new-rule))))
 
+(defun -add-rule-list (initial new-rules)
+  "Replace or append a list of rules
+
+Returns a modified copy of the rule list."
+  (-reduce #'-add-rule (-concat (list initial) new-rules)))
+
 (defun add-rules (initial &rest new-rules)
   "Replace or append multiple rules
 
 Returns a modified copy of the rule list."
-  (add-rule-list initial new-rules))
-
-(defun add-rule-list (initial new-rules)
-  "Replace or append a list of rules
-
-Returns a modified copy of the rule list."
-  (-reduce #'add-rule (-concat (list initial) new-rules)))
-
-(defun remove-rule-for-operator (initial-rules operator)
-  "Remove rule corresponding to operator from initial-rules
-
-Returns a modified copy of the rule list."
-  (-filter (lambda (rule) (not (equal (car rule) operator)))
-           initial-rules))
+  (-add-rule-list initial new-rules))
 
 
 
@@ -129,13 +122,13 @@ Returns a modified copy of the rule list."
   "Default spacing rules for programming modes")
 
 (defvar python-rules
-  (--> prog-mode-rules
-       (add-rule it (cons "**" #'python-mode-**))
-       (add-rule it (cons "*" #'python-mode-*))
-       (add-rule it (cons ":" #'python-mode-:))
-       (add-rule it (cons "//" " // "))
-       (add-rule it (cons "=" #'python-mode-kwargs-=))
-       )
+  (add-rules prog-mode-rules
+             (cons "**" #'python-mode-**)
+             (cons "*" #'python-mode-*)
+             (cons ":" #'python-mode-:)
+             (cons "//" " // ")
+             (cons "=" #'python-mode-kwargs-=)
+             )
   "Rules for python mode")
 
 (defvar c-rules
@@ -162,12 +155,16 @@ Returns a modified copy of the rule list."
   "Rules for C and C++ modes")
 
 (defvar ruby-rules
-  ;; regex equality
-  (add-rules prog-mode-rules (cons "=~" " =~ ")))
+  (add-rules prog-mode-rules
+             ;; regex equality
+             (cons "=~" " =~ ")
+             ))
 
 (defvar perl-rules
-  ;; regex equality
-  (add-rules prog-mode-rules (cons "=~" " =~ ")))
+  (add-rules prog-mode-rules
+             ;; regex equality
+             (cons "=~" " =~ ")
+             ))
 
 (defvar haskell-rules
   ;; health warning: i haven't written much haskell recently so i'm likely
@@ -176,24 +173,24 @@ Returns a modified copy of the rule list."
 
   ;; todo: add tests based on the style guide?
   ;; https://github.com/tibbe/haskell-style-guide/blob/master/haskell-style.md
-  (--> prog-mode-rules
-       (add-rule it (cons "." " . ")) ;; function composition
-       (add-rule it (cons "++" " ++ ")) ;; list concat
-       (add-rule it (cons "!!" " !! ")) ;; indexing
-       (add-rule it (cons "$" " $ "))
-       (add-rule it (cons "<-" " <- "))
-       (add-rule it (cons "->" " -> "))
-       (remove-rule-for-operator it ":") ;; list constructor
-       (add-rule it (cons "::" " :: ")) ;; type specification
-       (remove-rule-for-operator it "!=") ;; not-equal is /=
-       ))
+  (add-rules prog-mode-rules
+             (cons "." " . ") ;; function composition
+             (cons "++" " ++ ") ;; list concat
+             (cons "!!" " !! ") ;; indexing
+             (cons "$" " $ ")
+             (cons "<-" " <- ")
+             (cons "->" " -> ")
+             (cons ":" nil) ;; list constructor
+             (cons "::" " :: ") ;; type specification
+             (cons "!=" nil) ;; not-equal is /=
+             ))
 
 (defvar prose-rules
-  (--> prog-mode-rules
-       (add-rule it (cons "." #'docs-.))
-       (remove-rule-for-operator it "%") ; format strings
-       (remove-rule-for-operator it "/") ; path separator
-       )
+  (add-rules prog-mode-rules
+             (cons "." #'docs-.)
+             (cons "%" nil) ; format strings
+             (cons "/" nil) ; path separator
+             )
   "Rules to use in comments, strings and text modes.")
 
 
@@ -235,7 +232,7 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
   "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
           ((operator . action) rule))
-    (when rule
+    (when (and rule action)
 
       ;; Delete the characters matching this rule before point
       (looking-back (rule-regex-with-whitespace operator) nil t)
