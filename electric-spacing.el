@@ -302,11 +302,18 @@ if not inside any parens."
     ". "))
 
 (defun prog-mode-- ()
-  "Handle exponent notation"
+  "Handle exponent and negative number notation"
   ;; exponent notation, e.g. 1e-10: don't space
-  (if (looking-back "[0-9.]+[eE]")
-      "-"
-    " - "))
+  (cond ((looking-back "[0-9.]+[eE]") "-")
+
+        ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or
+        ;; -1 alone at all). This will proabaly need to be major mode
+        ;; specific eventually.
+        ((looking-back "[=,:\*\+-/]") " -")
+        ((looking-back "[[(]") "-")
+        ((looking-back "^") "-")
+
+        (t " - ")))
 
 (defun prog-mode-/ ()
   "Handle path separator in UNIX hashbangs"
