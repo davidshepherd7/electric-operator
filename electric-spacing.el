@@ -214,7 +214,7 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
       ;; Insert correctly spaced operator
       (if (stringp action)
           (insert action)
-        (funcall action)))))
+        (insert (funcall action))))))
 
 ;;;###autoload
 (define-minor-mode electric-spacing-mode
@@ -250,9 +250,8 @@ is very handy for many programming languages."
 (defun electric-spacing-docs-. ()
   "Double space if setting tells us to"
   (if electric-spacing-double-space-docs
-      (insert ".  ")
-    (insert ". "))
-  )
+      ".  "
+    ". "))
 
 (defun electric-spacing-& ()
   "Handle C reference operator"
@@ -265,13 +264,10 @@ is very handy for many programming languages."
          ;; | a && b;
          ;; `----
          (cond ((looking-back (concat (electric-spacing-c-types) " *" ))
-                (insert "& "))
-               ((looking-back "= *")
-                (insert " &"))
-               (t
-                (insert " & "))))
-        (t
-         (insert " & "))))
+                "& ")
+               ((looking-back "= *") " &")
+               (t " & ")))
+        (t " & ")))
 
 (defun electric-spacing-* ()
   "Handle C dereference operator and pointer types"
@@ -285,26 +281,26 @@ is very handy for many programming languages."
          ;; | *a = *b;
          ;; `----
          (cond ((looking-back (concat (electric-spacing-c-types) " *" ))
-                (insert " *"))
+                " *")
                ((looking-back "\\* *")
-                (insert " * "))
+                " * ")
                ((looking-back "^[ (]*")
-                (insert " * ")
+                " * "
                 (indent-according-to-mode))
                ((looking-back "= *")
-                (insert " *"))
+                " *")
                (t
-                (insert " * "))))
+                " * ")))
 
         (t
-         (insert " * "))))
+         " * ")))
 
 (defun electric-spacing-- ()
   "Handle exponent notation"
   ;; exponent notation, e.g. 1e-10: don't space
   (if (looking-back "[0-9.]+[eE]")
-      (insert "-")
-    (insert " - ")))
+      "-"
+    " - "))
 
 (defun electric-spacing-/ ()
   "Handle path separators in hashbangs"
@@ -312,9 +308,9 @@ is very handy for many programming languages."
               (save-excursion
                 (move-beginning-of-line nil)
                 (looking-at "#!")))
-         (insert "/"))
+         "/")
         (t
-         (insert " / "))))
+         " / ")))
 
 
 
@@ -323,8 +319,8 @@ is very handy for many programming languages."
 (defun electric-spacing-c-: ()
   "Handle the : part of ternary operator"
   (if (looking-back "\\?.+")
-      (insert " : ")
-    (insert ":")))
+      " : "
+    ":"))
 
 (defun electric-spacing-c-+ ()
   "Handle ++ operator"
@@ -333,12 +329,11 @@ is very handy for many programming languages."
         (when (looking-back "[a-zA-Z0-9_] +\\+ *")
           (save-excursion
             (backward-char 2)
-            (delete-horizontal-space)))
-        (insert "+")
-        (indent-according-to-mode))
+            (delete-horizontal-space))) ;;TODO: impure
+        "+")
 
     ;; else
-    (insert " + ")))
+    " + "))
 
 (defun electric-spacing-c-- ()
   "Handle -- operator"
@@ -347,9 +342,8 @@ is very handy for many programming languages."
         (when (looking-back "[a-zA-Z0-9_] +\\- *")
           (save-excursion
             (backward-char 2)
-            (delete-horizontal-space)))
-        (insert "-")
-        (indent-according-to-mode))
+            (delete-horizontal-space)));;TODO: impure
+        "-")
 
     ;; else handle negative exponents
     (electric-spacing--)))
@@ -357,16 +351,16 @@ is very handy for many programming languages."
 (defun electric-spacing-c-< ()
   "Handle #include brackets"
   (if (looking-back "#\s*include\s*")
-      (insert " <")
+      " <"
     ;; else
-    (insert " < ")))
+    " < "))
 
 (defun electric-spacing-c-> ()
   "Handle #include brackets"
   (if (looking-back "#\s*include.*")
-      (insert ">")
+      ">"
     ;; else
-    (insert " > ")))
+    " > "))
 
 
 
@@ -385,28 +379,23 @@ if not inside any parens."
   "Handle python dict assignment"
   (if (and (not (in-string-p))
            (eq (electric-spacing-enclosing-paren) ?\{))
-      (insert ": ")
-    (insert ":")))
+      ": "
+    ":"))
 
 (defun electric-spacing-python-* ()
   "Handle python *args"
   ;; Can only occur after '(' ',' or on a new line, so just check for those.
   ;; If it's just after a comma then also insert a space before the *.
-  (cond ((looking-back ",") (insert " *"))
-        ((looking-back "[(,^)][ \t]*") (insert "*"))
+  (cond ((looking-back ",")  " *")
+        ((looking-back "[(,^)][ \t]*")  "*")
         ;; Othewise act as normal
-        (t (insert " * "))))
+        (t  " * ")))
 
 (defun electric-spacing-python-** ()
   "Handle python **kwargs"
-  (cond ((looking-back ",")
-         (insert " **"))
-
-        ((looking-back "[(,^)][ \t]*")
-         (insert "**"))
-
-        (t
-         (insert " ** "))))
+  (cond ((looking-back ",") " **")
+        ((looking-back "[(,^)][ \t]*") "**")
+        (t " ** ")))
 
 (provide 'electric-spacing)
 
