@@ -125,10 +125,8 @@ Returns a modified copy of the list."
              '(":" . electric-spacing-c-:) ; (or case label)
 
              ;; Increment/decrement
-             '("+" . electric-spacing-c-+)
-             '("-" . electric-spacing-c--)
-             ;; TODO: clean these cases up by adding a way for rules that
-             ;; don't change the existing spacing before the operator.
+             '("++" . electric-spacing-c-++)
+             '("--" . electric-spacing-c---)
 
              ;; #include statements
              '("<" . electric-spacing-c-<)
@@ -322,31 +320,17 @@ is very handy for many programming languages."
       " : "
     ":"))
 
-(defun electric-spacing-c-+ ()
-  "Handle ++ operator"
-  (if (looking-back "\\+ *")
-      (progn
-        (when (looking-back "[a-zA-Z0-9_] +\\+ *")
-          (save-excursion
-            (backward-char 2)
-            (delete-horizontal-space))) ;;TODO: impure
-        "+")
+(defun electric-spacing-c-++ ()
+  "Handle ++ operator pre/postfix"
+  (if (looking-back "[a-zA-Z0-9_]\s*")
+      "++ "
+    " ++"))
 
-    ;; else
-    " + "))
-
-(defun electric-spacing-c-- ()
-  "Handle -- operator"
-  (if (looking-back "\\- *")
-      (progn
-        (when (looking-back "[a-zA-Z0-9_] +\\- *")
-          (save-excursion
-            (backward-char 2)
-            (delete-horizontal-space)));;TODO: impure
-        "-")
-
-    ;; else handle negative exponents
-    (electric-spacing--)))
+(defun electric-spacing-c--- ()
+  "Handle -- operator pre/postfix"
+  (if (looking-back "[a-zA-Z0-9_]\s*")
+      "-- "
+    " --"))
 
 (defun electric-spacing-c-< ()
   "Handle #include brackets"
