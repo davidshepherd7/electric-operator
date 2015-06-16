@@ -82,3 +82,19 @@ so to run the tests you'll need to install cask then run `cask install` to
 install dependencies. Then the tests can be run with `make test`.
 
 Bug reports are also welcome!
+
+
+## History
+
+Electric-operator is based on a heavily refactored version of
+[electric-spacing](https://github.com/xwl/electric-spacing) by William Xu,
+which is itself based on
+[smart-operator](http://www.emacswiki.org/emacs/SmartOperator) by the same
+author.
+
+Electric-operator uses simpler and more flexible rules to define how
+operators should be treated, and also adds a full suite of tests. However
+it has additional dependencies (the excellent
+[`dash`](https://github.com/magnars/dash.el) and
+[`Names`](https://github.com/Malabarba/names/) packages) which cannot be
+added to the GNU ELPA repository where electric-spacing lives.

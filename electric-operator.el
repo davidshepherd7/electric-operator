@@ -1,9 +1,9 @@
-;;; electric-operator.el --- Insert operators with surrounding spaces smartly
+;;; electric-operator.el --- Intelligently surround operators with spacing
 
-;; Copyright (C) 2004, 2005, 2007-2015 Free Software Foundation, Inc.
+;; Copyright (C) 2015 Free Software Foundation, Inc.
 
-;; Author: William Xu <william.xwl@gmail.com>
-;; Version: 5.0
+;; Author: David Shepherd <davidshepherd7@gmail.com>
+;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -16,23 +16,23 @@
 ;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with EMMS; see the file COPYING.  If not, write to the
+;; along with electric operator; see the file COPYING.  If not, write to the
 ;; Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
 
 ;; Electric operator mode is a minor mode which automatically inserts
-;; surrounding spaces around operator symbols. For example, `=' becomes ` =
-;; ', `+=' becomes ` += '.
+;; surrounding spaces around operator symbols. For example, `a=b+c' becomes
+;; `a = b + c'.
 ;;
 ;; Type `M-x electric-operator-mode' to toggle this minor mode.
 
 ;;; Acknowledgements
 
-;; Nikolaj Schumacher <n_schumacher@web.de>, for suggesting
-;; reimplementing as a minor mode and providing an initial patch for
-;; that.
+;; This mode is based on electric-spacing mode and smart-operator mode,
+;; both by William Xu <william.xwl@gmail.com> with contributions from
+;; Nikolaj Schumacher <n_schumacher@web.de>.
 
 ;;; Code:
 
