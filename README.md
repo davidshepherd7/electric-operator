@@ -95,6 +95,5 @@ author.
 Electric-operator uses simpler and more flexible rules to define how
 operators should be treated, and also adds a full suite of tests. However
 it has additional dependencies (the excellent
-[`dash`](https://github.com/magnars/dash.el) and
-[`Names`](https://github.com/Malabarba/names/) packages) which cannot be
-added to the GNU ELPA repository where electric-spacing lives.
+[`dash`](https://github.com/magnars/dash.el) package) which are not in the
+GNU ELPA repository where electric-spacing lives.
