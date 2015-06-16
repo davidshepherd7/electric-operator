@@ -1,4 +1,4 @@
-;;; electric-spacing.el --- Insert operators with surrounding spaces smartly
+;;; electric-operator.el --- Insert operators with surrounding spaces smartly
 
 ;; Copyright (C) 2004, 2005, 2007-2015 Free Software Foundation, Inc.
 
@@ -22,11 +22,11 @@
 
 ;;; Commentary:
 
-;; Electric spacing mode is a minor mode which automatically inserts
+;; Electric operator mode is a minor mode which automatically inserts
 ;; surrounding spaces around operator symbols. For example, `=' becomes ` =
 ;; ', `+=' becomes ` += '.
 ;;
-;; Type `M-x electric-spacing-mode' to toggle this minor mode.
+;; Type `M-x electric-operator-mode' to toggle this minor mode.
 
 ;;; Acknowledgements
 
@@ -44,7 +44,7 @@
 
 ;; namespace using names.el:
 ;;;###autoload
-(define-namespace electric-spacing-
+(define-namespace electric-operator-
 
 
 
@@ -56,7 +56,7 @@
   :group 'electricity)
 
 (defcustom enable-in-docs t
-  "Enable electric-spacing in strings and comments."
+  "Enable electric-operator in strings and comments."
   :type 'boolean
   :group 'electricity)
 
@@ -396,7 +396,7 @@ if not inside any parens."
         (t " ** ")))
 
 (defun python-mode-kwargs-= ()
-  (if (eq (electric-spacing-enclosing-paren) ?\()
+  (if (eq (electric-operator-enclosing-paren) ?\()
       "="
     " = "))
 
@@ -439,6 +439,6 @@ if not inside any parens."
 
 ) ; End of names
 
-(provide 'electric-spacing)
+(provide 'electric-operator)
 
-;;; electric-spacing.el ends here
+;;; electric-operator.el ends here

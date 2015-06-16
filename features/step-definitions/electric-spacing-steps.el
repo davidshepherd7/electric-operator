@@ -2,7 +2,7 @@
 ;; files in this directory whose names end with "-steps.el" will be
 ;; loaded automatically by Ecukes.
 
-(Then "^electric-spacing-mode is on$"
+(Then "^electric-operator-mode is on$"
       (lambda ()
-        (cl-assert electric-spacing-mode)
+        (cl-assert electric-operator-mode)
         ))

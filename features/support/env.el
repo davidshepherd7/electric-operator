@@ -1,17 +1,17 @@
 (require 'f)
 
-(defvar electric-spacing-support-path
+(defvar electric-operator-support-path
   (f-dirname load-file-name))
 
-(defvar electric-spacing-features-path
-  (f-parent electric-spacing-support-path))
+(defvar electric-operator-features-path
+  (f-parent electric-operator-support-path))
 
-(defvar electric-spacing-root-path
-  (f-parent electric-spacing-features-path))
+(defvar electric-operator-root-path
+  (f-parent electric-operator-features-path))
 
-(add-to-list 'load-path electric-spacing-root-path)
+(add-to-list 'load-path electric-operator-root-path)
 
-(require 'electric-spacing)
+(require 'electric-operator)
 (require 'espuds)
 (require 'ert)
 

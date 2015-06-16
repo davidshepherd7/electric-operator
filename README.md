@@ -1,4 +1,4 @@
-# Electric spacing mode
+# Electric operator mode
 
 An emacs minor-mode to automatically add spacing around operators.
 
@@ -10,23 +10,23 @@ results in
 
     a = 10 * 5 + 2
 
-I'm aiming to have electric-spacing-mode "correctly" handle every (or
+I'm aiming to have electric-operator-mode "correctly" handle every (or
 almost every) operator. If you find a case where it doesn't space something
 as expected then consider it a bug, and please report it :).
 
 
 ## Setup
 
-The simplest way to install electric-spacing-mode is via package.el.
+The simplest way to install electric-operator-mode is via package.el.
 
-To temporarily enable electric-spacing-mode simply call
-`electric-spacing-mode`. To permenantly enable it for a major mode simply
+To temporarily enable electric-operator-mode simply call
+`electric-operator-mode`. To permenantly enable it for a major mode simply
 add it to the relevant mode hook. For example for python-mode add the
 following to your config:
 
-    (add-hook 'python-mode-hook #'electric-spacing-mode)
+    (add-hook 'python-mode-hook #'electric-operator-mode)
 
-Note that `electric-spacing-mode` is not a global minor mode, and so must
+Note that `electric-operator-mode` is not a global minor mode, and so must
 be enabled separately for each major mode.
 
 
@@ -40,28 +40,28 @@ returns the correctly spaced operator.
 
 Each major mode has its own list of rules for the spacing of operators. The
 rule list for a major mode is looked up in the hash table
-`electric-spacing-mode-rules-table`. Rule lists can be modified using the
-function `electric-spacing-add-rules-for-mode`, which will automatically
+`electric-operator-mode-rules-table`. Rule lists can be modified using the
+function `electric-operator-add-rules-for-mode`, which will automatically
 replace any existing rules for the same operator. To disable a rule set the
 action part of the rule (the second element) to nil.
 
 As an example: to automatically add spacing around `->` and `=>` in python
 mode you would use
 
-    (electric-spacing-add-rules-for-mode 'python-mode
+    (electric-operator-add-rules-for-mode 'python-mode
       (cons "->" " -> ")
       (cons "=>" " => "))
 
 placed somewhere in your startup files. 
 
 To use the default rules for a new programming mode use `apply` to add all
-rules from `electric-spacing-prog-mode-rules`:
+rules from `electric-operator-prog-mode-rules`:
 
-    (apply #'electric-spacing-add-rules-for-mode 'my-new-mode
-           electric-spacing-prog-mode-rules)
+    (apply #'electric-operator-add-rules-for-mode 'my-new-mode
+           electric-operator-prog-mode-rules)
 
 The default rules for text modes can be added in the same way from the list
-`electric-spacing-prose-rules`.
+`electric-operator-prose-rules`.
 
 
 ## Caveats

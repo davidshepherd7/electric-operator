@@ -1,7 +1,7 @@
 Feature: Generic programming mode spacing
   Background:
     When I turn on prog-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
     When the buffer is empty
 
   Scenario: Space = operator
@@ -15,7 +15,7 @@ Feature: Generic programming mode spacing
   Scenario: Space an operator with spacing 'before
     # There are no pre-spaced operators in default mode, so use c-mode
     When I turn on c-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
     When I type "char*a"
     Then I should see "char *a"
 
@@ -27,7 +27,7 @@ Feature: Generic programming mode spacing
 Feature: Digraphs
   Background:
     When I turn on prog-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
     When the buffer is empty
 
   Scenario: Don't space ! operator
@@ -51,7 +51,7 @@ Feature: Digraphs
 Feature: Decimal numbers
   Background:
     When I turn on prog-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
     When the buffer is empty
 
   Scenario: Don't space decimals
@@ -62,7 +62,7 @@ Feature: Decimal numbers
 Feature: Negative exponents
   Background:
     When I turn on prog-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
     When the buffer is empty
 
   Scenario: Space - operator
@@ -85,7 +85,7 @@ Feature: Negative exponents
 Feature: Unix #! paths
   Background:
     When I turn on prog-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
     When the buffer is empty
 
   Scenario: Correctly space basic #!
@@ -100,7 +100,7 @@ Feature: Unix #! paths
 Feature: Negative numbers
   Background:
     When I turn on prog-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
     When the buffer is empty
 
   Scenario: Space - operator

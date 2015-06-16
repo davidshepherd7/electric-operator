@@ -2,10 +2,10 @@ Feature: Python mode basics
   Background:
     When the buffer is empty
     When I turn on python-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
 
   Scenario: Enable electric spacing
-    Then electric-spacing-mode is on
+    Then electric-operator-mode is on
 
   Scenario: Space + operator
     When I type "a+b"
@@ -16,7 +16,7 @@ Feature: python *args and **kwargs
   Background:
     When the buffer is empty
     When I turn on python-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
 
   # Make sure we haven't messed up normal multiplication or exponentiation
   Scenario: Space *
@@ -60,7 +60,7 @@ Feature: python dictionaries
   Background:
     When the buffer is empty
     When I turn on python-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
 
   Scenario: Don't space : in most cases
     When I type "if:"
@@ -79,7 +79,7 @@ Feature: Member access
   Background:
     When the buffer is empty
     When I turn on python-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
 
   Scenario: Don't space accessing class members
     When I type "my_class.a"
@@ -90,7 +90,7 @@ Feature: Keyword argument =
   Background:
     When the buffer is empty
     When I turn on python-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
 
   Scenario: Space standard assignment as normal
     When I type "a=b"

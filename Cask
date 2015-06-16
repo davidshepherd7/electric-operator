@@ -1,6 +1,6 @@
 (source melpa)
 
-(package "electric-spacing" "0.0" "electric-spacing")
+(package "electric-operator" "0.0" "electric-operator")
 
 (depends-on "dash")
 (depends-on "s")

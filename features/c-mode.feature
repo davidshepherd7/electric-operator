@@ -2,7 +2,7 @@ Feature: -> operator
   Background:
     When the buffer is empty
     When I turn on c-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
 
   Scenario: Space >
     When I type "a>b"
@@ -21,7 +21,7 @@ Feature: #include directives
   Background:
     When the buffer is empty
     When I turn on c-mode
-    When I turn on electric-spacing-mode
+    When I turn on electric-operator-mode
 
   Scenario: Include statement
     When I type "#include<stdio.h>"
@@ -60,7 +60,7 @@ Feature: Ternary operator
     Background:
       When the buffer is empty
       When I turn on c-mode
-      When I turn on electric-spacing-mode
+      When I turn on electric-operator-mode
 
     Scenario: Ternary operator
       When I type "a?b:c"
@@ -75,7 +75,7 @@ Feature: * operator
       Background:
       When the buffer is empty
       When I turn on c-mode
-      When I turn on electric-spacing-mode
+      When I turn on electric-operator-mode
 
     Scenario: Multiplication
       When I type "a*b"
@@ -102,7 +102,7 @@ Feature: & operator
       Background:
       When the buffer is empty
       When I turn on c-mode
-      When I turn on electric-spacing-mode
+      When I turn on electric-operator-mode
 
     Scenario: Bitwise and
       When I type "a&b"
@@ -125,7 +125,7 @@ Feature: Pointer to pointer type
   Background:
       When the buffer is empty
       When I turn on c-mode
-      When I turn on electric-spacing-mode
+      When I turn on electric-operator-mode
 
   Scenario: pointer to pointer type
     When I type "char**a"
