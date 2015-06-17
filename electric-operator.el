@@ -50,12 +50,12 @@
 
 ;; Customisable variables
 
-(defcustom double-space-docs t
+(defcustom double-space-docs nil
   "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
   :type 'boolean
   :group 'electricity)
 
-(defcustom enable-in-docs t
+(defcustom enable-in-docs nil
   "Enable electric-operator in strings and comments."
   :type 'boolean
   :group 'electricity)
