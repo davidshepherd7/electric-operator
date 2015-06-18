@@ -159,7 +159,7 @@ the given major mode."
   "Pick which rule list is appropriate for spacing at point"
   (cond
    ;; In comment or string?
-   ((and enable-in-docs (in-docs?)) prose-rules)
+   ((in-docs?) (if enable-in-docs prose-rules (list)))
 
    ;; Try to find an entry for this mode in the table
    ((gethash major-mode mode-rules-table))
