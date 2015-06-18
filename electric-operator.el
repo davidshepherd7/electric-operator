@@ -396,7 +396,7 @@ if not inside any parens."
         (t " ** ")))
 
 (defun python-mode-kwargs-= ()
-  (if (eq (electric-operator-enclosing-paren) ?\()
+  (if (eq (enclosing-paren) ?\()
       "="
     " = "))
 
