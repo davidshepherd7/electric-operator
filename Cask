@@ -5,7 +5,8 @@
 (depends-on "dash")
 (depends-on "s")
 
-(depends-on "names")
+;; Need at least this version for dash's threading macros
+(depends-on "names" 20150618.0)
 
 (development
  (depends-on "ecukes")
