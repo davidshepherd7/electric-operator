@@ -144,10 +144,9 @@ the given major mode."
   "Default spacing rules for programming modes")
 
 (defvar prose-rules
-  (add-rules prog-mode-rules
+  (add-rules '()
              (cons "." #'docs-.)
-             (cons "%" nil) ; format strings
-             (cons "/" nil) ; path separator
+             (cons "," ", ")
              )
   "Rules to use in comments, strings and text modes.")
 
