@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 ;;; electric-operator.el --- Automatically add spaces around operators
 
 ;; Copyright (C) 2015 Free Software Foundation, Inc.
@@ -10,8 +11,6 @@
 (require 'dash)
 (require 's)
 (require 'names)
-
-;;; -*- lexical-binding: t; -*-
 
 ;; namespacing using names.el:
 ;;;###autoload
@@ -68,13 +67,13 @@ Returns a modified copy of the rule list."
 Returns a modified copy of the rule list."
   (-add-rule-list initial new-rules))
 
-(defun add-rules-for-mode (major-mode &rest new-rules)
+(defun add-rules-for-mode (major-mode-symbol &rest new-rules)
   "Replace or add spacing rules for major mode
 
 Destructively modifies mode-rules-table to use the new rules for
 the given major mode."
-  (puthash major-mode
-           (-add-rule-list (gethash major-mode mode-rules-table)
+  (puthash major-mode-symbol
+           (-add-rule-list (gethash major-mode-symbol mode-rules-table)
                            new-rules)
            mode-rules-table))
 
