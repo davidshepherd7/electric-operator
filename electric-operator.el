@@ -13,7 +13,7 @@
 
 ;;; -*- lexical-binding: t; -*-
 
-;; namespace using names.el:
+;; namespacing using names.el:
 ;;;###autoload
 (define-namespace electric-operator-
 
@@ -22,7 +22,7 @@
 
 
 
-;; Customisable variables
+;;; Customisable variables
 
 (defcustom double-space-docs nil
   "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
@@ -36,7 +36,7 @@
 
 
 
-;; Other variables
+;;; Other variables
 
 (defvar mode-rules-table
   (make-hash-table)
@@ -44,7 +44,7 @@
 
 
 
-;; Rule list helper functions
+;;; Rule list helper functions
 
 (defun -add-rule (initial new-rule)
   "Replace or append a new rule
@@ -80,7 +80,7 @@ the given major mode."
 
 
 
-;; Default rule lists
+;;; Default rule lists
 
 (defvar prog-mode-rules
   (list (cons "=" " = ")
@@ -123,7 +123,7 @@ the given major mode."
 
 
 
-;; Core functions
+;;; Core functions
 
 (defun get-rules-list ()
   "Pick which rule list is appropriate for spacing at point"
@@ -191,7 +191,7 @@ inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
 
 
 
-;; Helper functions
+;;; Helper functions
 
 (defun in-docs? ()
   "Check if we are inside a string or comment"
@@ -214,7 +214,7 @@ if not inside any parens."
 
 
 
-;; General tweaks
+;;; General tweaks
 
 (defun docs-. ()
   "Double space if setting tells us to"
@@ -224,17 +224,18 @@ if not inside any parens."
 
 (defun prog-mode-- ()
   "Handle exponent and negative number notation"
-  ;; exponent notation, e.g. 1e-10: don't space
-  (cond ((looking-back "[0-9.]+[eE]") "-")
+  (cond
+   ;; Exponent notation, e.g. 1e-10: don't space
+   ((looking-back "[0-9.]+[eE]") "-")
 
-        ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or
-        ;; -1 alone at all). This will proabaly need to be major mode
-        ;; specific eventually.
-        ((looking-back "[=,:\*\+-/]") " -")
-        ((looking-back "[[(]") "-")
-        ((looking-back "^") "-")
+   ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or -1
+   ;; alone at all). This will proabaly need to be major mode specific
+   ;; eventually.
+   ((looking-back "[=,:\*\+-/]") " -")
+   ((looking-back "[[(]") "-")
+   ((looking-back "^") "-")
 
-        (t " - ")))
+   (t " - ")))
 
 (defun prog-mode-/ ()
   "Handle path separator in UNIX hashbangs"
@@ -245,7 +246,7 @@ if not inside any parens."
 
 
 
-;; C mode tweaks
+;;; C/C++ mode tweaks
 
 (apply #'add-rules-for-mode 'c-mode prog-mode-rules)
 (add-rules-for-mode 'c-mode
@@ -330,14 +331,14 @@ if not inside any parens."
 
 
 
-;; Python mode tweaks
+;;; Python mode tweaks
 
 (apply #'add-rules-for-mode 'python-mode prog-mode-rules)
 (add-rules-for-mode 'python-mode
                     (cons "**" #'python-mode-**)
                     (cons "*" #'python-mode-*)
                     (cons ":" #'python-mode-:)
-                    (cons "//" " // ")
+                    (cons "//" " // ") ; integer division
                     (cons "=" #'python-mode-kwargs-=)
                     )
 
@@ -370,21 +371,20 @@ if not inside any parens."
 
 
 
-;; Other major mode tweaks
+;;; Other major mode tweaks
 
 (puthash 'ruby-mode
          (add-rules prog-mode-rules
-                    ;; regex equality
-                    (cons "=~" " =~ ")
+                    (cons "=~" " =~ ") ; regex equality
                     )
          mode-rules-table)
 
 (puthash 'perl-mode
          (add-rules prog-mode-rules
-                    ;; regex equality
-                    (cons "=~" " =~ ")
+                    (cons "=~" " =~ ") ; regex equality
                     )
          mode-rules-table)
+
 (puthash 'cperl-mode (gethash 'cperl-mode mode-rules-table)
          mode-rules-table)
 
@@ -392,20 +392,20 @@ if not inside any parens."
          ;; Health warning: i haven't written much haskell recently so i'm
          ;; likely to have missed some things.
          (add-rules prog-mode-rules
-                    (cons "." " . ") ;; function composition
-                    (cons "++" " ++ ") ;; list concat
-                    (cons "!!" " !! ") ;; indexing
+                    (cons "." " . ") ; function composition
+                    (cons "++" " ++ ") ; list concat
+                    (cons "!!" " !! ") ; indexing
                     (cons "$" " $ ")
                     (cons "<-" " <- ")
                     (cons "->" " -> ")
-                    (cons ":" nil) ;; list constructor
-                    (cons "::" " :: ") ;; type specification
-                    (cons "!=" nil) ;; not-equal is /=
+                    (cons ":" nil) ; list constructor
+                    (cons "::" " :: ") ; type specification
+                    (cons "!=" nil) ; not-equal
                     )
          mode-rules-table)
 
 
-) ; End of names
+) ; end of namespace
 
 (provide 'electric-operator)
 
