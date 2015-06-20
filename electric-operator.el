@@ -11,6 +11,8 @@
 (require 's)
 (require 'names)
 
+;;; -*- lexical-binding: t; -*-
+
 ;; namespace using names.el:
 ;;;###autoload
 (define-namespace electric-operator-
