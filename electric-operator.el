@@ -340,6 +340,7 @@ if not inside any parens."
                     (cons ":" #'python-mode-:)
                     (cons "//" " // ") ; integer division
                     (cons "=" #'python-mode-kwargs-=)
+                    (cons "-" #'python-mode-negative-slices)
                     )
 
 (defun python-mode-: ()
@@ -368,6 +369,13 @@ if not inside any parens."
   (if (eq (enclosing-paren) ?\()
       "="
     " = "))
+
+(defun python-mode-negative-slices ()
+  "Handle cases like a[1:-1], see issue #2."
+  (if (and (eq (enclosing-paren) ?\[)
+           (looking-back ":"))
+      "-"
+    (prog-mode--)))
 
 
 
