@@ -5,7 +5,7 @@
 
 ;; Author: David Shepherd <davidshepherd7@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((dash "20150513.1027") (s "20140910.334") (names "20150618.1011"))
+;; Package-Requires: ((dash "20150513.1027") (names "20150618.1011"))
 ;; Keywords: electric
 ;; URL: https://github.com/davidshepherd7/electric-operator
 
@@ -20,7 +20,6 @@
 (require 'thingatpt)
 
 (require 'dash)
-(require 's)
 (require 'names)
 
 ;; namespacing using names.el:
@@ -153,7 +152,7 @@ the given major mode."
 
 For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 "
-  (s-join "\s*" (-map #'regexp-quote (s-split "" op))))
+  (mapconcat 'identity (-map #'regexp-quote (split-string op "")) "\s*"))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
