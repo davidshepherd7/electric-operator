@@ -2,13 +2,11 @@
 
 (files "electric-operator.el")
 
+;; Tell Cask to add package information to this file (so that we can have a
+;; single file package).
+(package-file "electric-operator.el")
+
 (source melpa)
-
-(depends-on "dash" "20150513.1027")
-(depends-on "s" "20140910.334")
-
-;; Need at least this version for dash's threading macros
-(depends-on "names" "20150618.0")
 
 (development
  (depends-on "ecukes")

@@ -2,8 +2,19 @@
 ;;; electric-operator.el --- Automatically add spaces around operators
 
 ;; Copyright (C) 2015 Free Software Foundation, Inc.
+
 ;; Author: David Shepherd <davidshepherd7@gmail.com>
+;; Version: 0.1
+;; Package-Requires: ((dash "20150513.1027") (s "20140910.334") (names "20150618.1011"))
+;; Keywords: electric
 ;; URL: https://github.com/davidshepherd7/electric-operator
+
+;;; Commetary:
+
+;; An emacs minor-mode to automatically add spacing around operators. For
+;; example typing `a=10*5+2' results in `a = 10 * 5 + 2'.
+
+;;; Code:
 
 (require 'cc-mode)
 (require 'thingatpt)
