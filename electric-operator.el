@@ -5,7 +5,7 @@
 
 ;; Author: David Shepherd <davidshepherd7@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((dash "20150513.1027") (names "20150618.1011"))
+;; Package-Requires: ((dash "2.10.0") (names "20150618.0"))
 ;; Keywords: electric
 ;; URL: https://github.com/davidshepherd7/electric-operator
 
