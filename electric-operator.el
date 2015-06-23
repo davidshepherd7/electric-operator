@@ -18,6 +18,7 @@
 
 (require 'cc-mode)
 (require 'thingatpt)
+(require 'subr-x)
 
 (require 'dash)
 (require 'names)
@@ -152,7 +153,7 @@ the given major mode."
 
 For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 "
-  (mapconcat 'identity (-map #'regexp-quote (split-string op "")) "\s*"))
+  (string-join (-map #'regexp-quote (split-string op "")) "\s*"))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
