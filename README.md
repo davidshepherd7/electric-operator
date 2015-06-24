@@ -55,7 +55,18 @@ mode you would use
       (cons "->" " -> ")
       (cons "=>" " => "))
 
-placed somewhere in your startup files. 
+placed somewhere in your startup files.
+
+To modify the default rules use the function `electric-operator-add-rules`
+to modify the variable `electric-operator-prog-mode-rules`. For example if
+you prefer not have spaces around `*` you can use:
+
+    (electric-operator-add-rules electric-operator-prog-mode-rules
+                                 (cons "*" nil))
+
+Note that major mode rule lists can override the behaviour
+`electric-operator-prog-mode-rules`. So you might also need to change some
+major mode rule lists if you want this behaviour everywhere.
 
 To use the default rules for a new programming mode use `apply` to add all
 rules from `electric-operator-prog-mode-rules`:
