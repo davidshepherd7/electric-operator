@@ -18,6 +18,7 @@
 
 (require 'cc-mode)
 (require 'thingatpt)
+(require 'subr-x)
 
 (require 'dash)
 (require 'names)
@@ -152,7 +153,7 @@ the given major mode."
 
 For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 "
-  (mapconcat 'identity (-map #'regexp-quote (split-string op "")) "\s*"))
+  (string-join (-map #'regexp-quote (split-string op "")) "\s*"))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
@@ -221,7 +222,16 @@ if not inside any parens."
     (when (nth 1 ppss)
       (char-after (nth 1 ppss)))))
 
-
+(defun probably-unary-operator? ()
+  "Try to guess if the operator we are about to insert will be unary
+
+(i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
+  (or
+   (looking-back "^")
+   (looking-back "[=,:\*\+-/><&^([{]")
+   (looking-back "\\(return\\)")))
+
+ 
 
 ;;; General tweaks
 
@@ -240,10 +250,9 @@ if not inside any parens."
    ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or -1
    ;; alone at all). This will proabaly need to be major mode specific
    ;; eventually.
-   ((looking-back "[=,:\*\+-/]") " -")
-   ((looking-back "[[(]") "-")
-   ((looking-back "^") "-")
-
+   ((probably-unary-operator?)
+    (if (or (looking-back "[[(]") (looking-back "^"))
+        "-" " -"))
    (t " - ")))
 
 (defun prog-mode-/ ()
@@ -284,11 +293,6 @@ if not inside any parens."
 (puthash 'c++-mode (gethash 'c-mode mode-rules-table)
          mode-rules-table)
 
-(defun c-mode-is-unary? ()
-  "Try to guess if this is the unary form of an operator"
-  (or (looking-back "[=,]\s*")
-      (looking-back "^\s*")))
-
 (defun c-types-regex ()
   (concat c-primitive-type-key "?"))
 
@@ -327,15 +331,15 @@ if not inside any parens."
 (defun c-mode-& ()
   "Handle C address-of operator and reference types"
   (cond ((looking-back (c-types-regex)) " &")
-        ((c-mode-is-unary?) " &")
         ((looking-back "(") "&")
+        ((probably-unary-operator?) " &")
         (t " & ")))
 
 (defun c-mode-* ()
   "Handle C dereference operator and pointer types"
   (cond ((looking-back (c-types-regex)) " *")
-        ((c-mode-is-unary?) " *")
         ((looking-back "(") "*")
+        ((probably-unary-operator?) " *")
         (t " * ")))
 
 
@@ -418,6 +422,16 @@ if not inside any parens."
                     (cons ":" nil) ; list constructor
                     (cons "::" " :: ") ; type specification
                     (cons "!=" nil) ; not-equal
+                    )
+         mode-rules-table)
+
+;; Testing these is hard because ess-mode is not built in to emacs and it's
+;; really weird (doesn't define autoloads, doesn't inherit from prog-mode,
+;; ...).
+(puthash 'ess-mode
+         (add-rules prog-mode-rules
+                    (cons "." nil) ; word separator
+                    (cons "<-" " <- ") ; assignment
                     )
          mode-rules-table)
 

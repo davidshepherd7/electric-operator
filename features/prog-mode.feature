@@ -131,6 +131,18 @@ Feature: Negative numbers
     When I type "a/-1"
     Then I should see "a / -1"
 
+  Scenario: a ^ -1
+    When I type "a^-1"
+    Then I should see "a ^ -1"
+
+  Scenario: a < -1
+    When I type "a<-1"
+    Then I should see "a < -1"
+
+  Scenario: a > -1
+    When I type "a>-1"
+    Then I should see "a > -1"
+
   Scenario: a = [-1]
     When I type "a=[-1]"
     Then I should see "a = [-1]"
@@ -142,3 +154,7 @@ Feature: Negative numbers
   Scenario: f(x, -1)
     When I type "f(x,-1)"
     Then I should see "f(x, -1)"
+
+  Scenario: return
+    When I type "return -1"
+    Then I should see "return -1"
