@@ -425,6 +425,16 @@ if not inside any parens."
                     )
          mode-rules-table)
 
+;; Testing these is hard because ess-mode is not built in to emacs and it's
+;; really weird (doesn't define autoloads, doesn't inherit from prog-mode,
+;; ...).
+(puthash 'ess-mode
+         (add-rules prog-mode-rules
+                    (cons "." nil) ; word separator
+                    (cons "<-" " <- ") ; assignment
+                    )
+         mode-rules-table)
+
 
 ) ; end of namespace
 
