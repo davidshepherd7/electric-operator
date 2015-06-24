@@ -17,7 +17,10 @@ as expected then consider it a bug, and please report it :).
 
 ## Setup
 
-The simplest way to install electric-operator-mode is via package.el.
+The simplest way to install electric-operator-mode is by using package.el
+to get it from [MELPA unstable](http://melpa.org/#/getting-started).
+Alternatively you can install the dependencies listed in
+`electric-operator.el` and add `electric-operator.el` to your load path.
 
 To temporarily enable electric-operator-mode simply call
 `electric-operator-mode`. To permenantly enable it for a major mode simply
