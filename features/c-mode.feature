@@ -93,6 +93,10 @@ Feature: * operator
       When I type "char*a"
       Then I should see "char *a"
 
+    Scenario: Non-builtin pointer type
+      When I type "size_t*a"
+      Then I should see "size_t *a"
+
     Scenario: Assign pointer dereference
       When I type "a=*b"
       Then I should see "a = *b"

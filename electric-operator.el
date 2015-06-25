@@ -303,8 +303,20 @@ if not inside any parens."
 (puthash 'c++-mode (gethash 'c-mode mode-rules-table)
          mode-rules-table)
 
-(defun c-types-regex ()
-  (concat c-primitive-type-key "?"))
+(defvar c-user-types-regex
+  "_t"
+  "Regex used in looking-back to check for C types
+
+For now we just assume that anything ending in '_t' is a type.
+I'm not sure if we can do any better by default.
+
+You could add your own type names to this if needed. Send pull
+requests/bug reports if you find any widely used type names that
+could be added here.")
+
+(defun c-after-type? ()
+  (or (looking-back (concat c-primitive-type-key "?"))
+      (looking-back c-user-types-regex)))
 
 (defun c-mode-: ()
   "Handle the : part of ternary operator"
@@ -340,14 +352,14 @@ if not inside any parens."
 
 (defun c-mode-& ()
   "Handle C address-of operator and reference types"
-  (cond ((looking-back (c-types-regex)) " &")
+  (cond ((c-after-type?) " &")
         ((looking-back "(") "&")
         ((probably-unary-operator?) " &")
         (t " & ")))
 
 (defun c-mode-* ()
   "Handle C dereference operator and pointer types"
-  (cond ((looking-back (c-types-regex)) " *")
+  (cond ((c-after-type?) " *")
         ((looking-back "(") "*")
         ((probably-unary-operator?) " *")
         (t " * ")))
