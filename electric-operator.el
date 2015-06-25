@@ -290,6 +290,12 @@ if not inside any parens."
                     ;; bitshift operators
                     (cons "<<" " << ")
                     (cons ">>" " >> ")
+
+
+                    ;; End of statement inc/decrement, handled separately
+                    ;; because there is no space after the ++/--.
+                    (cons "++;" "++;")
+                    (cons "--;" "--;")
                     )
 
 

@@ -52,6 +52,14 @@ Feature: Increment and decrement operators
     When I type "b=--a-c"
     Then I should see "b = --a - c"
 
+  Scenario: Post-increment with semi-colon
+    When I type "a++;"
+    Then I should see "a++;"
+
+  Scenario: Post-decrement with semi-colon
+    When I type "a--;"
+    Then I should see "a--;"
+
   # It might be possible to handle some of these without brackets. There's
   # also cases like `a++ + b` vs `a + ++b`, is this possible to parse?
 
