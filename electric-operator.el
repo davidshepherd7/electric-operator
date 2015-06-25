@@ -286,6 +286,10 @@ if not inside any parens."
                     ;; #include statements
                     (cons "<" #'c-mode-<)
                     (cons ">" #'c-mode->)
+
+                    ;; bitshift operators
+                    (cons "<<" " << ")
+                    (cons ">>" " >> ")
                     )
 
 
