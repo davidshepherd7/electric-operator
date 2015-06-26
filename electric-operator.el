@@ -462,12 +462,13 @@ could be added here.")
                     (cons "." " . ") ; function composition
                     (cons "++" " ++ ") ; list concat
                     (cons "!!" " !! ") ; indexing
-                    (cons "$" " $ ")
-                    (cons "<-" " <- ")
-                    (cons "->" " -> ")
+                    (cons "--" "-- ") ; comment
+                    (cons "$" " $ ") ; delay evaluation
+                    (cons "<-" " <- ") ; assignment
+                    (cons "->" " -> ") ; lambdas and function types
                     (cons ":" nil) ; list constructor
                     (cons "::" " :: ") ; type specification
-                    (cons "!=" nil) ; not-equal
+                    (cons "!=" nil) ; unused
                     )
          mode-rules-table)
 
