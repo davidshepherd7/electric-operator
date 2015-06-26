@@ -44,6 +44,17 @@
   :type 'boolean
   :group 'electricity)
 
+(defcustom c-pointer-type-style 'variable
+  "Defines how C/C++ mode pointer and reference types are spaced.
+
+If set to 'variable then the operator is touching the variable
+name, as in `int *x'.
+
+If set to 'type then the operator is touching the type name , as
+in `int* x'."
+  :group 'electricity
+  :options '(variable type))
+
 
 
 ;;; Other variables
@@ -277,7 +288,7 @@ if not inside any parens."
                     ;; pointers
                     (cons "*" #'c-mode-*)
                     (cons "&" #'c-mode-&)
-                    (cons "**" " **") ; pointer-to-pointer type
+                    (cons "**" #'c-mode-**) ; pointer-to-pointer type
 
                     ;; increment/decrement
                     (cons "++" #'c-mode-++)
@@ -350,19 +361,32 @@ could be added here.")
     ;; else
     " > "))
 
+(defun c-space-pointer-type (op)
+  "Space a C pointer types operator as specified by
+  `c-pointer-type-style'.
+
+ For example `int* x'  or `int *x'."
+  (cond ((eq c-pointer-type-style  'variable) (concat " " op))
+        ((eq c-pointer-type-style 'type) (concat op " "))
+        (t (error "Unrecognised value for c-pointer-type-style."))))
+
 (defun c-mode-& ()
   "Handle C address-of operator and reference types"
-  (cond ((c-after-type?) " &")
+  (cond ((c-after-type?) (c-space-pointer-type "&"))
         ((looking-back "(") "&")
         ((probably-unary-operator?) " &")
         (t " & ")))
 
 (defun c-mode-* ()
   "Handle C dereference operator and pointer types"
-  (cond ((c-after-type?) " *")
+  (cond ((c-after-type?) (c-space-pointer-type "*"))
         ((looking-back "(") "*")
         ((probably-unary-operator?) " *")
         (t " * ")))
+
+(defun c-mode-** ()
+  "C pointer to pointer."
+  (c-space-pointer-type "**"))
 
 
 
