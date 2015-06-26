@@ -67,15 +67,50 @@ The default rules for text modes can be added in the same way from the list
 `electric-operator-prose-rules`.
 
 
-## Caveats
+## Major mode readyness
+
+A number of basic operator rules are defined for any major mode, so if your
+language is "normal" (i.e C-like) then a good amount of functionality
+should just work.
+
+* *Python*: I've use `electric-operator` a lot for python. Support is
+  extremely good. Specifically we handle edge cases in `*args`, `**kwargs`,
+  `:` in dictionaries, kwarg assignment, and slices.
+
+* *`ess-mode`*: At least one person is using `electric-operator` with
+  `ess-mode` for R. R's syntax is fairly standard and straightforward, so
+  everything *should* work well. Using `ess-mode` for languages other than
+  R is not supported but seems to be rare.
+
+* *C and C++*: these are much more tricky to get right. Most things should be
+  working ok but there are still some issues with comments (#5) and
+  pointer/reference types (#7) (especially in C++). I'm actively working on
+  this. I'm currently using `electric-operator` for some C programming.
+
+* *Ruby and Perl*: some tweaks for these modes were inherited from
+  `electric-spacing`, but I haven't tried them personally. Pull requests
+  are welcome!
+
+* *Haskell*: I've added a number of tweaks based on memory and skimming a
+  [syntax guide](http://prajitr.github.io/quick-haskell-syntax/), but I
+  haven't had a chance to try it out yet. There's probabaly some work to do.
+
+* *Java*: No Java-specific support yet, but since the syntax is largely simlar to a
+  simplified C it should be easy to support it if.
+
+* Lisps: I don't think `electric-spacing` has much to offer for lisps, so
+  it doesn't do anything at the moment. If you can think of any spacing
+  rules that would be nice then please submit an issue/pull-request.
+
+If you use `electric-operator` for a major mode not on this list please
+open an issue to let me know how it went.
+
+
+In general:
 
 * Negative numbers might still be a bit flakey. It seems to be difficult to
   reliably distinguish between negative numbers and the minus operator.
   Suggestions welcome :)
-
-* No support for lisp modes. I'm not sure what we could do that's
-  particularly useful in these cases since there aren't really many/any
-  operators (again, suggestions are welcome).
 
 
 ## Contributing
