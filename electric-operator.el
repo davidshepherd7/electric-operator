@@ -469,6 +469,14 @@ could be added here.")
                     (cons ":" nil) ; list constructor
                     (cons "::" " :: ") ; type specification
                     (cons "!=" nil) ; unused
+                    (cons ".|." " .|. ") ; bitwise OR
+                    (cons ".&." " .&. ") ; bitwise AND
+
+                    ;; Exponents, for some reason there are three of
+                    ;; them!
+                    (cons "^" " ^ ")
+                    (cons "**" " ** ")
+                    (cons "^^" " ^^ ")
                     )
          mode-rules-table)
 
