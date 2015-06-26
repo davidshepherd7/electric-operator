@@ -80,7 +80,7 @@ should just work.
 * *`ess-mode`*: At least one person is using `electric-operator` with
   `ess-mode` for R. R's syntax is fairly standard and straightforward, so
   everything *should* work well. Using `ess-mode` for languages other than
-  R is not supported but seems to be rare.
+  R is not currently supported.
 
 * *C and C++*: these are much more tricky to get right. Most things should be
   working ok but there are still some issues with comments (#5) and
@@ -98,9 +98,12 @@ should just work.
 * *Java*: No Java-specific support yet, but since the syntax is largely simlar to a
   simplified C it should be easy to support it if.
 
-* Lisps: I don't think `electric-spacing` has much to offer for lisps, so
+* *Lisps*: I don't think `electric-operator` has much to offer for lisps, so
   it doesn't do anything at the moment. If you can think of any spacing
   rules that would be nice then please submit an issue/pull-request.
+
+* *Text modes*: Again, I'm not sure that we can do much in text modes. At the moment 
+  spacing is added after `.` (behaviour inherited from `electric-spacing`) and `,`.
 
 If you use `electric-operator` for a major mode not on this list please
 open an issue to let me know how it went.
