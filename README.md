@@ -87,6 +87,11 @@ should just work.
   pointer/reference types (#7) (especially in C++). I'm actively working on
   this. I'm currently using `electric-operator` for some C programming.
 
+* *Java*: I've added tweaks based on memory and a
+  [syntax guide](http://www.tutorialspoint.com/java/java_quick_guide.htm).
+  Since the syntax is largely simlar a simplification of C it should work
+  well, but I haven't tried it out yet.
+
 * *Ruby and Perl*: some tweaks for these modes were inherited from
   `electric-spacing`, but I haven't tried them personally. Pull requests
   are welcome!
@@ -94,9 +99,6 @@ should just work.
 * *Haskell*: I've added a number of tweaks based on memory and skimming a
   [syntax guide](http://prajitr.github.io/quick-haskell-syntax/), but I
   haven't had a chance to try it out yet. There's probabaly some work to do.
-
-* *Java*: No Java-specific support yet, but since the syntax is largely simlar to a
-  simplified C it should be easy to support it if.
 
 * *Lisps*: I don't think `electric-operator` has much to offer for lisps, so
   it doesn't do anything at the moment. If you can think of any spacing
