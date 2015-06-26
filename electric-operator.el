@@ -127,8 +127,6 @@ the given major mode."
         (cons "+=" " += ")
         (cons "/=" " /= ")
         (cons "-=" " -= ")
-        (cons "&=" " &= ")
-        (cons "|=" " |= ")
 
         (cons "&&" " && ")
         (cons "||" " || ")
@@ -307,6 +305,15 @@ if not inside any parens."
                     ;; because there is no space after the ++/--.
                     (cons "++;" "++;")
                     (cons "--;" "--;")
+
+                    ;; Weirder assignment operators
+                    (cons "%=" " %= ")
+                    (cons "^=" " ^= ")
+                    (cons "&=" " &= ")
+                    (cons "|=" " |= ")
+                    (cons "<<=" " <<= ")
+                    (cons ">>=" " >>= ")
+
                     )
 
 
@@ -453,6 +460,35 @@ could be added here.")
          mode-rules-table)
 
 (puthash 'cperl-mode (gethash 'cperl-mode mode-rules-table)
+         mode-rules-table)
+
+(puthash 'java-mode
+         ;; This is based on a syntax guide and hasn't been tested.
+         (add-rules prog-mode-rules
+
+                    ;; TODO: handle comments // and /*
+
+                    ;; ternary operator
+                    (cons "?" " ? ")
+                    (cons ":" #'c-mode-:) ; (or case label)
+
+                    ;; increment/decrement
+                    (cons "++" #'c-mode-++)
+                    (cons "--" #'c-mode---)
+
+                    ;; bitshift operators
+                    (cons "<<" " << ")
+                    (cons ">>" " >> ")
+                    (cons ">>>" " >>> ")
+
+                    ;; Weirder assignment operators
+                    (cons "%=" " %= ")
+                    (cons "^=" " ^= ")
+                    (cons "&=" " &= ")
+                    (cons "|=" " |= ")
+                    (cons "<<=" " <<= ")
+                    (cons ">>=" " >>= ")
+                    )
          mode-rules-table)
 
 (puthash 'haskell-mode
