@@ -158,11 +158,15 @@ the given major mode."
    (t prose-rules)))
 
 (defun rule-regex-with-whitespace (op)
-  "Construct regex matching operator and any whitespace before/inside/after
+  "Construct regex matching operator and any whitespace before/inside/after.
 
 For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
+
+Whitespace before the operator is captured for possible use later.
 "
-  (string-join (-map #'regexp-quote (split-string op "")) "\s*"))
+  (concat "\\(\s*\\)"
+          (mapconcat #'regexp-quote (split-string op "" t) "\s*")
+          "\s*"))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
@@ -179,13 +183,18 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 
       ;; Delete the characters matching this rule before point
       (looking-back (rule-regex-with-whitespace operator) nil t)
-      (let ((match (match-data)))
-        (delete-region (nth 0 match) (nth 1 match)))
+      (let ((pre-whitespace (match-string 1)))
+        (delete-region (match-beginning 0) (match-end 0))
 
-      ;; Insert correctly spaced operator
-      (if (stringp action)
-          (insert action)
-        (insert (funcall action))))))
+        ;; If this is the first thing in a line then restore the
+        ;; indentation.
+        (if (looking-back "^\s*")
+            (insert pre-whitespace))
+
+        ;; Insert correctly spaced operator
+        (if (stringp action)
+            (insert action)
+          (insert (funcall action)))))))
 
 :autoload
 (define-minor-mode mode

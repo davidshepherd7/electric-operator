@@ -194,3 +194,28 @@ Feature: Comments
   Scenario: /* is not spaced internally
     When I type "/*"
     Then I should see "/* "
+
+  # # This doesn't actually test what it should, it always passes. Possible
+  # # ecukes bug?
+  # Scenario: // does not lose indentation
+  #   When I insert:
+  #     """
+  #     {
+  #       /
+  #     }
+  #     """
+  #   Then I should see:
+  #     """
+  #     {
+  #       /
+  #     }
+  #     """
+  #   When I go to line "2"
+  #   When I go to end of line
+  #   When I type "/"
+  #   Then I should see:
+  #     """
+  #     {
+  #       //
+  #     }
+  #     """
