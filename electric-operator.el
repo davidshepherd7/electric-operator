@@ -300,6 +300,9 @@ if not inside any parens."
                     (cons "<<" " << ")
                     (cons ">>" " >> ")
 
+                    ;; Comments
+                    (cons "/*" "/* ")
+                    (cons "//" "// ")
 
                     ;; End of statement inc/decrement, handled separately
                     ;; because there is no space after the ++/--.
@@ -488,6 +491,10 @@ could be added here.")
                     (cons "|=" " |= ")
                     (cons "<<=" " <<= ")
                     (cons ">>=" " >>= ")
+
+                    ;; Comments
+                    (cons "/*" "/* ")
+                    (cons "//" "// ")
                     )
          mode-rules-table)
 

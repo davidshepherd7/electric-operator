@@ -179,3 +179,18 @@ Feature: Option to have * and & touching next to the type
     When I set electric-operator-c-pointer-type-style to variable
     When I type "int**x"
     Then I should see "int **x"
+
+
+Feature: Comments
+  Background:
+    When the buffer is empty
+    When I turn on c-mode
+    When I turn on electric-operator-mode
+
+  Scenario: // is not spaced internally
+    When I type "//"
+    Then I should see "// "
+
+  Scenario: /* is not spaced internally
+    When I type "/*"
+    Then I should see "/* "
