@@ -74,7 +74,7 @@ Returns a modified copy of the rule list."
   (let* ((op (car new-rule))
          (existing-rule (assoc op initial)))
     (if existing-rule
-        (-replace-first existing-rule new-rule initial)
+        (-replace existing-rule new-rule initial)
       (-snoc initial new-rule))))
 
 (defun -add-rule-list (initial new-rules)
