@@ -348,6 +348,16 @@ could be added here.")
   (or (looking-back (concat c-primitive-type-key "?"))
       (looking-back c-user-types-regex)))
 
+(defun c-is-function-definition? ()
+  (let ((syntax-symbol (car (car (c-guess-basic-syntax)))))
+    (or (eq syntax-symbol 'topmost-intro)
+        (eq syntax-symbol 'topmost-intro-cont)
+        (eq syntax-symbol 'arglist-intro)
+        (eq syntax-symbol 'arglist-cont-nonempty))))
+
+;; There are similar but different symbols for objective-C, but I'm not
+;; going to try to support that now.
+
 (defun c-mode-: ()
   "Handle the : part of ternary operator"
   (if (looking-back "\\?.+")
@@ -393,6 +403,7 @@ could be added here.")
   "Handle C address-of operator and reference types"
   (cond ((c-after-type?) (c-space-pointer-type "&"))
         ((looking-back "(") "&")
+        ((c-is-function-definition?) (c-space-pointer-type "&"))
         ((probably-unary-operator?) " &")
         (t " & ")))
 
@@ -400,6 +411,7 @@ could be added here.")
   "Handle C dereference operator and pointer types"
   (cond ((c-after-type?) (c-space-pointer-type "*"))
         ((looking-back "(") "*")
+        ((c-is-function-definition?) (c-space-pointer-type "*"))
         ((probably-unary-operator?) " *")
         (t " * ")))
 
