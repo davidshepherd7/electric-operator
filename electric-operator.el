@@ -349,11 +349,15 @@ could be added here.")
       (looking-back c-user-types-regex)))
 
 (defun c-is-function-definition? ()
+  "Try to guess if we are in function definition/declaration
+
+Using `cc-mode''s syntactic analysis."
   (let ((syntax-symbol (car (car (c-guess-basic-syntax)))))
-    (or (eq syntax-symbol 'topmost-intro)
-        (eq syntax-symbol 'topmost-intro-cont)
-        (eq syntax-symbol 'arglist-intro)
-        (eq syntax-symbol 'arglist-cont-nonempty))))
+    (-contains? '(topmost-intro
+                  topmost-intro-cont
+                  arglist-intro
+                  arglist-cont-nonempty)
+                syntax-symbol)))
 
 ;; There are similar but different symbols for objective-C, but I'm not
 ;; going to try to support that now.
@@ -401,19 +405,29 @@ could be added here.")
 
 (defun c-mode-& ()
   "Handle C address-of operator and reference types"
-  (cond ((c-after-type?) (c-space-pointer-type "&"))
-        ((looking-back "(") "&")
-        ((c-is-function-definition?) (c-space-pointer-type "&"))
-        ((probably-unary-operator?) " &")
-        (t " & ")))
+  (cond
+   ;; Reference types
+   ((or (c-after-type?)
+        (c-is-function-definition?)) (c-space-pointer-type "&"))
+
+   ;; Address-of operator
+   ((looking-back "(") "&")
+   ((probably-unary-operator?) " &")
+
+   (t " & ")))
 
 (defun c-mode-* ()
   "Handle C dereference operator and pointer types"
-  (cond ((c-after-type?) (c-space-pointer-type "*"))
-        ((looking-back "(") "*")
-        ((c-is-function-definition?) (c-space-pointer-type "*"))
-        ((probably-unary-operator?) " *")
-        (t " * ")))
+  (cond
+   ;; Pointer types
+   ((or (c-after-type?)
+        (c-is-function-definition?)) (c-space-pointer-type "*"))
+
+   ;; Pointer dereference
+   ((looking-back "(") "*")
+   ((probably-unary-operator?) " *")
+
+   (t " * ")))
 
 (defun c-mode-** ()
   "C pointer to pointer."
