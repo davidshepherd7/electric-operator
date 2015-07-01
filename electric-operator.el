@@ -335,6 +335,8 @@ if not inside any parens."
 
 ;; And some extra rules
 (add-rules-for-mode 'c++-mode
+
+                    ;; Move constructor or `and' operator
                     (cons "&&" #'c++-mode-&&))
 
 
@@ -520,8 +522,6 @@ Using `cc-mode''s syntactic analysis."
 (puthash 'java-mode
          ;; This is based on a syntax guide and hasn't been tested.
          (add-rules prog-mode-rules
-
-                    ;; TODO: handle comments // and /*
 
                     ;; ternary operator
                     (cons "?" " ? ")

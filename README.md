@@ -36,8 +36,8 @@ be enabled separately for each major mode.
 ## Customisation
 
 The spacing around operators is controlled by "rules". The simplest rule is
-a pair strings giving the (unspaced) operator and the correctly spaced
-operator, e.g. `(cons "=" " = ")` is the default rule for `=`.
+a pair containing the (unspaced) operator and the correctly spaced operator
+as strings. For example `(cons "=" " = ")` is the default rule for `=`.
 Alternatively the second element of the pair can be a function which
 returns the correctly spaced operator.
 
@@ -55,8 +55,6 @@ mode you would use
       (cons "->" " -> ")
       (cons "=>" " => "))
 
-placed somewhere in your startup files.
-
 To use the default rules for a new programming mode use `apply` to add all
 rules from `electric-operator-prog-mode-rules`:
 
@@ -67,13 +65,13 @@ The default rules for text modes can be added in the same way from the list
 `electric-operator-prose-rules`.
 
 
-## Major mode readyness
+## Major mode readiness
 
 A number of basic operator rules are defined for any major mode, so if your
 language is "normal" (i.e C-like) then a good amount of functionality
 should just work.
 
-* *Python*: I've use `electric-operator` a lot for python. Support is
+* *Python*: I've used `electric-operator` a lot for python. Support is
   extremely good. Specifically we handle edge cases in `*args`, `**kwargs`,
   `:` in dictionaries, kwarg assignment, and slices.
 
@@ -82,15 +80,16 @@ should just work.
   everything *should* work well. Using `ess-mode` for languages other than
   R is not currently supported.
 
-* *C and C++*: these are much more tricky to get right. Most things should be
-  working ok but there are still some issues with comments (#5) and
-  pointer/reference types (#7) (especially in C++). I'm actively working on
-  this. I'm currently using `electric-operator` for some C programming.
+* *C and C++*: these are much more tricky to get right. Most things should
+  be working ok but there are still some issues with
+  pointer-to-class/struct types (#11) and templates (#8). I'm actively
+  working on this.
 
 * *Java*: I've added tweaks based on memory and a
   [syntax guide](http://www.tutorialspoint.com/java/java_quick_guide.htm).
-  Since the syntax is largely simlar a simplification of C it should work
-  well, but I haven't tried it out yet.
+  Since the syntax is largely simlar a simplification of C++ it should work
+  well, but I haven't tried it out yet. Generics aren't handled properly
+  (#8).
 
 * *Ruby and Perl*: some tweaks for these modes were inherited from
   `electric-spacing`, but I haven't tried them personally. Pull requests
@@ -114,8 +113,8 @@ open an issue to let me know how it went.
 In general:
 
 * Negative numbers might still be a bit flakey. It seems to be difficult to
-  reliably distinguish between negative numbers and the minus operator.
-  Suggestions welcome :)
+reliably distinguish between negative numbers and the minus operator.
+Suggestions welcome :)
 
 
 ## Contributing
