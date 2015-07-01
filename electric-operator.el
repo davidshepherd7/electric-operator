@@ -333,6 +333,11 @@ if not inside any parens."
 (puthash 'c++-mode (gethash 'c-mode mode-rules-table)
          mode-rules-table)
 
+;; And some extra rules
+(add-rules-for-mode 'c++-mode
+                    (cons "&&" #'c++-mode-&&))
+
+
 (defvar c-user-types-regex
   "_t"
   "Regex used in looking-back to check for C types
@@ -432,6 +437,12 @@ Using `cc-mode''s syntactic analysis."
 (defun c-mode-** ()
   "C pointer to pointer."
   (c-space-pointer-type "**"))
+
+(defun c++-mode-&& ()
+  "Handle move constructor"
+  (if (c-is-function-definition?)
+      (c-space-pointer-type "&&")
+    " && "))
 
 
 
