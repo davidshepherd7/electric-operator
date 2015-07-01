@@ -369,9 +369,9 @@ Using `cc-mode''s syntactic analysis."
   ;; There are similar but different symbols for objective-C, but I'm not
   ;; going to try to support that now.
 
-  (let ((syntax-symbols (-map #'car (c-guess-basic-syntax))))
-    (-intersection syntax-symbols c-function-definition-syntax-list
-                   )))
+  (->> (c-guess-basic-syntax)
+       (-map #'car)
+       (-intersection c-function-definition-syntax-list)))
 
 (defun c-mode-: ()
   "Handle the : part of ternary operator"
