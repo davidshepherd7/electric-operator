@@ -353,19 +353,25 @@ could be added here.")
   (or (looking-back (concat c-primitive-type-key "?"))
       (looking-back c-user-types-regex)))
 
+(defvar c-function-definition-syntax-list
+  '(topmost-intro
+    topmost-intro-cont
+    arglist-intro
+    arglist-cont-nonempty)
+  "syntax symbols for lines which contain a function definition
+
+See `c-guess-basic-syntax'.")
+
 (defun c-is-function-definition? ()
   "Try to guess if we are in function definition/declaration
 
 Using `cc-mode''s syntactic analysis."
-  (let ((syntax-symbol (car (car (c-guess-basic-syntax)))))
-    (-contains? '(topmost-intro
-                  topmost-intro-cont
-                  arglist-intro
-                  arglist-cont-nonempty)
-                syntax-symbol)))
+  ;; There are similar but different symbols for objective-C, but I'm not
+  ;; going to try to support that now.
 
-;; There are similar but different symbols for objective-C, but I'm not
-;; going to try to support that now.
+  (let ((syntax-symbols (-map #'car (c-guess-basic-syntax))))
+    (-intersection syntax-symbols c-function-definition-syntax-list
+                   )))
 
 (defun c-mode-: ()
   "Handle the : part of ternary operator"
