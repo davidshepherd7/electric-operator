@@ -10,9 +10,10 @@ results in
 
     a = 10 * 5 + 2
 
-I'm aiming to have electric-operator-mode "correctly" handle every (or
-almost every) operator. If you find a case where it doesn't space something
-as expected then consider it a bug, and please report it :).
+I'm aiming to have electric-operator-mode "correctly" handle almost every
+operator for major modes built in to Emacs (and a few that aren't). If you find a
+case where it doesn't space something as expected then consider it a bug, 
+and please report it :).
 
 
 ## Setup
