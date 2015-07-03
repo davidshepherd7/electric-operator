@@ -22,6 +22,11 @@ to get it from [MELPA unstable](http://melpa.org/#/getting-started).
 Alternatively you can install the dependencies listed in
 `electric-operator.el` and add `electric-operator.el` to your load path.
 
+Either way you also need to make sure electric-operator is loaded with
+`(require 'electric-operator)` (or you could use 
+[`use-package`](https://github.com/jwiegley/use-package) to load packages
+and keep your customisations organised).
+
 To temporarily enable electric-operator-mode simply call
 `electric-operator-mode`. To permenantly enable it for a major mode simply
 add it to the relevant mode hook. For example for python-mode add the
