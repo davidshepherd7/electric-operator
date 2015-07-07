@@ -8,11 +8,8 @@ env:
   matrix:
     - EVM_EMACS=emacs-24.5-bin
     - EVM_EMACS=emacs-24.4-bin
-    - EVM_EMACS=emacs-git-snapshot
 matrix:
   fast_finish: true
-  allow_failures:
-    - env: EVM_EMACS=emacs-git-snapshot
 
 sudo: required
 before_install:
