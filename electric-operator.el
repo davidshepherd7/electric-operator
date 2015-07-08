@@ -337,7 +337,10 @@ if not inside any parens."
 (add-rules-for-mode 'c++-mode
 
                     ;; Move constructor or `and' operator
-                    (cons "&&" #'c++-mode-&&))
+                    (cons "&&" #'c++-mode-&&)
+
+                    ;; Nested templates
+                    (cons ">>" #'c++-mode->>))
 
 
 (defvar c-user-types-regex
@@ -404,6 +407,11 @@ Using `cc-mode''s syntactic analysis."
   (cond ((looking-back "#\s*include.*") ">")
         ((c-is-function-definition?) "> ")
         (t " > ")))
+
+(defun c++-mode->> ()
+  "Handle nested templates"
+  (cond ((c-is-function-definition?) ">> ")
+        (t " >> ")))
 
 (defun c-space-pointer-type (op)
   "Space a C pointer types operator as specified by

@@ -76,6 +76,10 @@ Feature: Templates are not spaced like gt/lt
     When I type "void f(MyType<double> x)"
     Then I should see "void f(MyType<double> x)"
 
+  Scenario: Nested template in function argument
+    When I type "void f(MyType<d<int>> x)"
+    Then I should see "void f(MyType<d<int>> x)"
+
   # TODO
 
   # Scenario: Template type definition
@@ -88,3 +92,5 @@ Feature: Templates are not spaced like gt/lt
   #   When I go to line "2"
   #   When I type "MyType<double> x"
   #   Then I should see "MyType<double> x"
+
+  # Similarly for nested templates
