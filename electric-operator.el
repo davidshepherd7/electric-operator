@@ -394,18 +394,16 @@ Using `cc-mode''s syntactic analysis."
     " --"))
 
 (defun c-mode-< ()
-  "Handle #include brackets"
-  (if (looking-back "#\s*include\s*")
-      " <"
-    ;; else
-    " < "))
+  "Handle #include brackets and templates"
+  (cond ((looking-back "#\s*include\s*") " <")
+        ((c-is-function-definition?) "<")
+        (t " < ")))
 
 (defun c-mode-> ()
-  "Handle #include brackets"
-  (if (looking-back "#\s*include.*")
-      ">"
-    ;; else
-    " > "))
+  "Handle #include brackets and templates"
+  (cond ((looking-back "#\s*include.*") ">")
+        ((c-is-function-definition?) "> ")
+        (t " > ")))
 
 (defun c-space-pointer-type (op)
   "Space a C pointer types operator as specified by

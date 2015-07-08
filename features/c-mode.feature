@@ -5,6 +5,13 @@ Feature: -> operator
     When I turn on electric-operator-mode
 
   Scenario: Space >
+    When I insert:
+    """
+    int main() {
+
+    }
+    """
+    When I go to line "2"
     When I type "a>b"
     Then I should see "a > b"
 
