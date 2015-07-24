@@ -588,6 +588,13 @@ Using `cc-mode''s syntactic analysis."
          (add-rules prog-mode-rules
                     (cons "." nil) ; word separator
                     (cons "<-" " <- ") ; assignment
+                    (cons "->" " -> ") ; Right assignment
+                    (cons "%%" " %% ") ; Modulus
+                    (cons "%/%" " %/% ") ; Integer divide
+                    (cons "%*%" " %*% ") ; Matrix product
+                    (cons "%o%" " %o% ") ; Outer product
+                    (cons "%x%" " %x% ") ; Kronecker product
+                    (cons "%in%" " %in% ") ; Matching operator
                     )
          mode-rules-table)
 
