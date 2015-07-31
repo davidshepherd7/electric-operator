@@ -23,6 +23,14 @@ Feature: python *args and **kwargs
     When I type "a*b"
     Then I should see "a * b"
 
+  Scenario: Multiplication after a function
+    When I type "f(x)*a"
+    Then I should see "f(x) * a"
+
+  Scenario: Exponentiation after a function
+    When I type "f(x)**a"
+    Then I should see "f(x) ** a"
+
   Scenario: Space * inside function
     When I type "f(a*b)"
     Then I should see "f(a * b)"

@@ -484,14 +484,14 @@ Using `cc-mode''s syntactic analysis."
   ;; Can only occur after '(' ',' or on a new line, so just check for those.
   ;; If it's just after a comma then also insert a space before the *.
   (cond ((looking-back ",")  " *")
-        ((looking-back "[(,^)][ \t]*")  "*")
+        ((looking-back "[(,][ \t]*")  "*")
         ;; Othewise act as normal
         (t  " * ")))
 
 (defun python-mode-** ()
   "Handle python **kwargs"
   (cond ((looking-back ",") " **")
-        ((looking-back "[(,^)][ \t]*") "**")
+        ((looking-back "[(,][ \t]*") "**")
         (t " ** ")))
 
 (defun python-mode-kwargs-= ()
