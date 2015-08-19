@@ -79,19 +79,19 @@ A number of basic operator rules are defined for any major mode, so if your
 language is "normal" (i.e C-like) then a good amount of functionality
 should just work.
 
-* *Python*: I've used `electric-operator` a lot for python. Support is
-  extremely good. Specifically we handle edge cases in `*args`, `**kwargs`,
+* *Python*: Should be complete. I've used `electric-operator` a lot for python.
+  Specifically we handle edge cases in `*args`, `**kwargs`,
   `:` in dictionaries, kwarg assignment, and slices.
 
-* *`ess-mode`*: At least one person is using `electric-operator` with
+* *`ess-mode`*: Should be complete. A few people are using `electric-operator` with
   `ess-mode` for R. R's syntax is fairly standard and straightforward, so
   everything *should* work well. Using `ess-mode` for languages other than
   R is not currently supported.
 
 * *C and C++*: these are much more tricky to get right. Most things should
   be working ok but there are still some issues with
-  pointer-to-class/struct types (#11) and templates (#8). I'm actively
-  working on this.
+  pointer-to-class/struct types (#11) and templates (#8). I'm looking for ways to resolve 
+  this, probably using `cc-mode`, suggestions or tips would be very welcome.
 
 * *Java*: I've added tweaks based on memory and a
   [syntax guide](http://www.tutorialspoint.com/java/java_quick_guide.htm).
