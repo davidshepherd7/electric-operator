@@ -330,8 +330,8 @@ if not inside any parens."
 
 
 ;; Use the same rules for c++
-(puthash 'c++-mode (gethash 'c-mode mode-rules-table)
-         mode-rules-table)
+(apply #'add-rules-for-mode 'c++-mode
+       (gethash 'c-mode mode-rules-table))
 
 ;; And some extra rules
 (add-rules-for-mode 'c++-mode
@@ -510,24 +510,23 @@ Using `cc-mode''s syntactic analysis."
 
 ;;; Other major mode tweaks
 
-(puthash 'ruby-mode
-         (add-rules prog-mode-rules
+(apply #'add-rules-for-mode 'ruby-mode
+       prog-mode-rules)
+(add-rules-for-mode 'ruby-mode
                     (cons "=~" " =~ ") ; regex equality
                     )
-         mode-rules-table)
 
-(puthash 'perl-mode
-         (add-rules prog-mode-rules
+(apply #'add-rules-for-mode 'perl-mode prog-mode-rules)
+(add-rules-for-mode 'perl-mode
                     (cons "=~" " =~ ") ; regex equality
                     )
-         mode-rules-table)
 
-(puthash 'cperl-mode (gethash 'cperl-mode mode-rules-table)
-         mode-rules-table)
+;; cperl mode is another perl mode, copy the rules
+(apply #'add-rules-for-mode 'cperl-mode (gethash 'cperl-mode mode-rules-table))
 
-(puthash 'java-mode
-         ;; This is based on a syntax guide and hasn't been tested.
-         (add-rules prog-mode-rules
+;; This is based on a syntax guide and hasn't been tested.
+(apply #'add-rules-for-mode 'java-mode prog-mode-rules)
+(add-rules-for-mode 'java-mode
 
                     ;; ternary operator
                     (cons "?" " ? ")
@@ -554,12 +553,10 @@ Using `cc-mode''s syntactic analysis."
                     (cons "/*" "/* ")
                     (cons "//" "// ")
                     )
-         mode-rules-table)
 
-(puthash 'haskell-mode
-         ;; Health warning: i haven't written much haskell recently so i'm
-         ;; likely to have missed some things.
-         (add-rules prog-mode-rules
+;; Again: based on a syntax guide and not really tested
+(apply #'add-rules-for-mode 'haskell-mode prog-mode-rules)
+(add-rules-for-mode 'haskell-mode
                     (cons "." " . ") ; function composition
                     (cons "++" " ++ ") ; list concat
                     (cons "!!" " !! ") ; indexing
@@ -579,13 +576,12 @@ Using `cc-mode''s syntactic analysis."
                     (cons "**" " ** ")
                     (cons "^^" " ^^ ")
                     )
-         mode-rules-table)
 
-;; Testing these is hard because ess-mode is not built in to emacs and it's
-;; really weird (doesn't define autoloads, doesn't inherit from prog-mode,
-;; ...).
-(puthash 'ess-mode
-         (add-rules prog-mode-rules
+;; Integration testing these is hard because ess-mode is not built in to
+;; emacs and it's weird (doesn't define autoloads, doesn't inherit from
+;; prog-mode, ...).
+(apply #'add-rules-for-mode 'ess-mode prog-mode-rules)
+(add-rules-for-mode 'ess-mode
                     (cons "." nil) ; word separator
                     (cons "<-" " <- ") ; assignment
                     (cons "->" " -> ") ; Right assignment
@@ -596,14 +592,13 @@ Using `cc-mode''s syntactic analysis."
                     (cons "%x%" " %x% ") ; Kronecker product
                     (cons "%in%" " %in% ") ; Matching operator
                     )
-         mode-rules-table)
 
 ;; ess-mode binds comma to a function, so we need to advise that function
 ;; to also run our code:
 (eval-after-load 'ess-mode
   (advice-add 'ess-smart-comma :after #'post-self-insert-function))
 
-  
+
 ) ; end of namespace
 
 (provide 'electric-operator)
