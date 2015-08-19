@@ -89,13 +89,17 @@ Returns a modified copy of the rule list."
 Returns a modified copy of the rule list."
   (-add-rule-list initial new-rules))
 
+(defun get-rules-for-mode (major-mode-symbol)
+  "Get the spacing rules for major mode"
+  (gethash major-mode-symbol mode-rules-table))
+
 (defun add-rules-for-mode (major-mode-symbol &rest new-rules)
   "Replace or add spacing rules for major mode
 
 Destructively modifies mode-rules-table to use the new rules for
 the given major mode."
   (puthash major-mode-symbol
-           (-add-rule-list (gethash major-mode-symbol mode-rules-table)
+           (-add-rule-list (get-rules-for-mode major-mode-symbol)
                            new-rules)
            mode-rules-table))
 
@@ -151,7 +155,7 @@ the given major mode."
    ((in-docs?) (if enable-in-docs prose-rules (list)))
 
    ;; Try to find an entry for this mode in the table
-   ((gethash major-mode mode-rules-table))
+   ((get-rules-for-mode major-mode))
 
    ;; Default modes
    ((derived-mode-p 'prog-mode) prog-mode-rules)
@@ -330,8 +334,7 @@ if not inside any parens."
 
 
 ;; Use the same rules for c++
-(apply #'add-rules-for-mode 'c++-mode
-       (gethash 'c-mode mode-rules-table))
+(apply #'add-rules-for-mode 'c++-mode (get-rules-for-mode 'c-mode))
 
 ;; And some extra rules
 (add-rules-for-mode 'c++-mode
@@ -522,7 +525,7 @@ Using `cc-mode''s syntactic analysis."
                     )
 
 ;; cperl mode is another perl mode, copy the rules
-(apply #'add-rules-for-mode 'cperl-mode (gethash 'cperl-mode mode-rules-table))
+(apply #'add-rules-for-mode 'cperl-mode (get-rules-for-mode 'cperl-mode))
 
 ;; This is based on a syntax guide and hasn't been tested.
 (apply #'add-rules-for-mode 'java-mode prog-mode-rules)
