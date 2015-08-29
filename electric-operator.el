@@ -477,8 +477,7 @@ Using `cc-mode''s syntactic analysis."
 
 (defun python-mode-: ()
   "Handle python dict assignment"
-  (if (and (not (in-string-p))
-           (eq (enclosing-paren) ?\{))
+  (if (eq (enclosing-paren) ?\{)
       ": "
     ":"))
 
