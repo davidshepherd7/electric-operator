@@ -4,16 +4,20 @@ Feature: Generic programming mode spacing
     When I turn on electric-operator-mode
     When the buffer is empty
 
+  # Make sure we actually managed to enable electric-operator-mode
+  Scenario: Enable electric spacing
+    Then electric-operator-mode is on
+
   # Basic stuff
-  Scenario: Space = operator
+  Scenario: Space a simple operator
     When I type "a=b"
     Then I should see "a = b"
 
-  Scenario: Space an operator with spacing 'after
+  Scenario: Space an operator with spacing after
     When I type "f(a,b)"
     Then I should see "f(a, b)"
 
-  Scenario: Space an operator with spacing 'before
+  Scenario: Space an operator with spacing before
     # There are no pre-spaced operators in default mode, so use c-mode
     When I turn on c-mode
     When I turn on electric-operator-mode
