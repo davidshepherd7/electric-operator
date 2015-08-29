@@ -1,17 +1,10 @@
 Feature: -> operator
   Background:
-    When the buffer is empty
     When I turn on c-mode
     When I turn on electric-operator-mode
+    When I'm inside C main
 
   Scenario: Space >
-    When I insert:
-    """
-    int main() {
-
-    }
-    """
-    When I go to line "2"
     When I type "a>b"
     Then I should see "a > b"
 
@@ -22,5 +15,3 @@ Feature: -> operator
   Scenario: Don't space ->
     When I type "a->b"
     Then I should see "a->b"
-
-

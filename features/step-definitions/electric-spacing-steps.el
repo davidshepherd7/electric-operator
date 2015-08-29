@@ -6,3 +6,11 @@
       (lambda ()
         (cl-assert electric-operator-mode)
         ))
+
+(When "^I'm inside C main"
+      (lambda ()
+        (When "The buffer is empty")
+        (insert "int main() {\n")
+        (insert "\n")
+        (insert "}\n")
+        (When "I go to line \"2\"")))
