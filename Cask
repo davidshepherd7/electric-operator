@@ -6,7 +6,7 @@
 ;; single file package).
 (package-file "electric-operator.el")
 
-(source melpa)
+(source melpa-stable)
 
 (development
  (depends-on "ecukes")
