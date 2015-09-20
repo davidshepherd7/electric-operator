@@ -360,8 +360,15 @@ requests/bug reports if you find any widely used type names that
 could be added here.")
 
 (defun c-after-type? ()
-  (or (looking-back (concat c-primitive-type-key "?"))
-      (looking-back c-user-types-regex)))
+  (or
+   ;; Check for built-in types
+   (looking-back (concat c-primitive-type-key "?"))
+
+   ;; Check if previous word is struct/union/enum keyword
+   (looking-back "\\b\\(struct\\|union\\|enum\\)[[:space:]]+[[:alnum:]\\|_]+")
+
+   ;; Check for any user-defined types
+   (looking-back c-user-types-regex)))
 
 (defvar c-function-definition-syntax-list
   '(topmost-intro

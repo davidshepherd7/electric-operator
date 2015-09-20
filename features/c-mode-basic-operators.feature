@@ -147,6 +147,44 @@ Feature: C basic operators
     When I type "/*"
     Then I should see "/* "
 
+
+  # Type keywords for pointers vs multiplication
+  Scenario: Pointer to struct
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "struct s*foo"
+    Then I should see "struct s *foo"
+
+  Scenario: Variable with struct in the name
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "struct_ure*foo"
+    Then I should see "struct_ure * foo"
+
+  Scenario: Another variable with struct in the name
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "a_struct*foo"
+    Then I should see "a_struct * foo"
+
+  Scenario: Pointer to struct then multiply
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "struct s*foo=a*b"
+    Then I should see "struct s *foo = a * b"
+
+  Scenario: Pointer to oddly named struct
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "struct my_type_2*foo"
+    Then I should see "struct my_type_2 *foo"
+
+  Scenario: Pointer to union
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "union s*foo"
+    Then I should see "union s *foo"
+
+  Scenario: Pointer to enum
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "enum s*foo=a*b"
+    Then I should see "enum s *foo = a * b"
+
+
   # # This doesn't actually test what it should, it always passes. Possible
   # # ecukes bug?
   # Scenario: // does not lose indentation
