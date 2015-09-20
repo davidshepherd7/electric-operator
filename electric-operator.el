@@ -292,6 +292,8 @@ if not inside any parens."
 (add-rules-for-mode 'c-mode
                     (cons "->" "->")
 
+                    (cons "/" #'c-mode-/)
+
                     ;; ternary operator
                     (cons "?" " ? ")
                     (cons ":" #'c-mode-:) ; (or case label)
@@ -381,6 +383,9 @@ Using `cc-mode''s syntactic analysis."
        (-map #'car)
        (-intersection c-function-definition-syntax-list)))
 
+(defun c-mode-include-line? ()
+  (looking-back "#\s*include.*"))
+
 (defun c-mode-: ()
   "Handle the : part of ternary operator"
   (if (looking-back "\\?.+")
@@ -401,13 +406,13 @@ Using `cc-mode''s syntactic analysis."
 
 (defun c-mode-< ()
   "Handle #include brackets and templates"
-  (cond ((looking-back "#\s*include\s*") " <")
+  (cond ((c-mode-include-line?) " <")
         ((c-is-function-definition?) "<")
         (t " < ")))
 
 (defun c-mode-> ()
   "Handle #include brackets and templates"
-  (cond ((looking-back "#\s*include.*") ">")
+  (cond ((c-mode-include-line?) ">")
         ((c-is-function-definition?) "> ")
         (t " > ")))
 
@@ -460,6 +465,10 @@ Using `cc-mode''s syntactic analysis."
   (if (c-is-function-definition?)
       (c-space-pointer-type "&&")
     " && "))
+
+(defun c-mode-/ ()
+  "Handle / in #include <a/b>"
+  (if (c-mode-include-line?) "/" (prog-mode-/)))
 
 
 

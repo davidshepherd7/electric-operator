@@ -12,4 +12,6 @@ Feature: #include directives
     When I type "# include<stdio.h>"
     Then I should see "# include <stdio.h>"
 
-
+  Scenario: Include statement with path inside angle brackets
+    When I type "#include<old/stdio.h>"
+    Then I should see "#include <old/stdio.h>"
