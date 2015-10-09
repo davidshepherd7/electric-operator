@@ -616,6 +616,18 @@ Using `cc-mode''s syntactic analysis."
 (eval-after-load 'ess-mode
   (advice-add 'ess-smart-comma :after #'post-self-insert-function))
 
+
+(puthash 'js-mode
+         (add-rules prog-mode-rules
+                    (cons "%=" " %= ")
+                    (cons "++" "++ ")
+                    (cons "--" "-- ")
+                    (cons "===" " === ")
+                    (cons "!==" " !== ")
+                    (cons "<<" " << ")
+                    (cons ">>" " >> "))
+         mode-rules-table)
+
 
 ) ; end of namespace
 
