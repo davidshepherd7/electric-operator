@@ -53,6 +53,10 @@ Feature: C++ specific operators
     Then I should see "void f(MyType<d<int>> x)"
 
 
+  Scenario: Automatic type references
+    When I type "auto&thing"
+    Then I should see "auto &thing"
+
   # TODO
 
   # Scenario: Template type definition

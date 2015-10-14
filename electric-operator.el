@@ -364,8 +364,8 @@ could be added here.")
    ;; Check for built-in types
    (looking-back (concat c-primitive-type-key "?"))
 
-   ;; Check if previous word is struct/union/enum keyword
-   (looking-back "\\b\\(struct\\|union\\|enum\\)[[:space:]]+[[:alnum:]\\|_]+")
+   ;; Check if previous word is struct/union/enum/auto keyword
+   (looking-back "\\b\\(struct\\|union\\|enum\\|auto\\)[[:space:]]+[[:alnum:]\\|_]+")
 
    ;; Check for any user-defined types
    (looking-back c-user-types-regex)))
