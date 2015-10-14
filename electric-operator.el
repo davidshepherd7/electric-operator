@@ -28,7 +28,7 @@
 (define-namespace electric-operator-
 
 ;; Tell names that it's ok to expand things inside these threading macros.
-:functionlike-macros (-> ->> -->)
+:functionlike-macros (-->)
 
 
 
@@ -174,10 +174,10 @@ Whitespace before the operator is captured for possible use later.
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
-  (->> rule-list
-       (-filter (lambda (rule) (looking-back (rule-regex-with-whitespace (car rule)))))
-       (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))))
-       (car)))
+  (--> rule-list
+       (-filter (lambda (rule) (looking-back (rule-regex-with-whitespace (car rule)))) it)
+       (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))) it)
+       (car it)))
 
 (defun post-self-insert-function ()
   "Check for a matching rule and apply it"
@@ -397,9 +397,9 @@ Using `cc-mode''s syntactic analysis."
   ;; There are similar but different symbols for objective-C, but I'm not
   ;; going to try to support that now.
 
-  (->> (c-guess-basic-syntax)
-       (-map #'car)
-       (-intersection c-function-definition-syntax-list)))
+  (--> (c-guess-basic-syntax)
+       (-map #'car it)
+       (-intersection c-function-definition-syntax-list it)))
 
 (defun c-mode-include-line? ()
   (looking-back "#\s*include.*"))
