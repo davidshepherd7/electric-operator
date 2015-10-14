@@ -90,14 +90,27 @@ should just work.
 
 * *C and C++*: these are much more tricky to get right. Most things should
   be working ok but there are still some issues with
-  pointer-to-class/struct types (#11) and templates (#8). I'm looking for ways to resolve 
-  this, probably using `cc-mode`, suggestions or tips would be very welcome.
+  pointer-to-class/struct types (#11) and templates (#8). I'm looking for
+  ways to resolve this, probably using `cc-mode`, suggestions or tips would
+  be very welcome. For now if you make much use of templates I would
+  recommend disabling spacing around `<` and `>` with
+
+        ;; Disable <, > in C++: support isn't good enough yet
+        (electric-operator-add-rules-for-mode 'c++-mode
+                                              (cons "<" nil)
+                                              (cons ">" nil))
+
+  Similarly if you use lots of raw pointers you might prefer to disable
+  spacing around `*`.
 
 * *Java*: I've added tweaks based on memory and a
   [syntax guide](http://www.tutorialspoint.com/java/java_quick_guide.htm).
   Since the syntax is largely simlar a simplification of C++ it should work
   well, but I haven't tried it out yet. Generics aren't handled properly
   (#8).
+
+* *Javascript*: I've added all the basic operators, and I'm currently using
+  javascript so any issues should be ironed out quickly.
 
 * *Ruby and Perl*: some tweaks for these modes were inherited from
   `electric-spacing`, but I haven't tried them personally. Pull requests
