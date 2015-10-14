@@ -490,8 +490,11 @@ Using `cc-mode''s syntactic analysis."
    (t " * ")))
 
 (defun c-mode-** ()
-  "C pointer to pointer."
-  (c-space-pointer-type "**"))
+  "C pointer to pointer or multiplication by pointer dereference.
+  e.g. `res = a * *b;`'"
+  (if (c-after-type?)
+      (c-space-pointer-type "**")
+    " * *"))
 
 (defun c++-mode-&& ()
   "Handle move constructor"

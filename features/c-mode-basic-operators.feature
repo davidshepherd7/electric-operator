@@ -185,6 +185,10 @@ Feature: C basic operators
     Then I should see "enum s *foo = a * b"
 
 
+  Scenario: Multiplication with pointer deref
+    When I type "result = foo * *bar"
+    Then I should see "result = foo * *bar"
+
   # # This doesn't actually test what it should, it always passes. Possible
   # # ecukes bug?
   # Scenario: // does not lose indentation
