@@ -345,7 +345,10 @@ if not inside any parens."
                     (cons "&&" #'c++-mode-&&)
 
                     ;; Nested templates
-                    (cons ">>" #'c++-mode->>))
+                    (cons ">>" #'c++-mode->>)
+
+                    ;; Handle for-each loops as well
+                    (cons ":" #'c++-mode-:))
 
 
 (defvar c-user-types-regex
@@ -393,11 +396,26 @@ Using `cc-mode''s syntactic analysis."
 (defun c-mode-include-line? ()
   (looking-back "#\s*include.*"))
 
+(defun c-mode-probably-ternary ()
+  (looking-back "\\?.+"))
+
 (defun c-mode-: ()
   "Handle the : part of ternary operator"
-  (if (looking-back "\\?.+")
+  (if (c-mode-probably-ternary)
       " : "
     ":"))
+
+(defun c++-mode-: ()
+  "Handle ternary, case, or for each"
+  (cond
+   ((c-mode-probably-ternary) " : ")
+
+   ;; probably a for-each loop
+   ((equal (enclosing-paren) ?\() " : ")
+
+   ;; probably a case statement
+   (t ":" )))
+
 
 (defun c-mode-++ ()
   "Handle ++ operator pre/postfix"

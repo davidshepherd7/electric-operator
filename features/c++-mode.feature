@@ -57,6 +57,21 @@ Feature: C++ specific operators
     When I type "auto&thing"
     Then I should see "auto &thing"
 
+
+  # Colon operator
+  Scenario: For each loops
+    When I type "for(int x:list)"
+    Then I should see "for(int x : list)"
+
+  Scenario: Standard ternary operator still works
+    When I type "a?b:c"
+    Then I should see "a ? b : c"
+
+  Scenario: Ternary operator in parens
+    When I type "(a?b:c)"
+    Then I should see "(a ? b : c)"
+
+
   # TODO
 
   # Scenario: Template type definition
