@@ -348,7 +348,10 @@ if not inside any parens."
                     (cons ">>" #'c++-mode->>)
 
                     ;; Handle for-each loops as well
-                    (cons ":" #'c++-mode-:))
+                    (cons ":" #'c++-mode-:)
+
+                    ;; Namespaces
+                    (cons "::" "::"))
 
 
 (defvar c-user-types-regex

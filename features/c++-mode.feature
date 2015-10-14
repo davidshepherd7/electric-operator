@@ -71,6 +71,11 @@ Feature: C++ specific operators
     When I type "(a?b:c)"
     Then I should see "(a ? b : c)"
 
+  Scenario: Namespaces in parens
+    When I type "f(a::foo::bar(x))"
+    Then I should see "f(a::foo::bar(x))"
+
+
 
   # TODO
 
