@@ -76,6 +76,19 @@ Feature: C++ specific operators
     Then I should see "f(a::foo::bar(x))"
 
 
+  # Operator overloads should never be spaced
+  Scenario: operator<<
+    When I type "operator<<"
+    Then I should see "operator<<"
+
+  Scenario: operator+
+    When I type "operator+"
+    Then I should see "operator+"
+
+  Scenario: operator=
+    When I type "operator="
+    Then I should see "operator="
+
 
   # TODO
 

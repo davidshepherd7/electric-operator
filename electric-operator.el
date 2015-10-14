@@ -28,7 +28,7 @@
 (define-namespace electric-operator-
 
 ;; Tell names that it's ok to expand things inside these threading macros.
-:functionlike-macros (-> ->>)
+:functionlike-macros (-> ->> -->)
 
 
 
@@ -352,6 +352,11 @@ if not inside any parens."
 
                     ;; Namespaces
                     (cons "::" "::"))
+
+;; Construct and add null rules for operator=, operator<< etc.
+(--> (get-rules-for-mode 'c++-mode)
+     (-map (lambda (p) (cons (concat "operator" (car p)) nil)) it)
+     (apply #'add-rules-for-mode 'c++-mode it))
 
 
 (defvar c-user-types-regex
