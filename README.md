@@ -140,7 +140,7 @@ Suggestions welcome :)
 
 ## Contributing
 
-I'm using [Cask](https://github.com/rejeep/cask.el) to manage dependencies,
+I'm using [Cask](https://github.com/cask/cask.el) to manage dependencies,
 so to run the tests you'll need to install cask then run `cask install` to
 install dependencies. Then the tests can be run with `make test`.
 
