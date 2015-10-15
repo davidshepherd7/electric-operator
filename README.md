@@ -31,7 +31,7 @@ Either way you also need to make sure electric-operator is loaded with
 and keep your customisations organised).
 
 To temporarily enable electric-operator-mode simply call
-`electric-operator-mode`. To permenantly enable it for a major mode simply
+`electric-operator-mode`. To permanently enable it for a major mode simply
 add it to the relevant mode hook. For example for python-mode add the
 following to your config:
 
@@ -118,7 +118,7 @@ should just work.
 
 * *Haskell*: I've added a number of tweaks based on memory and skimming a
   [syntax guide](http://prajitr.github.io/quick-haskell-syntax/), but I
-  haven't had a chance to try it out yet. There's probabaly some work to do.
+  haven't had a chance to try it out yet. There's probably some work to do.
 
 * *Lisps*: I don't think `electric-operator` has much to offer for lisps, so
   it doesn't do anything at the moment. If you can think of any spacing
