@@ -645,7 +645,7 @@ Using `cc-mode''s syntactic analysis."
 
 ;; ess-mode binds comma to a function, so we need to advise that function
 ;; to also run our code:
-(eval-after-load 'ess-mode
+(with-eval-after-load 'ess-mode
   (advice-add 'ess-smart-comma :after #'post-self-insert-function))
 
 
