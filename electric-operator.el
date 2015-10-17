@@ -376,7 +376,7 @@ could be added here.")
    (looking-back (concat c-primitive-type-key "?"))
 
    ;; Check if previous word is struct/union/enum/auto keyword
-   (looking-back "\\b\\(struct\\|union\\|enum\\|auto\\)[[:space:]]+[[:alnum:]\\|_]+")
+   (looking-back "\\b\\(struct\\|union\\|enum\\|auto\\|const\\)[[:space:]]+[[:alnum:]\\|_\\|:]+")
 
    ;; Check for any user-defined types
    (looking-back c-user-types-regex)))
