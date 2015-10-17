@@ -75,6 +75,9 @@ Feature: C++ specific operators
     When I type "f(a::foo::bar(x))"
     Then I should see "f(a::foo::bar(x))"
 
+  Scenario: Inheritance
+    When I type "class Foo:public Bar"
+    Then I should see "class Foo : public Bar"
 
   # Operator overloads should never be spaced
   Scenario: operator<<

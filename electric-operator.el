@@ -390,7 +390,7 @@ could be added here.")
 
 See `c-guess-basic-syntax'.")
 
-(defun c-is-function-definition? ()
+(defun c-is-function-or-class-definition? ()
   "Try to guess if we are in function definition/declaration
 
 Using `cc-mode''s syntactic analysis."
@@ -416,6 +416,9 @@ Using `cc-mode''s syntactic analysis."
 (defun c++-mode-: ()
   "Handle ternary, case, or for each"
   (cond
+   ;; The colon in `class Foo : public Bar`
+   ((c-is-function-or-class-definition?) " : ")
+
    ((c-mode-probably-ternary) " : ")
 
    ;; probably a for-each loop
@@ -440,18 +443,18 @@ Using `cc-mode''s syntactic analysis."
 (defun c-mode-< ()
   "Handle #include brackets and templates"
   (cond ((c-mode-include-line?) " <")
-        ((c-is-function-definition?) "<")
+        ((c-is-function-or-class-definition?) "<")
         (t " < ")))
 
 (defun c-mode-> ()
   "Handle #include brackets and templates"
   (cond ((c-mode-include-line?) ">")
-        ((c-is-function-definition?) "> ")
+        ((c-is-function-or-class-definition?) "> ")
         (t " > ")))
 
 (defun c++-mode->> ()
   "Handle nested templates"
-  (cond ((c-is-function-definition?) ">> ")
+  (cond ((c-is-function-or-class-definition?) ">> ")
         (t " >> ")))
 
 (defun c-space-pointer-type (op)
@@ -467,8 +470,8 @@ Using `cc-mode''s syntactic analysis."
   "Handle C address-of operator and reference types"
   (cond
    ;; Reference types
-   ((or (c-after-type?)
-        (c-is-function-definition?)) (c-space-pointer-type "&"))
+   ((or (c-after-type?) (c-is-function-or-class-definition?))
+    (c-space-pointer-type "&"))
 
    ;; Address-of operator
    ((looking-back "(") "&")
@@ -480,8 +483,8 @@ Using `cc-mode''s syntactic analysis."
   "Handle C dereference operator and pointer types"
   (cond
    ;; Pointer types
-   ((or (c-after-type?)
-        (c-is-function-definition?)) (c-space-pointer-type "*"))
+   ((or (c-after-type?) (c-is-function-or-class-definition?))
+    (c-space-pointer-type "*"))
 
    ;; Pointer dereference
    ((looking-back "(") "*")
@@ -498,7 +501,7 @@ Using `cc-mode''s syntactic analysis."
 
 (defun c++-mode-&& ()
   "Handle move constructor"
-  (if (c-is-function-definition?)
+  (if (c-is-function-or-class-definition?)
       (c-space-pointer-type "&&")
     " && "))
 
