@@ -175,7 +175,7 @@ Whitespace before the operator is captured for possible use later.
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
   (--> rule-list
-       (-filter (lambda (rule) (looking-back (rule-regex-with-whitespace (car rule)))) it)
+       (-filter (lambda (rule) (looking-back-locally (rule-regex-with-whitespace (car rule)))) it)
        (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))) it)
        (car it)))
 
@@ -186,13 +186,13 @@ Whitespace before the operator is captured for possible use later.
     (when (and rule action)
 
       ;; Delete the characters matching this rule before point
-      (looking-back (rule-regex-with-whitespace operator) nil t)
+      (looking-back-locally (rule-regex-with-whitespace operator) t)
       (let ((pre-whitespace (match-string 1)))
         (delete-region (match-beginning 0) (match-end 0))
 
         ;; If this is the first thing in a line then restore the
         ;; indentation.
-        (if (looking-back "^\s*")
+        (if (looking-back-locally "^\s*")
             (insert pre-whitespace))
 
         ;; Insert correctly spaced operator
@@ -249,11 +249,24 @@ if not inside any parens."
 
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
-   (looking-back "^")
-   (looking-back "[=,:\*\+-/><&^([{]")
-   (looking-back "\\(return\\)")))
+   (looking-back-locally "^")
+   (looking-back-locally "[=,:\*\+-/><&^([{]")
+   (looking-back-locally "\\(return\\)")))
 
- 
+(defun looking-back-locally (string &optional greedy)
+  "A wrapper for looking-back limited to the two previous lines
+
+Apparently looking-back can be slow without a limit, and calling
+it without a limit is deprecated.
+
+Any better ideas would be welcomed."
+  (let ((two-lines-up (save-excursion
+                        (forward-line -2)
+                        (beginning-of-line)
+                        (point))))
+    (looking-back string two-lines-up greedy)))
+
+
 
 ;;; General tweaks
 
@@ -267,20 +280,20 @@ if not inside any parens."
   "Handle exponent and negative number notation"
   (cond
    ;; Exponent notation, e.g. 1e-10: don't space
-   ((looking-back "[0-9.]+[eE]") "-")
+   ((looking-back-locally "[0-9.]+[eE]") "-")
 
    ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or -1
    ;; alone at all). This will proabaly need to be major mode specific
    ;; eventually.
    ((probably-unary-operator?)
-    (if (or (looking-back "[[(]") (looking-back "^"))
+    (if (or (looking-back-locally "[[(]") (looking-back-locally "^"))
         "-" " -"))
    (t " - ")))
 
 (defun prog-mode-/ ()
   "Handle path separator in UNIX hashbangs"
   ;; First / needs a space before it, rest don't need any spaces
-  (cond ((and (hashbang-line?) (looking-back "#!")) " /")
+  (cond ((and (hashbang-line?) (looking-back-locally "#!")) " /")
         ((hashbang-line?) "/")
         (t " / ")))
 
@@ -361,7 +374,7 @@ if not inside any parens."
 
 (defvar c-user-types-regex
   "_t"
-  "Regex used in looking-back to check for C types
+  "Regex used in looking-back-locally to check for C types
 
 For now we just assume that anything ending in '_t' is a type.
 I'm not sure if we can do any better by default.
@@ -373,15 +386,15 @@ could be added here.")
 (defun c-after-type? ()
   (or
    ;; Check for built-in types
-   (looking-back (concat c-primitive-type-key "?"))
+   (looking-back-locally (concat c-primitive-type-key "?"))
 
    ;; Check if previous word is struct/union/enum keyword
-   (looking-back "\\b\\(struct\\|union\\|enum\\|const\\)[[:space:]]+[[:alnum:]\\|_\\|:]+")
+   (looking-back-locally "\\b\\(struct\\|union\\|enum\\|const\\)[[:space:]]+[[:alnum:]\\|_\\|:]+")
 
-   (looking-back "auto")
+   (looking-back-locally "auto")
 
    ;; Check for any user-defined types
-   (looking-back c-user-types-regex)))
+   (looking-back-locally c-user-types-regex)))
 
 (defvar c-function-definition-syntax-list
   '(topmost-intro
@@ -404,10 +417,10 @@ Using `cc-mode''s syntactic analysis."
        (-intersection c-function-definition-syntax-list it)))
 
 (defun c-mode-include-line? ()
-  (looking-back "#\s*include.*"))
+  (looking-back-locally "#\s*include.*"))
 
 (defun c-mode-probably-ternary ()
-  (looking-back "\\?.+"))
+  (looking-back-locally "\\?.+"))
 
 (defun c-mode-: ()
   "Handle the : part of ternary operator"
@@ -432,13 +445,13 @@ Using `cc-mode''s syntactic analysis."
 
 (defun c-mode-++ ()
   "Handle ++ operator pre/postfix"
-  (if (looking-back "[a-zA-Z0-9_]\s*")
+  (if (looking-back-locally "[a-zA-Z0-9_]\s*")
       "++ "
     " ++"))
 
 (defun c-mode--- ()
   "Handle -- operator pre/postfix"
-  (if (looking-back "[a-zA-Z0-9_]\s*")
+  (if (looking-back-locally "[a-zA-Z0-9_]\s*")
       "-- "
     " --"))
 
@@ -476,7 +489,7 @@ Using `cc-mode''s syntactic analysis."
     (c-space-pointer-type "&"))
 
    ;; Address-of operator
-   ((looking-back "(") "&")
+   ((looking-back-locally "(") "&")
    ((probably-unary-operator?) " &")
 
    (t " & ")))
@@ -489,7 +502,7 @@ Using `cc-mode''s syntactic analysis."
     (c-space-pointer-type "*"))
 
    ;; Pointer dereference
-   ((looking-back "(") "*")
+   ((looking-back-locally "(") "*")
    ((probably-unary-operator?) " *")
 
    (t " * ")))
@@ -535,15 +548,15 @@ Using `cc-mode''s syntactic analysis."
   "Handle python *args"
   ;; Can only occur after '(' ',' or on a new line, so just check for those.
   ;; If it's just after a comma then also insert a space before the *.
-  (cond ((looking-back ",")  " *")
-        ((looking-back "[(,][ \t]*")  "*")
+  (cond ((looking-back-locally ",")  " *")
+        ((looking-back-locally "[(,][ \t]*")  "*")
         ;; Othewise act as normal
         (t  " * ")))
 
 (defun python-mode-** ()
   "Handle python **kwargs"
-  (cond ((looking-back ",") " **")
-        ((looking-back "[(,][ \t]*") "**")
+  (cond ((looking-back-locally ",") " **")
+        ((looking-back-locally "[(,][ \t]*") "**")
         (t " ** ")))
 
 (defun python-mode-kwargs-= ()
@@ -554,7 +567,7 @@ Using `cc-mode''s syntactic analysis."
 (defun python-mode-negative-slices ()
   "Handle cases like a[1:-1], see issue #2."
   (if (and (eq (enclosing-paren) ?\[)
-           (looking-back ":"))
+           (looking-back-locally ":"))
       "-"
     (prog-mode--)))
 
