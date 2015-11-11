@@ -1,6 +1,7 @@
 language: emacs-lisp
 
 script:
+  - evm install $EVM_EMACS --use --skip
   - emacs --version
   - cask install
   - make test
