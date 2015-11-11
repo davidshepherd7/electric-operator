@@ -8,6 +8,11 @@ Feature: Generic programming mode spacing
   Scenario: Enable electric spacing
     Then electric-operator-mode is on
 
+  # Make sure the mode is really always being turned on and not just
+  # toggling!
+  Scenario: Enable electric spacing again
+    Then electric-operator-mode is on
+
   # Basic stuff
   Scenario: Space a simple operator
     When I type "a=b"
