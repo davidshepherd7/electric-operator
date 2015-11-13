@@ -675,6 +675,23 @@ Using `cc-mode''s syntactic analysis."
                     (cons ">>" " >> "))
          mode-rules-table)
 
+(apply #'add-rules-for-mode 'php-mode prog-mode-rules)
+(add-rules-for-mode 'php-mode
+                    (cons "**" " ** ")
+                    (cons "%=" " %= ")
+                    (cons "===" " === ")
+                    (cons "<>" " <> ") ; not-equal
+                    (cons "!==" " !== ")
+                    (cons "++" #'c-mode-++)
+                    (cons "--" #'c-mode---)
+                    (cons "." " . ")   ; string concat
+                    (cons ".=" " .= ")
+                    )
+
+
+
+
+
 
 ) ; end of namespace
 

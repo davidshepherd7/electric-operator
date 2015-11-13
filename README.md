@@ -110,7 +110,11 @@ should just work.
   (#8).
 
 * *Javascript*: I've added all the basic operators, and I'm currently using
-  javascript so any issues should be ironed out quickly.
+javascript so any issues should be ironed out quickly.
+
+* *PHP*: Implemented based on
+  [this guide](http://www.w3schools.com/php/php_operators.asp), let me know
+  if you have any issues.
 
 * *Ruby and Perl*: some tweaks for these modes were inherited from
   `electric-spacing`, but I haven't tried them personally. Pull requests
