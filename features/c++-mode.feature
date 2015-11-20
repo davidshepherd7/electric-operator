@@ -101,3 +101,26 @@ Feature: C++ specific operators
   #   Then I should see "MyType<double> x"
 
   # Similarly for nested templates
+
+  # Lambdas
+  Scenario: ref inside operator[] still unspaced
+    When I'm inside C main
+    When I type "mymap[&a_pt]"
+    Then I should see "mymap[&a_pt]"
+
+  Scenario: reference captures in lambda functions unspaced
+    When I'm inside C main
+    When I type "[&ticket, &i]"
+    Then I should see "[&ticket, &i]"
+
+  Scenario: space -> in simple lambda return type
+    When I'm inside C main
+    When I type "[] ()->bool {"
+    Then I should see "[] () -> bool {"
+
+  Scenario: space -> in mutable lambda return type
+    When I'm inside C main
+    When I type "[] () mutable->bool {"
+    Then I should see "[] () mutable -> bool {"
+
+  # I'm not even going to try to parse exception specifications...

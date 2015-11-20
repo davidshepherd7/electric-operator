@@ -250,21 +250,24 @@ if not inside any parens."
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
    (looking-back-locally "^")
-   (looking-back-locally "[=,:\*\+-/><&^([{]")
+   (looking-back-locally "[=,:\*\+-/><&^]")
    (looking-back-locally "\\(return\\)")))
 
-(defun looking-back-locally (string &optional greedy)
-  "A wrapper for looking-back limited to the two previous lines
+(defun just-inside-bracket ()
+  (looking-back-locally "[([{]"))
+
+t(defun looking-back-locally (string &optional greedy)
+   "A wrapper for looking-back limited to the two previous lines
 
 Apparently looking-back can be slow without a limit, and calling
 it without a limit is deprecated.
 
 Any better ideas would be welcomed."
-  (let ((two-lines-up (save-excursion
-                        (forward-line -2)
-                        (beginning-of-line)
-                        (point))))
-    (looking-back string two-lines-up greedy)))
+   (let ((two-lines-up (save-excursion
+                         (forward-line -2)
+                         (beginning-of-line)
+                         (point))))
+     (looking-back string two-lines-up greedy)))
 
 
 
@@ -285,9 +288,9 @@ Any better ideas would be welcomed."
    ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or -1
    ;; alone at all). This will proabaly need to be major mode specific
    ;; eventually.
-   ((probably-unary-operator?)
-    (if (or (looking-back-locally "[[(]") (looking-back-locally "^"))
-        "-" " -"))
+   ((probably-unary-operator?) " -")
+   ((just-inside-bracket) "-")
+
    (t " - ")))
 
 (defun prog-mode-/ ()
@@ -364,7 +367,10 @@ Any better ideas would be welcomed."
                     (cons ":" #'c++-mode-:)
 
                     ;; Namespaces
-                    (cons "::" "::"))
+                    (cons "::" "::")
+
+                    ;; Lambdas
+                    (cons "->" #'c++-mode-->))
 
 ;; Construct and add null rules for operator=, operator<< etc.
 (--> (get-rules-for-mode 'c++-mode)
@@ -488,8 +494,8 @@ Using `cc-mode''s syntactic analysis."
    ((or (c-after-type?) (c-is-function-or-class-definition?))
     (c-space-pointer-type "&"))
 
-   ;; Address-of operator
-   ((looking-back-locally "(") "&")
+   ;; Address-of operator or lambda pass-by-reference specifier
+   ((just-inside-bracket) "&")
    ((probably-unary-operator?) " &")
 
    (t " & ")))
@@ -502,7 +508,7 @@ Using `cc-mode''s syntactic analysis."
     (c-space-pointer-type "*"))
 
    ;; Pointer dereference
-   ((looking-back-locally "(") "*")
+   ((just-inside-bracket) "*")
    ((probably-unary-operator?) " *")
 
    (t " * ")))
@@ -523,6 +529,16 @@ Using `cc-mode''s syntactic analysis."
 (defun c-mode-/ ()
   "Handle / in #include <a/b>"
   (if (c-mode-include-line?) "/" (prog-mode-/)))
+
+(defun c++-probably-lambda-arrow ()
+  "Try to guess if we are writing a lambda statement"
+  (looking-back-locally "\\[[^]]*\\]\\s-*([^)]*)\\s-*\\(mutable\\)?"))
+
+(defun c++-mode--> ()
+  "Handle lambda arrows"
+  (if (c++-probably-lambda-arrow)
+      " -> "
+    "->"))
 
 
 
