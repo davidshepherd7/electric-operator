@@ -589,6 +589,31 @@ Using `cc-mode''s syntactic analysis."
 
 
 
+;;; Javascript mode tweaks
+
+(defun js-mode-: ()
+  "Handle object assignment and ternary"
+  (if (eq (enclosing-paren) ?\{)
+      ": "
+    " : "))
+
+(puthash 'js-mode
+         (add-rules prog-mode-rules
+                    (cons "%=" " %= ")
+                    (cons "++" "++ ")
+                    (cons "--" "-- ")
+                    (cons "===" " === ")
+                    (cons "!==" " !== ")
+                    (cons "<<" " << ")
+                    (cons ">>" " >> ")
+                    (cons ":" #'js-mode-:)
+                    (cons "?" " ? ")
+                    )
+         mode-rules-table)
+
+
+
+
 ;;; Other major mode tweaks
 
 (apply #'add-rules-for-mode 'ruby-mode
@@ -679,17 +704,6 @@ Using `cc-mode''s syntactic analysis."
 (with-eval-after-load 'ess-mode
   (advice-add 'ess-smart-comma :after #'post-self-insert-function))
 
-
-(puthash 'js-mode
-         (add-rules prog-mode-rules
-                    (cons "%=" " %= ")
-                    (cons "++" "++ ")
-                    (cons "--" "-- ")
-                    (cons "===" " === ")
-                    (cons "!==" " !== ")
-                    (cons "<<" " << ")
-                    (cons ">>" " >> "))
-         mode-rules-table)
 
 (apply #'add-rules-for-mode 'php-mode prog-mode-rules)
 (add-rules-for-mode 'php-mode
