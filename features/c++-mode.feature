@@ -79,6 +79,15 @@ Feature: C++ specific operators
     When I type "class Foo:public Bar"
     Then I should see "class Foo : public Bar"
 
+  Scenario: Public methods
+    When I type "public:"
+    Then I should see "public:"
+
+  Scenario: Private methods
+    When I type "private:"
+    Then I should see "private:"
+
+
   # Operator overloads should never be spaced
   Scenario: operator<<
     When I type "operator<<"

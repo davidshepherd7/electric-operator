@@ -363,7 +363,7 @@ Any better ideas would be welcomed."
                     ;; Nested templates
                     (cons ">>" #'c++-mode->>)
 
-                    ;; Handle for-each loops as well
+                    ;; Handle for-each loops, public/private as well
                     (cons ":" #'c++-mode-:)
 
                     ;; Namespaces
@@ -437,6 +437,9 @@ Using `cc-mode''s syntactic analysis."
 (defun c++-mode-: ()
   "Handle ternary, case, or for each"
   (cond
+   ;; Public/private class methods
+   ((looking-back-locally "private\\|public\\|protected") ":")
+
    ;; The colon in `class Foo : public Bar`
    ((c-is-function-or-class-definition?) " : ")
 
