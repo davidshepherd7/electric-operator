@@ -1,5 +1,4 @@
-;;; -*- lexical-binding: t; -*-
-;;; electric-operator.el --- Automatically add spaces around operators
+;;; electric-operator.el --- Automatically add spaces around operators -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2015 Free Software Foundation, Inc.
 
