@@ -63,8 +63,9 @@ mode you would use
       (cons "->" " -> ")
       (cons "=>" " => "))
 
-To use the default rules for a new programming mode use `apply` to add all
-rules from `electric-operator-prog-mode-rules`:
+Rules for new modes can be added in exactly the same way. To use the default
+rules for a new programming mode use `apply` to add all rules from
+`electric-operator-prog-mode-rules`:
 
     (apply #'electric-operator-add-rules-for-mode 'my-new-mode
            electric-operator-prog-mode-rules)
