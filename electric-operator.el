@@ -721,7 +721,19 @@ Using `cc-mode''s syntactic analysis."
                     )
 
 
-
+;; Coffee script support based on http://coffeescript.org/#operators
+(apply #'add-rules-for-mode 'coffee-mode prog-mode-rules)
+(add-rules-for-mode 'coffee-mode
+                    (cons "**" " ** ")
+                    (cons "//" " // ")
+                    (cons "///" " /// ")
+                    (cons "%%" " %% ")
+                    (cons "?" "? ")
+                    (cons "?=" " ?= ")
+                    (cons "?." "?.")
+                    (cons "->" " -> ")
+                    (cons "=>" " => ")
+                    )
 
 
 
