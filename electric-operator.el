@@ -699,6 +699,10 @@ Using `cc-mode''s syntactic analysis."
                     (cons "%o%" " %o% ") ; Outer product
                     (cons "%x%" " %x% ") ; Kronecker product
                     (cons "%in%" " %in% ") ; Matching operator
+                    (cons "%>%" " %>% ") ; Pipe (magrittr)
+                    (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
+                    (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
+                    (cons "%T>%" " %T>% ") ; Tee operator (magrittr)
                     )
 
 ;; ess-mode binds comma to a function, so we need to advise that function
