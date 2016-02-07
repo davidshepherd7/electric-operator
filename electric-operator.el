@@ -739,6 +739,11 @@ Using `cc-mode''s syntactic analysis."
                     (cons "=>" " => ")
                     )
 
+(apply #'add-rules-for-mode 'sql-mode prog-mode-rules)
+(add-rules-for-mode 'sql-mode
+                    (cons "-" nil)
+                    (cons "=" nil))
+
 
 
 ) ; end of namespace
