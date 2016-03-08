@@ -613,6 +613,33 @@ Using `cc-mode''s syntactic analysis."
                     )
          mode-rules-table)
 
+
+
+;;; Rust mode tweaks
+
+(puthash 'rust-mode
+         (add-rules prog-mode-rules
+                    ;; templates are hard
+                    (cons "<" nil)
+                    (cons ">" nil)
+
+                    ;; mut vs. bitwise and
+                    (cons "&" nil)
+
+                    ;; pointer deref vs multiplication
+                    (cons "*" nil)
+
+                    ;; Comments are not division
+                    (cons "//" "// ")
+
+                    ;; Extra operators
+                    (cons "<<" " << ")
+                    (cons ">>" " >> ")
+                    (cons "->" " -> ")
+                    (cons "=>" " => ")
+
+                    )
+         mode-rules-table)
 
 
 
