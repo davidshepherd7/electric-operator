@@ -726,6 +726,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons "%o%" " %o% ") ; Outer product
                     (cons "%x%" " %x% ") ; Kronecker product
                     (cons "%in%" " %in% ") ; Matching operator
+                    (cons "~" " ~ ") ; "is modeled by"
                     (cons "%>%" " %>% ") ; Pipe (magrittr)
                     (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
                     (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
