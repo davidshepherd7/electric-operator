@@ -17,6 +17,7 @@
 
 (Setup
  ;; Before anything has run
+ (require 'rust-mode)
  )
 
 (Before
