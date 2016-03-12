@@ -712,9 +712,6 @@ Using `cc-mode''s syntactic analysis."
                     (cons "^^" " ^^ ")
                     )
 
-;; Integration testing these is hard because ess-mode is not built in to
-;; emacs and it's weird (doesn't define autoloads, doesn't inherit from
-;; prog-mode, ...).
 (apply #'add-rules-for-mode 'ess-mode prog-mode-rules)
 (add-rules-for-mode 'ess-mode
                     (cons "." nil) ; word separator

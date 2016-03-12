@@ -14,4 +14,7 @@
 
  ;; For testing, not available on melpa stable so pull from github directly
  (depends-on "rust-mode" :git "https://github.com/rust-lang/rust-mode.git")
+
+ ;; For testing
+ (depends-on "ess")
  )

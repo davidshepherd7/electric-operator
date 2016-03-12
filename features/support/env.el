@@ -18,6 +18,10 @@
 (Setup
  ;; Before anything has run
  (require 'rust-mode)
+
+ ;; Goddamn ess has to be special..
+ (load "ess-autoloads")
+ (autoload 'R-mode "ess-site.el" "ESS" t)
  )
 
 (Before
