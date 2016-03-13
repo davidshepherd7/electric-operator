@@ -88,6 +88,11 @@ Returns a modified copy of the rule list."
 Returns a modified copy of the rule list."
   (-add-rule-list initial new-rules))
 
+
+;; All rule manipulation should be done through these functions and not by
+;; using puthash/gethash directly because it's plausible that the
+;; underlying data structure could be changed (e.g. to an alist).
+
 (defun get-rules-for-mode (major-mode-symbol)
   "Get the spacing rules for major mode"
   (gethash major-mode-symbol mode-rules-table))
@@ -599,8 +604,8 @@ Using `cc-mode''s syntactic analysis."
       ": "
     " : "))
 
-(puthash 'js-mode
-         (add-rules prog-mode-rules
+(apply #'add-rules-for-mode 'js-mode prog-mode-rules)
+(add-rules-for-mode 'js-mode
                     (cons "%=" " %= ")
                     (cons "++" "++ ")
                     (cons "--" "-- ")
@@ -611,14 +616,13 @@ Using `cc-mode''s syntactic analysis."
                     (cons ":" #'js-mode-:)
                     (cons "?" " ? ")
                     )
-         mode-rules-table)
 
 
 
 ;;; Rust mode tweaks
 
-(puthash 'rust-mode
-         (add-rules prog-mode-rules
+(apply #'add-rules-for-mode 'rust-mode prog-mode-rules)
+(add-rules-for-mode 'rust-mode
                     ;; templates are hard
                     (cons "<" nil)
                     (cons ">" nil)
@@ -639,14 +643,12 @@ Using `cc-mode''s syntactic analysis."
                     (cons "=>" " => ")
 
                     )
-         mode-rules-table)
 
 
 
 ;;; Other major mode tweaks
 
-(apply #'add-rules-for-mode 'ruby-mode
-       prog-mode-rules)
+(apply #'add-rules-for-mode 'ruby-mode prog-mode-rules)
 (add-rules-for-mode 'ruby-mode
                     (cons "=~" " =~ ") ; regex equality
                     )
