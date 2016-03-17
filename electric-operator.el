@@ -714,6 +714,11 @@ Using `cc-mode''s syntactic analysis."
                     (cons "^^" " ^^ ")
                     )
 
+(defun ess-mode-keyword-args-= ()
+  (if (eq (enclosing-paren) ?\()
+      "="
+    " = "))
+
 (apply #'add-rules-for-mode 'ess-mode prog-mode-rules)
 (add-rules-for-mode 'ess-mode
                     (cons "." nil) ; word separator
@@ -730,6 +735,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
                     (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
                     (cons "%T>%" " %T>% ") ; Tee operator (magrittr)
+                    (cons "=" #'ess-mode-keyword-args-=)
                     )
 
 ;; ess-mode binds comma to a function, so we need to advise that function

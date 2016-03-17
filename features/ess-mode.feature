@@ -17,3 +17,7 @@ Feature: R specific operators
     When I set ess-smart-operators to nil
     When I type "f(x,y)"
     Then I should see "f(x, y)"
+
+  Scenario: Equals for keyword args
+    When I type "somefunc(a=1, b=2)"
+    Then I should see "somefunc(a=1, b=2)"
