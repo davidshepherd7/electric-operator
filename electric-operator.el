@@ -646,6 +646,39 @@ Using `cc-mode''s syntactic analysis."
 
 
 
+;; R tweaks (ess mode)
+
+(defun ess-mode-keyword-args-= ()
+  (if (eq (enclosing-paren) ?\()
+      "="
+    " = "))
+
+(apply #'add-rules-for-mode 'ess-mode prog-mode-rules)
+(add-rules-for-mode 'ess-mode
+                    (cons "." nil) ; word separator
+                    (cons "<-" " <- ") ; assignment
+                    (cons "->" " -> ") ; Right assignment
+                    (cons "%%" " %% ") ; Modulus
+                    (cons "%/%" " %/% ") ; Integer divide
+                    (cons "%*%" " %*% ") ; Matrix product
+                    (cons "%o%" " %o% ") ; Outer product
+                    (cons "%x%" " %x% ") ; Kronecker product
+                    (cons "%in%" " %in% ") ; Matching operator
+                    (cons "~" " ~ ") ; "is modeled by"
+                    (cons "%>%" " %>% ") ; Pipe (magrittr)
+                    (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
+                    (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
+                    (cons "%T>%" " %T>% ") ; Tee operator (magrittr)
+                    (cons "=" #'ess-mode-keyword-args-=)
+                    )
+
+;; ess-mode binds comma to a function, so we need to advise that function
+;; to also run our code:
+(with-eval-after-load 'ess-mode
+  (advice-add 'ess-smart-comma :after #'post-self-insert-function))
+
+
+
 ;;; Other major mode tweaks
 
 (apply #'add-rules-for-mode 'ruby-mode prog-mode-rules)
@@ -713,36 +746,6 @@ Using `cc-mode''s syntactic analysis."
                     (cons "**" " ** ")
                     (cons "^^" " ^^ ")
                     )
-
-(defun ess-mode-keyword-args-= ()
-  (if (eq (enclosing-paren) ?\()
-      "="
-    " = "))
-
-(apply #'add-rules-for-mode 'ess-mode prog-mode-rules)
-(add-rules-for-mode 'ess-mode
-                    (cons "." nil) ; word separator
-                    (cons "<-" " <- ") ; assignment
-                    (cons "->" " -> ") ; Right assignment
-                    (cons "%%" " %% ") ; Modulus
-                    (cons "%/%" " %/% ") ; Integer divide
-                    (cons "%*%" " %*% ") ; Matrix product
-                    (cons "%o%" " %o% ") ; Outer product
-                    (cons "%x%" " %x% ") ; Kronecker product
-                    (cons "%in%" " %in% ") ; Matching operator
-                    (cons "~" " ~ ") ; "is modeled by"
-                    (cons "%>%" " %>% ") ; Pipe (magrittr)
-                    (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
-                    (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
-                    (cons "%T>%" " %T>% ") ; Tee operator (magrittr)
-                    (cons "=" #'ess-mode-keyword-args-=)
-                    )
-
-;; ess-mode binds comma to a function, so we need to advise that function
-;; to also run our code:
-(with-eval-after-load 'ess-mode
-  (advice-add 'ess-smart-comma :after #'post-self-insert-function))
-
 
 (apply #'add-rules-for-mode 'php-mode prog-mode-rules)
 (add-rules-for-mode 'php-mode
