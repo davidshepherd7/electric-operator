@@ -138,3 +138,13 @@ it has some additional dependencies (in particular the excellent
 [`dash`](https://github.com/magnars/dash.el) and
 [`names`](https://github.com/Malabarba/names) packages) which were decided
 to be too heavy to add to electric-spacing.
+
+
+## Changelog
+
+### Version 0.2
+
+* Disabled `<` and `>` in C++ and Java modes by default.
+* Added support for emacs25.
+* Added support for Javascript Coffeescript, Rust, PHP.
+* Improved support for R, C++, C.
