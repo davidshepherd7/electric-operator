@@ -29,28 +29,28 @@ Feature: C++ specific operators
     Then I should see "A(A &&a)"
 
 
-  # Templates are not spaced like gt/lt
-  Scenario: Greater than still works
-    When I'm inside C main
-    When I type "bool x=0>1"
-    Then I should see "bool x = 0 > 1"
+  # # Templates are not spaced like gt/lt
+  # Scenario: Greater than still works
+  #   When I'm inside C main
+  #   When I type "bool x=0>1"
+  #   Then I should see "bool x = 0 > 1"
 
-  Scenario: Less than still works
-    When I'm inside C main
-    When I type "bool x=0<1"
-    Then I should see "bool x = 0 < 1"
+  # Scenario: Less than still works
+  #   When I'm inside C main
+  #   When I type "bool x=0<1"
+  #   Then I should see "bool x = 0 < 1"
 
-  Scenario: Template in function rvalue
-    When I type "MyType<double> f()"
-    Then I should see "MyType<double> f()"
+  # Scenario: Template in function rvalue
+  #   When I type "MyType<double> f()"
+  #   Then I should see "MyType<double> f()"
 
-  Scenario: Template in function argument
-    When I type "void f(MyType<double> x)"
-    Then I should see "void f(MyType<double> x)"
+  # Scenario: Template in function argument
+  #   When I type "void f(MyType<double> x)"
+  #   Then I should see "void f(MyType<double> x)"
 
-  Scenario: Nested template in function argument
-    When I type "void f(MyType<d<int>> x)"
-    Then I should see "void f(MyType<d<int>> x)"
+  # Scenario: Nested template in function argument
+  #   When I type "void f(MyType<d<int>> x)"
+  #   Then I should see "void f(MyType<d<int>> x)"
 
 
   Scenario: Automatic type references

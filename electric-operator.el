@@ -374,7 +374,12 @@ Any better ideas would be welcomed."
                     (cons "::" "::")
 
                     ;; Lambdas
-                    (cons "->" #'c++-mode-->))
+                    (cons "->" #'c++-mode-->)
+
+                    ;; Templates are hard to deal with sensibly
+                    (cons "<" nil)
+                    (cons ">" nil)
+                    )
 
 ;; Construct and add null rules for operator=, operator<< etc.
 (--> (get-rules-for-mode 'c++-mode)
@@ -722,6 +727,10 @@ Using `cc-mode''s syntactic analysis."
                     ;; Comments
                     (cons "/*" "/* ")
                     (cons "//" "// ")
+
+                    ;; Generics are hard
+                    (cons "<" nil)
+                    (cons ">" nil)
                     )
 
 ;; Again: based on a syntax guide and not really tested
