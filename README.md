@@ -12,7 +12,7 @@ results in
 
     a = 10 * 5 + 2
 
-I'm aiming to have electric-operator-mode "correctly" handle almost every
+I'm aiming to have electric-operator-mode correctly handle almost every
 operator for major modes built in to Emacs (and a few that aren't). If you find a
 case where it doesn't space something as expected then consider it a bug, 
 and please report it :).
@@ -30,15 +30,14 @@ Either way you also need to make sure electric-operator is loaded with
 [`use-package`](https://github.com/jwiegley/use-package) to load packages
 and keep your customisations organised).
 
-To temporarily enable electric-operator-mode simply call
-`electric-operator-mode`. To permanently enable it for a major mode simply
-add it to the relevant mode hook. For example for python-mode add the
-following to your config:
+To temporarily enable electric-operator-mode call `electric-operator-mode`.
+To permanently enable it for a major mode add it to the relevant mode hook.
+For example for python-mode add the following to your config:
 
     (add-hook 'python-mode-hook #'electric-operator-mode)
 
-Note that `electric-operator-mode` is not a global minor mode, and so must
-be enabled separately for each major mode.
+Note that `electric-operator-mode` is not a global minor mode. It must be
+enabled separately for each major mode that you wish to use it with.
 
 
 ## Customisation
@@ -53,15 +52,19 @@ Each major mode has its own list of rules for the spacing of operators. The
 rule list for a major mode is looked up in the hash table
 `electric-operator-mode-rules-table`. Rule lists can be modified using the
 function `electric-operator-add-rules-for-mode`, which will automatically
-replace any existing rules for the same operator. To disable a rule set the
-action part of the rule (the second element) to nil.
-
-As an example: to automatically add spacing around `->` and `=>` in python
-mode you would use
+replace any existing rules for the same operator. As an example: to
+automatically add spacing around `->` and `=>` in python mode you would use
 
     (electric-operator-add-rules-for-mode 'python-mode
       (cons "->" " -> ")
       (cons "=>" " => "))
+
+Rules can be disable in a similar way by setting the second element of the
+rule to nil. For example if you find that the `*` operator in C is not
+working reliably enough for pointer types you would use
+
+    (electric-operator-add-rules-for-mode c-mode
+      (cons "*" nil))
 
 Rules for new modes can be added in exactly the same way. To use the default
 rules for a new programming mode use `apply` to add all rules from
@@ -74,74 +77,43 @@ The default rules for text modes can be added in the same way from the list
 `electric-operator-prose-rules`.
 
 
-## Major mode readiness
+## Programming language support
 
 A number of basic operator rules are defined for any major mode, so if your
 language is "normal" (i.e C-like) then a good amount of functionality
 should just work.
 
-* *Python*: Should be complete. I've used `electric-operator` a lot for python.
-  Specifically we handle edge cases in `*args`, `**kwargs`,
-  `:` in dictionaries, kwarg assignment, and slices.
+If you use `electric-operator` for a major mode not listed below here
+please open an issue to let me know what works.
 
-* *`ess-mode`*: Should be complete. A few people are using `electric-operator` with
-  `ess-mode` for R. R's syntax is fairly standard and straightforward, so
-  everything *should* work well. Using `ess-mode` for languages other than
-  R is not currently supported.
+Complete support is implemented for
 
-* *C and C++*: these are much more tricky to get right. Most things should
-  be working ok but there are still some issues with
-  pointer-to-class/struct types (#11) and templates (#8). I'm looking for
-  ways to resolve this, probably using `cc-mode`, suggestions or tips would
-  be very welcome. For now if you make much use of templates I would
-  recommend disabling spacing around `<` and `>` with
-
-        ;; Disable <, > in C++: support isn't good enough yet
-        (electric-operator-add-rules-for-mode 'c++-mode
-                                              (cons "<" nil)
-                                              (cons ">" nil))
-
-  Similarly if you use lots of raw pointers you might prefer to disable
-  spacing around `*`.
-
-* *Java*: I've added tweaks based on memory and a
-  [syntax guide](http://www.tutorialspoint.com/java/java_quick_guide.htm).
-  Since the syntax is largely simlar a simplification of C++ it should work
-  well, but I haven't tried it out yet. Generics aren't handled properly
-  (#8).
-
-* *Javascript*: I've added all the basic operators, and I'm currently using
-javascript so any issues should be ironed out quickly.
-
-* *PHP*: Implemented based on
-  [this guide](http://www.w3schools.com/php/php_operators.asp), let me know
-  if you have any issues.
-
-* *Ruby and Perl*: some tweaks for these modes were inherited from
-  `electric-spacing`, but I haven't tried them personally. Pull requests
-  are welcome!
-
-* *Haskell*: I've added a number of tweaks based on memory and skimming a
-  [syntax guide](http://prajitr.github.io/quick-haskell-syntax/), but I
-  haven't had a chance to try it out yet. There's probably some work to do.
-
-* *Lisps*: I don't think `electric-operator` has much to offer for lisps, so
-  it doesn't do anything at the moment. If you can think of any spacing
-  rules that would be nice then please submit an issue/pull-request.
-
-* *Text modes*: Again, I'm not sure that we can do much in text modes. At the moment 
-  spacing is added after `.` (behaviour inherited from `electric-spacing`) and `,`.
-
-If you use `electric-operator` for a major mode not on this list please
-open an issue to let me know how it went.
+* Python
+* R
+* Javascript
+* Coffeescript
+* PHP
+* SQL
 
 
-In general:
+Languages with good but imperfect support are
 
-* Negative numbers might still be a bit flakey. It seems to be difficult to
-reliably distinguish between negative numbers and the minus operator.
-Suggestions welcome :)
+* C
+* C++
+* Java
+* Rust
 
+there are difficulties with distinguishing between `*` for pointer types
+and for multiplication. Similiarly for `&` (reference types vs bitwise
+and), and `<`, `>` (comparision operators vs angle brackets.
+
+
+The following languages are supported but not extensively tested (as far as
+I know), please open an issue to let me know if you use them.
+
+* Haskell
+* Perl
+* Ruby
 
 ## Contributing
 
