@@ -63,7 +63,7 @@ Rules can be disable in a similar way by setting the second element of the
 rule to nil. For example if you find that the `*` operator in C is not
 working reliably enough for pointer types you would use
 
-    (electric-operator-add-rules-for-mode c-mode
+    (electric-operator-add-rules-for-mode 'c-mode
       (cons "*" nil))
 
 Rules for new modes can be added in exactly the same way. To use the default
