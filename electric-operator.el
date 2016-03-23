@@ -801,6 +801,11 @@ Using `cc-mode''s syntactic analysis."
                     (cons "-" nil)
                     (cons "=" nil))
 
+;; Don't use either prog or text mode defaults, css is too different
+(add-rules-for-mode 'css-mode
+                    (cons ":" ": ")
+                    (cons "," ", "))
+
 
 
 ) ; end of namespace
