@@ -55,6 +55,16 @@ in `int* x'."
   :type 'symbol
   :options '(variable type))
 
+(defcustom R-named-argument-style 'unspaced
+  "Defines whether = in R named function arguments should be
+spaced.
+
+Setting the value to 'spaced' results in f(foo = 1), 'unspaced'
+results in f(foo=1)."
+  :group 'electricity
+  :type 'symbol
+  :options '(spaced unspaced))
+
 
 
 ;;; Other variables
@@ -655,7 +665,8 @@ Using `cc-mode''s syntactic analysis."
 ;; R tweaks (ess mode)
 
 (defun ess-mode-keyword-args-= ()
-  (if (eq (enclosing-paren) ?\()
+  (if (and (eq R-named-argument-style 'unspaced)
+           (eq (enclosing-paren) ?\())
       "="
     " = "))
 

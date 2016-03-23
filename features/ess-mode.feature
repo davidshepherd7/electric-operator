@@ -18,6 +18,12 @@ Feature: R specific operators
     When I type "f(x,y)"
     Then I should see "f(x, y)"
 
+  Scenario: Spaced equals for keyword args
+    When I set electric-operator-R-named-argument-style to spaced
+    When I type "somefunc(a=1, b=2)"
+    Then I should see "somefunc(a = 1, b = 2)"
+
   Scenario: Equals for keyword args
+    When I set electric-operator-R-named-argument-style to unspaced
     When I type "somefunc(a=1, b=2)"
     Then I should see "somefunc(a=1, b=2)"
