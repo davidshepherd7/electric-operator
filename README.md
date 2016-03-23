@@ -77,6 +77,10 @@ The default rules for text modes can be added in the same way from the list
 `electric-operator-prose-rules`.
 
 
+Other customisation options are available to tweak behaviour for some
+modes. Use `M-x customize-apropos <RET> electric-operator` to see the full
+list and set them as normal using `setq`, customize etc. as you prefer.
+
 ## Programming language support
 
 A number of basic operator rules are defined for any major mode, so if your
