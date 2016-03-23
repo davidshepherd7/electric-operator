@@ -46,12 +46,13 @@
 (defcustom c-pointer-type-style 'variable
   "Defines how C/C++ mode pointer and reference types are spaced.
 
-If set to 'variable then the operator is touching the variable
+If set to 'variable' then the operator is touching the variable
 name, as in `int *x'.
 
-If set to 'type then the operator is touching the type name , as
+If set to 'type' then the operator is touching the type name , as
 in `int* x'."
   :group 'electricity
+  :type 'symbol
   :options '(variable type))
 
 
