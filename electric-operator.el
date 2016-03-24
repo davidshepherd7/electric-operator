@@ -164,17 +164,24 @@ the given major mode."
 ;;; Core functions
 
 (defun get-rules-list ()
-  "Pick which rule list is appropriate for spacing at point"
-  (cond
-   ;; In comment or string?
-   ((in-docs?) (if enable-in-docs prose-rules (list)))
+  "Pick which rule list is appropriate for spacing just before point"
+  (save-excursion
+    ;; We want to look one character before point because this is called
+    ;; via post-self-insert-hook (there is no pre-self-insert-hook). This
+    ;; allows us to correctly handle cases where the just-inserted
+    ;; character ended a comment/string/...
+    (forward-char -1)
 
-   ;; Try to find an entry for this mode in the table
-   ((get-rules-for-mode major-mode))
+    (cond
+     ;; In comment or string?
+     ((in-docs?) (if enable-in-docs prose-rules (list)))
 
-   ;; Default modes
-   ((derived-mode-p 'prog-mode) prog-mode-rules)
-   (t prose-rules)))
+     ;; Try to find an entry for this mode in the table
+     ((get-rules-for-mode major-mode))
+
+     ;; Default modes
+     ((derived-mode-p 'prog-mode) prog-mode-rules)
+     (t prose-rules))))
 
 (defun rule-regex-with-whitespace (op)
   "Construct regex matching operator and any whitespace before/inside/after.
@@ -620,6 +627,14 @@ Using `cc-mode''s syntactic analysis."
       ": "
     " : "))
 
+(defun js-mode-/ ()
+  "Handle regex literals and division"
+  ;; Closing / counts as being inside a string so we don't need to do
+  ;; anything.
+  (if (probably-unary-operator?)
+      "/"
+    " / "))
+
 (apply #'add-rules-for-mode 'js-mode prog-mode-rules)
 (add-rules-for-mode 'js-mode
                     (cons "%=" " %= ")
@@ -631,6 +646,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons ">>" " >> ")
                     (cons ":" #'js-mode-:)
                     (cons "?" " ? ")
+                    (cons "/" #'js-mode-/)
                     )
 
 
