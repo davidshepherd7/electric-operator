@@ -19,3 +19,7 @@ Feature: Javascript specific operators
   Scenario: Regex literals simple
     When I type "/a.foo/"
     Then I should see "/a.foo/"
+
+  Scenario: Regex literals with spacing before
+    When I type "x=/a.foo/"
+    Then I should see "x = /a.foo/"

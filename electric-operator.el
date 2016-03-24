@@ -201,26 +201,37 @@ Whitespace before the operator is captured for possible use later.
        (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))) it)
        (car it)))
 
+(defun eval-action (action point)
+  (cond
+   ((functionp action) (save-excursion (goto-char point) (funcall action)))
+   ((stringp action) action)
+   (t (error "Unrecognised action: %s" action))))
+
 (defun post-self-insert-function ()
   "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
           ((operator . action) rule))
     (when (and rule action)
 
-      ;; Delete the characters matching this rule before point
       (looking-back-locally (rule-regex-with-whitespace operator) t)
-      (let ((pre-whitespace (match-string 1)))
-        (delete-region (match-beginning 0) (match-end 0))
+      (let* ((pre-whitespace (match-string 1))
+             (op-match-beginning (match-beginning 0))
+             (op-match-end (match-end 0))
+             (spaced-string (eval-action action op-match-beginning)))
 
-        ;; If this is the first thing in a line then restore the
-        ;; indentation.
-        (if (looking-back-locally "^\s*")
+        ;; If action was a function which eval-d to nil then we do nothing.
+        (when spaced-string
+
+          ;; Delete the characters matching this rule before point
+          (delete-region op-match-beginning op-match-end)
+
+          ;; If this is the first thing in a line then restore the
+          ;; indentation.
+          (when (looking-back-locally "^\s*")
             (insert pre-whitespace))
 
-        ;; Insert correctly spaced operator
-        (if (stringp action)
-            (insert action)
-          (insert (funcall action)))))))
+          ;; Insert correctly spaced operator
+          (insert spaced-string))))))
 
 :autoload
 (define-minor-mode mode
@@ -632,7 +643,7 @@ Using `cc-mode''s syntactic analysis."
   ;; Closing / counts as being inside a string so we don't need to do
   ;; anything.
   (if (probably-unary-operator?)
-      "/"
+      nil
     " / "))
 
 (apply #'add-rules-for-mode 'js-mode prog-mode-rules)
