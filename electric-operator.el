@@ -213,7 +213,14 @@ Whitespace before the operator is captured for possible use later.
           ((operator . action) rule))
     (when (and rule action)
 
+      ;; Find point where operator starts
       (looking-back-locally (rule-regex-with-whitespace operator) t)
+
+      ;; Capture operator include leading and trailing whitespace
+      (save-excursion
+        (goto-char (match-beginning 0))
+        (looking-at (rule-regex-with-whitespace operator)))
+
       (let* ((pre-whitespace (match-string 1))
              (op-match-beginning (match-beginning 0))
              (op-match-end (match-end 0))
