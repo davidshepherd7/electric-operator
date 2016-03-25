@@ -69,7 +69,7 @@ results in f(foo=1)."
 
 ;;; Other variables
 
-(defvar mode-rules-table
+(defvar -mode-rules-table
   (make-hash-table)
   "A hash table of replacement rule lists for specific major modes")
 
@@ -106,17 +106,17 @@ Returns a modified copy of the rule list."
 
 (defun get-rules-for-mode (major-mode-symbol)
   "Get the spacing rules for major mode"
-  (gethash major-mode-symbol mode-rules-table))
+  (gethash major-mode-symbol -mode-rules-table))
 
 (defun add-rules-for-mode (major-mode-symbol &rest new-rules)
   "Replace or add spacing rules for major mode
 
-Destructively modifies mode-rules-table to use the new rules for
+Destructively modifies `electric-operator--mode-rules-table' to use the new rules for
 the given major mode."
   (puthash major-mode-symbol
            (-add-rule-list (get-rules-for-mode major-mode-symbol)
                            new-rules)
-           mode-rules-table))
+           -mode-rules-table))
 
 
 
