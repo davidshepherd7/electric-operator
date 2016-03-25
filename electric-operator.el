@@ -296,18 +296,18 @@ if not inside any parens."
 (defun just-inside-bracket ()
   (looking-back-locally "[([{]"))
 
-t(defun looking-back-locally (string &optional greedy)
-   "A wrapper for looking-back limited to the two previous lines
+(defun looking-back-locally (string &optional greedy)
+  "A wrapper for looking-back limited to the two previous lines
 
 Apparently looking-back can be slow without a limit, and calling
 it without a limit is deprecated.
 
 Any better ideas would be welcomed."
-   (let ((two-lines-up (save-excursion
-                         (forward-line -2)
-                         (beginning-of-line)
-                         (point))))
-     (looking-back string two-lines-up greedy)))
+  (let ((two-lines-up (save-excursion
+                        (forward-line -2)
+                        (beginning-of-line)
+                        (point))))
+    (looking-back string two-lines-up greedy)))
 
 
 
