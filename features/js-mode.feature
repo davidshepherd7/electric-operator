@@ -12,6 +12,7 @@ Feature: Javascript specific operators
     When I type "bool?1:2"
     Then I should see "bool ? 1 : 2"
 
+
   Scenario: Division
     When I type "x=b/a.foo"
     Then I should see "x = b / a.foo"
@@ -23,3 +24,7 @@ Feature: Javascript specific operators
   Scenario: Regex literals with spacing before
     When I type "x=/a.foo/"
     Then I should see "x = /a.foo/"
+
+  Scenario: Correctly space #! paths
+    When I type "#! /usr/bin/node"
+    Then I should see "#! /usr/bin/node"

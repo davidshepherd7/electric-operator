@@ -644,7 +644,7 @@ Using `cc-mode''s syntactic analysis."
   ;; anything.
   (if (probably-unary-operator?)
       nil
-    " / "))
+    (prog-mode-/)))
 
 (apply #'add-rules-for-mode 'js-mode prog-mode-rules)
 (add-rules-for-mode 'js-mode
