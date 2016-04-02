@@ -3,7 +3,7 @@
 ;; Copyright (C) 2015 Free Software Foundation, Inc.
 
 ;; Author: David Shepherd <davidshepherd7@gmail.com>
-;; Version: 0.1
+;; Version: 0.3
 ;; Package-Requires: ((dash "2.10.0") (names "20150618.0") (emacs "24.4"))
 ;; Keywords: electric
 ;; URL: https://github.com/davidshepherd7/electric-operator
@@ -69,7 +69,7 @@ results in f(foo=1)."
 
 ;;; Other variables
 
-(defvar mode-rules-table
+(defvar -mode-rules-table
   (make-hash-table)
   "A hash table of replacement rule lists for specific major modes")
 
@@ -106,17 +106,17 @@ Returns a modified copy of the rule list."
 
 (defun get-rules-for-mode (major-mode-symbol)
   "Get the spacing rules for major mode"
-  (gethash major-mode-symbol mode-rules-table))
+  (gethash major-mode-symbol -mode-rules-table))
 
 (defun add-rules-for-mode (major-mode-symbol &rest new-rules)
   "Replace or add spacing rules for major mode
 
-Destructively modifies mode-rules-table to use the new rules for
+Destructively modifies `electric-operator--mode-rules-table' to use the new rules for
 the given major mode."
   (puthash major-mode-symbol
            (-add-rule-list (get-rules-for-mode major-mode-symbol)
                            new-rules)
-           mode-rules-table))
+           -mode-rules-table))
 
 
 
@@ -164,17 +164,24 @@ the given major mode."
 ;;; Core functions
 
 (defun get-rules-list ()
-  "Pick which rule list is appropriate for spacing at point"
-  (cond
-   ;; In comment or string?
-   ((in-docs?) (if enable-in-docs prose-rules (list)))
+  "Pick which rule list is appropriate for spacing just before point"
+  (save-excursion
+    ;; We want to look one character before point because this is called
+    ;; via post-self-insert-hook (there is no pre-self-insert-hook). This
+    ;; allows us to correctly handle cases where the just-inserted
+    ;; character ended a comment/string/...
+    (forward-char -1)
 
-   ;; Try to find an entry for this mode in the table
-   ((get-rules-for-mode major-mode))
+    (cond
+     ;; In comment or string?
+     ((in-docs?) (if enable-in-docs prose-rules (list)))
 
-   ;; Default modes
-   ((derived-mode-p 'prog-mode) prog-mode-rules)
-   (t prose-rules)))
+     ;; Try to find an entry for this mode in the table
+     ((get-rules-for-mode major-mode))
+
+     ;; Default modes
+     ((derived-mode-p 'prog-mode) prog-mode-rules)
+     (t prose-rules))))
 
 (defun rule-regex-with-whitespace (op)
   "Construct regex matching operator and any whitespace before/inside/after.
@@ -194,26 +201,44 @@ Whitespace before the operator is captured for possible use later.
        (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))) it)
        (car it)))
 
+(defun eval-action (action point)
+  (cond
+   ((functionp action) (save-excursion (goto-char point) (funcall action)))
+   ((stringp action) action)
+   (t (error "Unrecognised action: %s" action))))
+
 (defun post-self-insert-function ()
   "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
           ((operator . action) rule))
     (when (and rule action)
 
-      ;; Delete the characters matching this rule before point
+      ;; Find point where operator starts
       (looking-back-locally (rule-regex-with-whitespace operator) t)
-      (let ((pre-whitespace (match-string 1)))
-        (delete-region (match-beginning 0) (match-end 0))
 
-        ;; If this is the first thing in a line then restore the
-        ;; indentation.
-        (if (looking-back-locally "^\s*")
+      ;; Capture operator include leading and trailing whitespace
+      (save-excursion
+        (goto-char (match-beginning 0))
+        (looking-at (rule-regex-with-whitespace operator)))
+
+      (let* ((pre-whitespace (match-string 1))
+             (op-match-beginning (match-beginning 0))
+             (op-match-end (match-end 0))
+             (spaced-string (eval-action action op-match-beginning)))
+
+        ;; If action was a function which eval-d to nil then we do nothing.
+        (when spaced-string
+
+          ;; Delete the characters matching this rule before point
+          (delete-region op-match-beginning op-match-end)
+
+          ;; If this is the first thing in a line then restore the
+          ;; indentation.
+          (when (looking-back-locally "^\s*")
             (insert pre-whitespace))
 
-        ;; Insert correctly spaced operator
-        (if (stringp action)
-            (insert action)
-          (insert (funcall action)))))))
+          ;; Insert correctly spaced operator
+          (insert spaced-string))))))
 
 :autoload
 (define-minor-mode mode
@@ -271,18 +296,18 @@ if not inside any parens."
 (defun just-inside-bracket ()
   (looking-back-locally "[([{]"))
 
-t(defun looking-back-locally (string &optional greedy)
-   "A wrapper for looking-back limited to the two previous lines
+(defun looking-back-locally (string &optional greedy)
+  "A wrapper for looking-back limited to the two previous lines
 
 Apparently looking-back can be slow without a limit, and calling
 it without a limit is deprecated.
 
 Any better ideas would be welcomed."
-   (let ((two-lines-up (save-excursion
-                         (forward-line -2)
-                         (beginning-of-line)
-                         (point))))
-     (looking-back string two-lines-up greedy)))
+  (let ((two-lines-up (save-excursion
+                        (forward-line -2)
+                        (beginning-of-line)
+                        (point))))
+    (looking-back string two-lines-up greedy)))
 
 
 
@@ -620,6 +645,14 @@ Using `cc-mode''s syntactic analysis."
       ": "
     " : "))
 
+(defun js-mode-/ ()
+  "Handle regex literals and division"
+  ;; Closing / counts as being inside a string so we don't need to do
+  ;; anything.
+  (if (probably-unary-operator?)
+      nil
+    (prog-mode-/)))
+
 (apply #'add-rules-for-mode 'js-mode prog-mode-rules)
 (add-rules-for-mode 'js-mode
                     (cons "%=" " %= ")
@@ -631,6 +664,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons ">>" " >> ")
                     (cons ":" #'js-mode-:)
                     (cons "?" " ? ")
+                    (cons "/" #'js-mode-/)
                     )
 
 

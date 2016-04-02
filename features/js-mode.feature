@@ -11,3 +11,20 @@ Feature: Javascript specific operators
   Scenario: Ternary operator
     When I type "bool?1:2"
     Then I should see "bool ? 1 : 2"
+
+
+  Scenario: Division
+    When I type "x=b/a.foo"
+    Then I should see "x = b / a.foo"
+
+  Scenario: Regex literals simple
+    When I type "/a.foo/"
+    Then I should see "/a.foo/"
+
+  Scenario: Regex literals with spacing before
+    When I type "x=/a.foo/"
+    Then I should see "x = /a.foo/"
+
+  Scenario: Correctly space #! paths
+    When I type "#! /usr/bin/node"
+    Then I should see "#! /usr/bin/node"
