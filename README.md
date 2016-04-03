@@ -121,9 +121,10 @@ I know), please open an issue to let me know if you use them.
 
 ## Contributing
 
-I'm using [Cask](https://github.com/cask/cask.el) to manage dependencies,
-so to run the tests you'll need to install cask then run `cask install` to
-install dependencies. Then the tests can be run with `make test`.
+I'm using [Cask](https://github.com/cask/cask.el) to manage dependencies, so to
+run the tests you'll need to install cask then run `cask install` to install
+dependencies. Then the tests can be run with `./test.sh` (or manually with
+`ecukes`, but make sure you exclude tests tagged with `@known-failure`).
 
 Bug reports are also welcome!
 

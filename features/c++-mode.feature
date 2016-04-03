@@ -4,6 +4,9 @@ Feature: C++ specific operators
     When I turn on c++-mode
     When I turn on electric-operator-mode
 
+  Scenario: Automatic type references
+    When I type "auto&thing"
+    Then I should see "auto &thing"
 
   # Move constructor type
   Scenario: and operator still works
@@ -29,33 +32,51 @@ Feature: C++ specific operators
     Then I should see "A(A &&a)"
 
 
-  # # Templates are not spaced like gt/lt
-  # Scenario: Greater than still works
-  #   When I'm inside C main
-  #   When I type "bool x=0>1"
-  #   Then I should see "bool x = 0 > 1"
+  # Templates
+  @known-failure
+  Scenario: Greater than still works
+    When I'm inside C main
+    When I type "bool x=0>1"
+    Then I should see "bool x = 0 > 1"
 
-  # Scenario: Less than still works
-  #   When I'm inside C main
-  #   When I type "bool x=0<1"
-  #   Then I should see "bool x = 0 < 1"
+  @known-failure
+  Scenario: Less than still works
+    When I'm inside C main
+    When I type "bool x=0<1"
+    Then I should see "bool x = 0 < 1"
 
-  # Scenario: Template in function rvalue
-  #   When I type "MyType<double> f()"
-  #   Then I should see "MyType<double> f()"
+  @known-failure
+  Scenario: >> still works
+    When I'm inside C main
+    When I type "std::cin>>x;"
+    Then I should see "std::cin>>x;"
 
-  # Scenario: Template in function argument
-  #   When I type "void f(MyType<double> x)"
-  #   Then I should see "void f(MyType<double> x)"
+  @known-failure
+  Scenario: Template in function rvalue
+    When I type "MyType<double> f()"
+    Then I should see "MyType<double> f()"
 
-  # Scenario: Nested template in function argument
-  #   When I type "void f(MyType<d<int>> x)"
-  #   Then I should see "void f(MyType<d<int>> x)"
+  @known-failure
+  Scenario: Template in function argument
+    When I type "void f(MyType<double> x)"
+    Then I should see "void f(MyType<double> x)"
 
+  @known-failure
+  Scenario: Nested template in function argument
+    When I type "void f(MyType<d<int>> x)"
+    Then I should see "void f(MyType<d<int>> x)"
 
-  Scenario: Automatic type references
-    When I type "auto&thing"
-    Then I should see "auto &thing"
+  @known-failure
+  Scenario: Template type definition
+    When I'm inside C main
+    When I type "MyType<double> x"
+    Then I should see "MyType<double> x"
+
+  @known-failure
+  Scenario: Nested template type definition
+    When I'm inside C main
+    When I type "MyType<Template<double>> x"
+    Then I should see "MyType<Template<double>> x"
 
 
   # Colon operator
@@ -101,15 +122,6 @@ Feature: C++ specific operators
     When I type "operator="
     Then I should see "operator="
 
-
-  # TODO
-
-  # Scenario: Template type definition
-  #   When I'm inside C main
-  #   When I type "MyType<double> x"
-  #   Then I should see "MyType<double> x"
-
-  # Similarly for nested templates
 
   # Lambdas
   Scenario: ref inside operator[] still unspaced
