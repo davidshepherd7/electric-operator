@@ -28,3 +28,20 @@ Feature: Javascript specific operators
   Scenario: Correctly space #! paths
     When I type "#! /usr/bin/node"
     Then I should see "#! /usr/bin/node"
+
+  # Had some problems with this because probably-unary-operator was wrong in
+  # some cases, so a " / " was inserted by the first /, combined with the fact
+  # that regexes are strings this goes wrong.
+  Scenario: // comments
+    When I type "//a comment"
+    Then I should see "// a comment"
+
+  Scenario: // comments in unary-operator context
+    When I type "function() {//a comment"
+    Then I should see "// a comment"
+
+  Scenario: // comments inside IIFEs
+    When I type "function() {"
+    When I press "<return>"
+    When I type "//a comment"
+    Then I should see "// a comment"

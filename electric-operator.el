@@ -289,9 +289,9 @@ if not inside any parens."
 
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
-   (looking-back-locally "^")
-   (looking-back-locally "[=,:\*\+-/><&^]")
-   (looking-back-locally "\\(return\\)")))
+   (looking-back-locally "^\\s-*")
+   (looking-back-locally "[=,:\*\+-/><&^{]\\s-*")
+   (looking-back-locally "\\(return\\)\\s-*")))
 
 (defun just-inside-bracket ()
   (looking-back-locally "[([{]"))
@@ -665,6 +665,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons ":" #'js-mode-:)
                     (cons "?" " ? ")
                     (cons "/" #'js-mode-/)
+                    (cons "//" "// ")
                     )
 
 
