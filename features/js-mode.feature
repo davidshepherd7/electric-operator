@@ -45,3 +45,7 @@ Feature: Javascript specific operators
     When I press "<return>"
     When I type "//a comment"
     Then I should see "// a comment"
+
+  Scenario: /* comments
+    When I type "/*a comment */"
+    Then I should see "/* a comment */"

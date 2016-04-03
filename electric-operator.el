@@ -666,6 +666,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons "?" " ? ")
                     (cons "/" #'js-mode-/)
                     (cons "//" "// ")
+                    (cons "/*" "/* ")
                     )
 
 
