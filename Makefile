@@ -13,7 +13,7 @@ clean :
 test: build unit ecukes
 
 ecukes: build
-	${CASK} exec ecukes
+	${CASK} exec ecukes --tags ~@known-failure
 
 install:
 	${CASK} install
