@@ -11,6 +11,7 @@
 (development
  (depends-on "ecukes")
  (depends-on "espuds")
+ (depends-on "undercover")
 
  ;; For testing, not available on melpa stable so pull from github directly
  (depends-on "rust-mode" :git "https://github.com/rust-lang/rust-mode.git")
