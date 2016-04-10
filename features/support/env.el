@@ -1,4 +1,3 @@
-(require 'undercover)
 (require 'f)
 
 (defvar electric-operator-support-path
@@ -11,8 +10,6 @@
   (f-parent electric-operator-features-path))
 
 (add-to-list 'load-path electric-operator-root-path)
-
-(undercover "*.el")
 
 (require 'electric-operator)
 (require 'espuds)
