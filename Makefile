@@ -10,12 +10,10 @@ build :
 clean :
 	@rm -f *.elc
 
-test: build unit ecukes
-
-ecukes: build
-	${CASK} exec ecukes --tags ~@known-failure
+test: build
+	./test.sh
 
 install:
 	${CASK} install
 
-.PHONY:	all test unit ecukes install clean build
+.PHONY:	all test install clean build
