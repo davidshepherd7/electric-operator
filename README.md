@@ -153,3 +153,28 @@ to be too heavy to add to electric-spacing.
 * Added support for emacs25.
 * Added support for Javascript Coffeescript, Rust, PHP.
 * Improved support for R, C++, C.
+
+
+## Edge cases
+
+This section lists places where electric-operator may fail, but I don't think
+it's a big deal *and* it would be difficult to add support. Open an issue if you
+really want one of these to work.
+
+### Complex default arguments in python lambdas
+
+In python lambda functions can have default arguments with almost arbitrary
+initialisation code. If this code contains a `:`, i.e. a dict initialisation or
+a list slice, then electric-operator may get confused. This shouldn't be an
+issue in practice because:
+
+1. The
+  [mutable default argument](http://stackoverflow.com/questions/1132941/least-astonishment-in-python-the-mutable-default-argument)
+  problem means you probably shouldn't use dicts or lists as default arguments.
+
+2. If you need default arguments then the function is probably complex enough to
+   deserve a name.
+
+It's difficult to solve because we would need to step over matching `{}` and
+`[]` while searching for a `lambda` to match the current `:`. I think this
+impossible with regexs so I would have to find something more powerful.
