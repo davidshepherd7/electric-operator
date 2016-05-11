@@ -667,6 +667,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons "/" #'js-mode-/)
                     (cons "//" "// ")
                     (cons "/*" "/* ")
+                    (cons "=>" " => ") ; ES6 arrow functions
                     )
 
 
