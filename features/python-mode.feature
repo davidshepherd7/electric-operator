@@ -60,6 +60,7 @@ Feature: Python mode basics
     When I type "{a:1}"
     Then I should see "{a: 1}"
 
+  # Lambda functions
   Scenario: Space after lambda arguments
     When I type "lambda x:x"
     Then I should see "lambda x: x"
@@ -68,10 +69,23 @@ Feature: Python mode basics
     When I type "{a:lambda x:x, b:2}"
     Then I should see "{a: lambda x: x, b: 2}"
 
+  Scenario: Lambda containing dict
+    When I type "lambda x:{a:x, b:2}"
+    Then I should see "lambda x: {a: x, b: 2}"
+
+  Scenario: Lambda containing slice
+    When I type "lambda x:x[1:2]"
+    Then I should see "lambda x: x[1:2]"
+
   @known-failure
   Scenario: Lambda with default argument containing dict
     When I type "lambda x={a:1}:print x"
     Then I should see "lambda x={a: 1}: print x"
+
+  @known-failure
+  Scenario: Lambda with default argument containing slice
+    When I type "lambda x=y[1:5]:print x"
+    Then I should see "lambda x=y[1:5]: print x"
 
 
   # Member access
