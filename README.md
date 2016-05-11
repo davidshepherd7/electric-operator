@@ -1,6 +1,6 @@
 # Electric operator mode
 
-[![travis](https://travis-ci.org/davidshepherd7/electric-operator.svg?branch=master)](https://travis-ci.org/davidshepherd7/electric-operator) [![Coverage Status](https://coveralls.io/repos/github/davidshepherd7/electric-operator/badge.svg?branch=master)](https://coveralls.io/github/davidshepherd7/electric-operator?branch=master) [![melpa](http://melpa.org/packages/electric-operator-badge.svg)](http://melpa.org/#/electric-operator) [![GPLv3](http://img.shields.io/badge/license-GNU%20GPLv3-blue.svg)](https://github.com/davidshepherd7/electric-operator/blob/master/LICENSE)
+[![travis](https://travis-ci.org/davidshepherd7/electric-operator.svg?branch=master)](https://travis-ci.org/davidshepherd7/electric-operator) [![melpa](http://melpa.org/packages/electric-operator-badge.svg)](http://melpa.org/#/electric-operator) [![GPLv3](http://img.shields.io/badge/license-GNU%20GPLv3-blue.svg)](https://github.com/davidshepherd7/electric-operator/blob/master/LICENSE)
 
 An emacs minor-mode to automatically add spacing around operators.
 
