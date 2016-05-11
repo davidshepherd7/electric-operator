@@ -629,9 +629,10 @@ Using `cc-mode''s syntactic analysis."
         (t " ** ")))
 
 (defun python-mode-kwargs-= ()
-  (if (eq (enclosing-paren) ?\()
-      "="
-    " = "))
+  (cond
+   ((python-mode-in-lambda-args?) "=")
+   ((eq (enclosing-paren) ?\() "=")
+   (t " = ")))
 
 (defun python-mode-negative-slices ()
   "Handle cases like a[1:-1], see issue #2."

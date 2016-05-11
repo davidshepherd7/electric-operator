@@ -89,6 +89,10 @@ Feature: Python mode basics
     When I type "f(a=b)"
     Then I should see "f(a=b)"
 
+  Scenario: Don't space default args in lambda
+    When I type "lambda x=1: print x"
+    Then I should see "lambda x=1: print x"
+
 
   # Slice operator
   Scenario: Don't space : inside slices
