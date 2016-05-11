@@ -602,11 +602,16 @@ Using `cc-mode''s syntactic analysis."
                     (cons "-" #'python-mode-negative-slices)
                     )
 
+(defun python-mode-in-lambda-args? ()
+  "Are we inside the arguments statement of a lambda?"
+  (looking-back-locally "lambda[^:]*"))
+
 (defun python-mode-: ()
   "Handle python dict assignment"
-  (if (eq (enclosing-paren) ?\{)
-      ": "
-    ":"))
+  (cond
+   ((python-mode-in-lambda-args?) ": ")
+   ((eq (enclosing-paren) ?\{) ": ")
+   (t ":")))
 
 (defun python-mode-* ()
   "Handle python *args"

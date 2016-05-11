@@ -60,6 +60,19 @@ Feature: Python mode basics
     When I type "{a:1}"
     Then I should see "{a: 1}"
 
+  Scenario: Space after lambda arguments
+    When I type "lambda x:x"
+    Then I should see "lambda x: x"
+
+  Scenario: Space after lambda arguments inside dict
+    When I type "{a:lambda x:x, b:2}"
+    Then I should see "{a: lambda x: x, b: 2}"
+
+  @known-failure
+  Scenario: Lambda with default argument containing dict
+    When I type "lambda x={a:1}:print x"
+    Then I should see "lambda x={a: 1}: print x"
+
 
   # Member access
   Scenario: Don't space accessing class members
