@@ -59,7 +59,7 @@ automatically add spacing around `->` and `=>` in python mode you would use
       (cons "->" " -> ")
       (cons "=>" " => "))
 
-Rules can be disable in a similar way by setting the second element of the
+Rules can be disabled in a similar way by setting the second element of the
 rule to nil. For example if you find that the `*` operator in C is not
 working reliably enough for pointer types you would use
 
