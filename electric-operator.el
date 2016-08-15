@@ -822,6 +822,10 @@ Using `cc-mode''s syntactic analysis."
                     (cons "--" #'c-mode---)
                     (cons "." " . ")   ; string concat
                     (cons ".=" " .= ")
+                    (cons "->" "->")
+                    (cons "//" "// ")
+                    (cons "=>" " => ")
+                    (cons "<?" "<?")
                     )
 
 
