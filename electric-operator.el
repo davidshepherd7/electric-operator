@@ -846,7 +846,9 @@ Using `cc-mode''s syntactic analysis."
 (apply #'add-rules-for-mode 'sql-mode prog-mode-rules)
 (add-rules-for-mode 'sql-mode
                     (cons "-" nil)
-                    (cons "=" nil))
+                    (cons "=" nil)
+                    (cons "%" nil)
+                    (cons "*" nil))
 
 ;; Don't use either prog or text mode defaults, css is too different
 (add-rules-for-mode 'css-mode
