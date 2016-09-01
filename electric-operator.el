@@ -798,6 +798,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons "$" " $ ") ; delay evaluation
                     (cons "<-" " <- ") ; assignment
                     (cons "->" " -> ") ; lambdas and function types
+                    (cons "=>" " => ") ; typeclasses
                     (cons ":" nil) ; list constructor
                     (cons "::" " :: ") ; type specification
                     (cons "!=" nil) ; unused
