@@ -792,6 +792,7 @@ Using `cc-mode''s syntactic analysis."
 (apply #'add-rules-for-mode 'haskell-mode prog-mode-rules)
 (add-rules-for-mode 'haskell-mode
                     (cons "." " . ") ; function composition
+                    (cons ".." "..") ; list range e.g. [1..10]
                     (cons "++" " ++ ") ; list concat
                     (cons "!!" " !! ") ; indexing
                     (cons "--" "-- ") ; comment
