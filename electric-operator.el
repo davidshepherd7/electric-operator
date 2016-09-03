@@ -791,8 +791,6 @@ Using `cc-mode''s syntactic analysis."
 ;; Again: based on a syntax guide and not really tested
 (apply #'add-rules-for-mode 'haskell-mode prog-mode-rules)
 (add-rules-for-mode 'haskell-mode
-                    (cons "." " . ") ; function composition
-                    (cons ".." "..") ; list range e.g. [1..10]
                     (cons "++" " ++ ") ; list concat
                     (cons "!!" " !! ") ; indexing
                     (cons "--" "-- ") ; comment
@@ -822,6 +820,10 @@ Using `cc-mode''s syntactic analysis."
                     (cons "^" " ^ ")
                     (cons "**" " ** ")
                     (cons "^^" " ^^ ")
+
+                    ;; Either function composition or function qualification,
+                    ;; can't tell so disable it
+                    (cons "." nil)
                     )
 
 (apply #'add-rules-for-mode 'php-mode prog-mode-rules)
