@@ -805,6 +805,17 @@ Using `cc-mode''s syntactic analysis."
                     (cons "!=" nil) ; unused
                     (cons ".|." " .|. ") ; bitwise OR
                     (cons ".&." " .&. ") ; bitwise AND
+                    (cons "~" " ~") ; lazy pattern match
+
+                    ;; Monads or something like that
+                    (cons ">>" " >> ")
+                    (cons ">>=" " >>= ")
+                    (cons "<$>" " <$> ")
+                    (cons "<*>" " <*> ")
+
+                    ;; Comments?
+                    (cons "{-" "{- ")
+                    (cons "-}" " -}")
 
                     ;; Exponents, for some reason there are three of
                     ;; them!
