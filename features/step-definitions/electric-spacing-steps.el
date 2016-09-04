@@ -33,3 +33,10 @@
         (insert "}\n")
         (When "I go to line \"2\"")
         ))
+
+;; TODO: when ecukes merges this use the ecukes version instead
+(When "^I turn off minor mode \\(.+\\)$"
+      "Turns off some minor mode (to turn off a major mode you have to turn on another one)."
+      (lambda (mode)
+        (let ((v (vconcat [?\C-u ?- ?\M-x] (string-to-vector mode))))
+          (execute-kbd-macro v))))
