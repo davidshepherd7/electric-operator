@@ -19,6 +19,7 @@
  ;; Before anything has run
  (load "rust-mode-autoloads")
  (load "ess-autoloads")
+ (load "js2-mode-autoloads")
  )
 
 (Before

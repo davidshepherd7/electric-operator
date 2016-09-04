@@ -676,6 +676,8 @@ Using `cc-mode''s syntactic analysis."
                     (cons "=>" " => ") ; ES6 arrow functions
                     )
 
+(apply #'add-rules-for-mode 'js2-mode (get-rules-for-mode 'js-mode))
+
 
 
 ;;; Rust mode tweaks

@@ -17,4 +17,5 @@
 
  ;; For testing
  (depends-on "ess")
+ (depends-on "js2-mode")
  )
