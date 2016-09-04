@@ -732,10 +732,14 @@ Using `cc-mode''s syntactic analysis."
                     (cons "=" #'ess-mode-keyword-args-=)
                     )
 
+(defun ess-comma-post-self-insert-function ()
+  (when mode
+    (post-self-insert-function)))
+
 ;; ess-mode binds comma to a function, so we need to advise that function
 ;; to also run our code:
 (with-eval-after-load 'ess-mode
-  (advice-add 'ess-smart-comma :after #'post-self-insert-function))
+  (advice-add 'ess-smart-comma :after #'ess-comma-post-self-insert-function))
 
 
 

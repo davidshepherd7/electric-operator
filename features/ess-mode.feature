@@ -18,6 +18,12 @@ Feature: R specific operators
     When I type "f(x,y)"
     Then I should see "f(x, y)"
 
+  Scenario: Interaction with ess-smart-command when disabled and mode disabled
+    When I turn off minor mode electric-operator-mode
+    When I set ess-smart-operators to nil
+    When I type "f(x,y)"
+    Then I should see "f(x,y)"
+
   Scenario: Spaced equals for keyword args
     When I set electric-operator-R-named-argument-style to spaced
     When I type "somefunc(a=1, b=2)"
