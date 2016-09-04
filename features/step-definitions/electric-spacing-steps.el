@@ -40,3 +40,7 @@
       (lambda (mode)
         (let ((v (vconcat [?\C-u ?- ?\M-x] (string-to-vector mode))))
           (execute-kbd-macro v))))
+
+(When "^I let js2-mode reparse$"
+      (lambda ()
+        (js2-reparse)))
