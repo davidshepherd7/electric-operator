@@ -147,6 +147,13 @@ to be too heavy to add to electric-spacing.
 
 ## Changelog
 
+### Unstable
+
+* Improve SQL support
+* Add basic Haskell support (no partially-evaluated operators)
+* Add js2-mode support
+* Fix running hook for `,` in ess-mode even when electric-operator is disabled
+
 ### Version 0.3
 
 * Feature: now fixes existing whitespace after operators as well as before them
