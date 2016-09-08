@@ -147,6 +147,17 @@ to be too heavy to add to electric-spacing.
 
 ## Changelog
 
+### Version 0.3
+
+* Feature: now fixes existing whitespace after operators as well as before them
+* Improve python lambdas
+* Add option for R to control default argument spacing
+* Improve Javascript comment handling
+* Improve Javascript regex handling
+* Support Javascript S6 arrow functions
+* Support some additional PHP operators
+* Add support for CSS
+
 ### Version 0.2
 
 * Disabled `<` and `>` in C++ and Java modes by default.
