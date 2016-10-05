@@ -231,7 +231,7 @@ Whitespace before the operator is captured for possible use later.
         (when spaced-string
 
           ;; Record the fact we are inserting something for passing fixup functions
-          (set 'operator-just-inserted t)
+          (setq operator-just-inserted t)
 
           ;; Delete the characters matching this rule before point
           (delete-region op-match-beginning op-match-end)
