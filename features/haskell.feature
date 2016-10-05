@@ -94,8 +94,12 @@ Feature: Haskell mode
     Then I should see "a = -1"
 
   Scenario: Prefix -
-    When I type "(- 1 2)"
+    When I type "(-1 2)"
     Then I should see "(- 1 2)"
+
+  Scenario: Infix in brackets
+    When I type "(1-2)"
+    Then I should see "(1 - 2)"
 
 
   # Infix / doesn't break other things
@@ -108,5 +112,9 @@ Feature: Haskell mode
     Then I should see "a / b"
 
   Scenario: Prefix /
-    When I type "(/ 1 2)"
+    When I type "(/1 2)"
     Then I should see "(/ 1 2)"
+
+  Scenario: Infix in brackets
+    When I type "(1/2)"
+    Then I should see "(1 / 2)"
