@@ -1,3 +1,7 @@
+
+;; Don't load old byte-compiled versions!
+(setq load-prefer-newer t)
+
 (require 'f)
 
 (defvar electric-operator-support-path
