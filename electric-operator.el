@@ -192,7 +192,7 @@ Whitespace before the operator is captured for possible use later.
 "
   (concat "\\(\s*\\)"
           (mapconcat #'regexp-quote (split-string op "" t) "\s*")
-          "\s*"))
+          "\\(\s*\\)"))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
@@ -210,13 +210,14 @@ Whitespace before the operator is captured for possible use later.
 (defun post-self-insert-function ()
   "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
-          ((operator . action) rule))
+          ((operator . action) rule)
+          (operator-just-inserted nil))
     (when (and rule action)
 
       ;; Find point where operator starts
       (looking-back-locally (rule-regex-with-whitespace operator) t)
 
-      ;; Capture operator include leading and trailing whitespace
+      ;; Capture operator include all leading and *trailing* whitespace
       (save-excursion
         (goto-char (match-beginning 0))
         (looking-at (rule-regex-with-whitespace operator)))
@@ -229,6 +230,9 @@ Whitespace before the operator is captured for possible use later.
         ;; If action was a function which eval-d to nil then we do nothing.
         (when spaced-string
 
+          ;; Record the fact we are inserting something for passing fixup functions
+          (setq operator-just-inserted t)
+
           ;; Delete the characters matching this rule before point
           (delete-region op-match-beginning op-match-end)
 
@@ -238,7 +242,10 @@ Whitespace before the operator is captured for possible use later.
             (insert pre-whitespace))
 
           ;; Insert correctly spaced operator
-          (insert spaced-string))))))
+          (insert spaced-string))))
+
+    (when (derived-mode-p 'haskell-mode)
+      (haskell-mode-fixup-partial-operator-parens operator-just-inserted))))
 
 :autoload
 (define-minor-mode mode
@@ -794,43 +801,100 @@ Using `cc-mode''s syntactic analysis."
                     (cons ">" nil)
                     )
 
-;; Again: based on a syntax guide and not really tested
+
+
+;; Haskell mode
+
+(defconst haskell-mode-infix-binary-operators
+  (list "=" "<" ">" "%" "+" "*" "&" "|" "==" "<=" ">=" "&&" "||"
+
+        "++" ; list concat
+        "!!"  ; indexing
+        ".|." ; bitwise OR
+        ".&." ; bitwise AND
+        "$" ; delay evaluation
+
+        ;; Monads or something like that
+        ">>" ">>=" "<$>" "<*>"
+
+        ;; Exponents, for some reason there are three of
+        ;; them!
+        "^" "**" "^^"
+        ))
+
+(defconst haskell-mode-special-infix-binary-operators
+  (list "/" "-"))
+
+(defun haskell-mode-infix-action (op)
+  (lambda ()
+    (let ((after-paren (looking-back-locally "(\\s-*"))
+          (before-paren (looking-at (concat (rule-regex-with-whitespace op) ")"))))
+      (cond
+       ;; only thing in the parens: no spaces
+       ((and after-paren before-paren) op)
+
+       (before-paren (concat " " op))
+       (after-paren (concat op " "))
+       (t (concat " " op " "))))))
+
+(defun haskell-mode-fixup-partial-operator-parens (operator-just-inserted)
+  (when (not operator-just-inserted)
+    (-each (-concat haskell-mode-infix-binary-operators haskell-mode-special-infix-binary-operators)
+      (lambda (op)
+        ;; If another character was typed between an operator and `)', make sure
+        ;; these's a single space there.
+        (when (and (looking-at "\\s-*)")
+                   (looking-back-locally (concat (rule-regex-with-whitespace op) "[^\\s-]")))
+          (save-excursion (replace-match " " nil nil nil 2)))
+
+        ;; When inserting a ) delete any whitespace between it and the operator
+        (when (looking-back-locally (concat "\\s-" op ")"))
+          (save-excursion (replace-match ")" nil nil nil 0)))))))
+
+(defun haskell-mode-/ ()
+  (let ((base (funcall (haskell-mode-infix-action "/"))))
+    (if (equal base " / ")
+        (prog-mode-/)
+      base)))
+
+(defun haskell-mode-- ()
+  (let ((base (funcall (haskell-mode-infix-action "-"))))
+    (if (equal base " - ")
+        (prog-mode--)
+      base)))
+
 (apply #'add-rules-for-mode 'haskell-mode prog-mode-rules)
+
+;; Make rules for partially evaluated binary operators inside parens
+(apply #'add-rules-for-mode 'haskell-mode
+       (-map (lambda (op) (cons op (haskell-mode-infix-action op)))
+             haskell-mode-infix-binary-operators))
+
 (add-rules-for-mode 'haskell-mode
-                    (cons "++" " ++ ") ; list concat
-                    (cons "!!" " !! ") ; indexing
+
+                    ;; More complex infix operators
+                    (cons "-" #'haskell-mode--)
+                    (cons "/" #'haskell-mode-/)
+                    (cons ":" nil)  ; list constructor: no spaces needed in either
+
                     (cons "--" "-- ") ; comment
-                    (cons "$" " $ ") ; delay evaluation
                     (cons "<-" " <- ") ; assignment
                     (cons "->" " -> ") ; lambdas and function types
                     (cons "=>" " => ") ; typeclasses
-                    (cons ":" nil) ; list constructor
                     (cons "::" " :: ") ; type specification
                     (cons "!=" nil) ; unused
-                    (cons ".|." " .|. ") ; bitwise OR
-                    (cons ".&." " .&. ") ; bitwise AND
                     (cons "~" " ~") ; lazy pattern match
-
-                    ;; Monads or something like that
-                    (cons ">>" " >> ")
-                    (cons ">>=" " >>= ")
-                    (cons "<$>" " <$> ")
-                    (cons "<*>" " <*> ")
 
                     ;; Comments?
                     (cons "{-" "{- ")
                     (cons "-}" " -}")
 
-                    ;; Exponents, for some reason there are three of
-                    ;; them!
-                    (cons "^" " ^ ")
-                    (cons "**" " ** ")
-                    (cons "^^" " ^^ ")
-
                     ;; Either function composition or function qualification,
                     ;; can't tell so disable it
                     (cons "." nil)
                     )
+
+
 
 (apply #'add-rules-for-mode 'php-mode prog-mode-rules)
 (add-rules-for-mode 'php-mode

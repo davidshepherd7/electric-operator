@@ -1,3 +1,7 @@
+
+;; Don't load old byte-compiled versions!
+(setq load-prefer-newer t)
+
 (require 'f)
 
 (defvar electric-operator-support-path
@@ -20,6 +24,7 @@
  (load "rust-mode-autoloads")
  (load "ess-autoloads")
  (load "js2-mode-autoloads")
+ (load "haskell-mode-autoloads")
  )
 
 (Before
