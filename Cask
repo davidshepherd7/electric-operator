@@ -1,4 +1,4 @@
-(package "electric-operator" "0.1" "Automatically add spaces around operators")
+(package "electric-operator" "1.0.0" "Automatically add spaces around operators")
 
 (files "electric-operator.el")
 
