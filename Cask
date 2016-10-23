@@ -1,4 +1,4 @@
-(package "electric-operator" "0.1" "Automatically add spaces around operators")
+(package "electric-operator" "1.0.0" "Automatically add spaces around operators")
 
 (files "electric-operator.el")
 
@@ -18,4 +18,5 @@
  ;; For testing
  (depends-on "ess")
  (depends-on "js2-mode" :git "https://github.com/mooz/js2-mode" :ref "c0801b25d6ada38cc93e7a6d33d5de0d1ad5bc1a")
+ (depends-on "haskell-mode")
  )
