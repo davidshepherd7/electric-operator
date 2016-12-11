@@ -688,6 +688,9 @@ Using `cc-mode''s syntactic analysis."
 
 (apply #'add-rules-for-mode 'js2-mode (get-rules-for-mode 'js-mode))
 
+(apply #'add-rules-for-mode 'typescript-mode (get-rules-for-mode 'js-mode))
+(add-rules-for-mode 'typescript-mode (cons ":" nil))
+
 
 
 ;;; Rust mode tweaks
