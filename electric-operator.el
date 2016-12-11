@@ -429,6 +429,9 @@ Any better ideas would be welcomed."
      (-map (lambda (p) (cons (concat "operator" (car p)) nil)) it)
      (apply #'add-rules-for-mode 'c++-mode it))
 
+;; Use the c rules for arduino mode
+(apply #'add-rules-for-mode 'arduino-mode (get-rules-for-mode 'c-mode))
+
 
 (defvar c-user-types-regex
   "_t"
