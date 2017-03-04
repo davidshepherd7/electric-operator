@@ -122,6 +122,32 @@ I know), please open an issue to let me know if you use them.
 * Perl
 * Ruby
 
+## Electric newlines
+
+Curretly I don't really support adding new lines after operators because emacs
+core has support for this in `electric-layout-mode`. But since it's a closely
+related concept here's my not-quite-trivial configuration for electric
+in python which works well with `electric-operator-mode`:
+
+    (defun ds/python-electric-newline ()
+      (let ((paren (ds/enclosing-paren)))
+        (if (not (or (eq paren ?\{)
+                     (eq paren ?\[)
+                     (eq paren ?\()
+                     (looking-back "\\blambda\\b.*")))
+            'after
+        nil)))
+
+    (defun ds/setup-python-electric-layout ()
+      (make-local-variable 'electric-layout-rules)
+      (add-to-list 'electric-layout-rules (cons ?: #'ds/python-electric-newline)))
+
+    (electric-layout-mode 1)
+    (add-hook 'python-mode-hook #'ds/setup-python-electric-layout)
+
+
+
+
 ## Contributing
 
 I'm using [Cask](https://github.com/cask/cask.el) to manage dependencies, so to
