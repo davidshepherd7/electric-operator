@@ -116,3 +116,10 @@ Feature: Python mode basics
   Scenario: Don't space negative slices
     When I type "a[-1:-2]"
     Then I should see "a[-1:-2]"
+
+
+  # Types
+  Scenario: Types in function declarations
+    When I type "def foo(x:int)->str:"
+    Then I should see "def foo(x: int) -> str:"
+    Then I should not see "str: "

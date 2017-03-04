@@ -610,6 +610,7 @@ Using `cc-mode''s syntactic analysis."
                     (cons "//" " // ") ; integer division
                     (cons "=" #'python-mode-kwargs-=)
                     (cons "-" #'python-mode-negative-slices)
+                    (cons "->" " -> ") ; function return types
                     )
 
 (defun python-mode-in-lambda-args? ()
@@ -621,6 +622,7 @@ Using `cc-mode''s syntactic analysis."
   (cond
    ((python-mode-in-lambda-args?) ": ")
    ((eq (enclosing-paren) ?\{) ": ")
+   ((and (eq (enclosing-paren) ?\() (looking-back-locally "def .*")) ": ") ; type definitions
    (t ":")))
 
 (defun python-mode-* ()
