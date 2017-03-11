@@ -627,18 +627,22 @@ Using `cc-mode''s syntactic analysis."
 
 (defun python-mode-* ()
   "Handle python *args"
-  ;; Can only occur after '(' ',' or on a new line, so just check for those.
-  ;; If it's just after a comma then also insert a space before the *.
-  (cond ((looking-back-locally ",")  " *")
-        ((looking-back-locally "[(,][ \t]*")  "*")
-        ;; Othewise act as normal
-        (t  " * ")))
+  (cond
+   ;; After a ',' we need a space before
+   ((looking-back-locally ",")  " *")
+   ;; After a '(' or a newline we don't
+   ((looking-back-locally "\\((\\|^\\)")  "*")
+   ;; Othewise act as normal
+   (t  " * ")))
 
 (defun python-mode-** ()
   "Handle python **kwargs"
-  (cond ((looking-back-locally ",") " **")
-        ((looking-back-locally "[(,][ \t]*") "**")
-        (t " ** ")))
+  (cond
+   ;; After a ',' we need a space before
+   ((looking-back-locally ",")  " **")
+   ;; After a '(' or a newline we don't
+   ((looking-back-locally "\\((\\|^\\)")  "**")
+   (t " ** ")))
 
 (defun python-mode-kwargs-= ()
   (cond

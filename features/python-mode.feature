@@ -39,6 +39,19 @@ Feature: Python mode basics
     When I type "f(a,*args)"
     Then I should see "f(a, *args)"
 
+  Scenario: Space *args with a newline before it
+    When I insert:
+    """
+    f(a,
+
+    """
+    When I type "*args)"
+    Then I should see:
+    """
+    f(a,
+    *args)
+    """
+
   # And **kwargs
   Scenario: Space **kwargs on its own
     When I type "f(**kwargs)"
@@ -48,7 +61,18 @@ Feature: Python mode basics
     When I type "f(a,**kwargs)"
     Then I should see "f(a, **kwargs)"
 
-  # TODO: figure out how to check cases where there is a newline, e.g. f(a,b,\n*args)
+  Scenario: Space **kwargs with a newline before it
+    When I insert:
+    """
+    f(a,
+
+    """
+    When I type "**kwargs)"
+    Then I should see:
+    """
+    f(a,
+    **kwargs)
+    """
 
 
   # python dictionaries
