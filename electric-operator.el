@@ -623,7 +623,12 @@ Using `cc-mode''s syntactic analysis."
    ((python-mode-in-lambda-args?) ": ")
    ((eq (enclosing-paren) ?\{) ": ")
    ((and (eq (enclosing-paren) ?\() (looking-back-locally "def .*")) ": ") ; type definitions
-   (t ":")))
+
+   ;; Probably a variable type definition or an end of a keyword line, leave it
+   ;; alone for now (possible TODO: variable type definitions properly by
+   ;; checking if this line matches any keywords, and if not treating it as a
+   ;; type definition).
+   (t nil)))
 
 (defun python-mode-* ()
   "Handle python *args"

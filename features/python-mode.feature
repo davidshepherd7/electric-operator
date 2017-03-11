@@ -82,13 +82,29 @@ Feature: Python mode basics
     When I type "if x:"
     Then I should see "if x:"
 
+  Scenario: Leave any existing space after : in ifs
+    When I type "if x: "
+    Then I should see "if x: "
+
   Scenario: Don't space : in else
     When I type "else:"
     Then I should see "else:"
 
+  Scenario: Don't space : in elif
+    When I type "elif y:"
+    Then I should see "elif y:"
+
   Scenario: Don't space : in for
     When I type "for x in y:"
     Then I should see "for x in y:"
+
+  Scenario: Don't space : in while
+    When I type "while x:"
+    Then I should see "while x:"
+
+  Scenario: Don't space : in with
+    When I type "with X as Y:"
+    Then I should see "with X as Y:"
 
 
   # python dictionaries
@@ -140,6 +156,15 @@ Feature: Python mode basics
     When I type "def foo(x:int)->str:"
     Then I should see "def foo(x: int) -> str:"
     Then I should not see "str: "
+
+  @known-failure
+  Scenario: Types in variable declarations --auto insert space
+    When I type "self._first_name:str = first_name"
+    Then I should see "self._first_name: str = first_name"
+
+  Scenario: Types in variable declarations -- space is not removed
+    When I type "self._first_name: str = first_name"
+    Then I should see "self._first_name: str = first_name"
 
 
   ## Member access
