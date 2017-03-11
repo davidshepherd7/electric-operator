@@ -5,7 +5,7 @@ Feature: Python mode basics
     When I turn on electric-operator-mode
 
 
-  # *args and **kwargs
+  ## * and ** operators
   Scenario: Space *
     When I type "a*b"
     Then I should see "a * b"
@@ -75,14 +75,27 @@ Feature: Python mode basics
     """
 
 
-  # python dictionaries
-  Scenario: Don't space : in most cases
-    When I type "if:"
-    Then I should see "if:"
+  ## Colons
 
+  # keywords
+  Scenario: Don't space : in ifs
+    When I type "if x:"
+    Then I should see "if x:"
+
+  Scenario: Don't space : in else
+    When I type "else:"
+    Then I should see "else:"
+
+  Scenario: Don't space : in for
+    When I type "for x in y:"
+    Then I should see "for x in y:"
+
+
+  # python dictionaries
   Scenario: Space after : in dict
     When I type "{a:1}"
     Then I should see "{a: 1}"
+
 
   # Lambda functions
   Scenario: Space after lambda arguments
@@ -112,26 +125,6 @@ Feature: Python mode basics
     Then I should see "lambda x=y[1:5]: print x"
 
 
-  # Member access
-  Scenario: Don't space accessing class members
-    When I type "my_class.a"
-    Then I should see "my_class.a"
-
-
-  # Keyword argument =
-  Scenario: Space standard assignment as normal
-    When I type "a=b"
-    Then I should see "a = b"
-
-  Scenario: Don't space assignment inside function call
-    When I type "f(a=b)"
-    Then I should see "f(a=b)"
-
-  Scenario: Don't space default args in lambda
-    When I type "lambda x=1: print x"
-    Then I should see "lambda x=1: print x"
-
-
   # Slice operator
   Scenario: Don't space : inside slices
     When I type "a[1:2]"
@@ -147,3 +140,23 @@ Feature: Python mode basics
     When I type "def foo(x:int)->str:"
     Then I should see "def foo(x: int) -> str:"
     Then I should not see "str: "
+
+
+  ## Member access
+  Scenario: Don't space accessing class members
+    When I type "my_class.a"
+    Then I should see "my_class.a"
+
+
+  ## Keyword argument =
+  Scenario: Space standard assignment as normal
+    When I type "a=b"
+    Then I should see "a = b"
+
+  Scenario: Don't space assignment inside function call
+    When I type "f(a=b)"
+    Then I should see "f(a=b)"
+
+  Scenario: Don't space default args in lambda
+    When I type "lambda x=1: print x"
+    Then I should see "lambda x=1: print x"
