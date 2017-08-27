@@ -126,7 +126,7 @@ I know), please open an issue to let me know if you use them.
 
 Curretly I don't really support adding new lines after operators because emacs
 core has support for this in `electric-layout-mode`. But since it's a closely
-related concept here's my not-quite-trivial configuration for electric
+related concept here's my not-quite-trivial configuration for electric newlines
 in python which works well with `electric-operator-mode`:
 
     (defun ds/python-electric-newline ()
