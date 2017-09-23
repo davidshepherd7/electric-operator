@@ -1,11 +1,14 @@
 language: emacs-lisp
-group: deprecated-2017Q2
+# group: deprecated-2017Q2
 
 
 
 script:
   - evm install $EVM_EMACS --use --skip
   - evm list
+  - python -c "import sys; print('\n'.join(sys.path))"
+  - echo $PATH
+  - cask exec sh -c 'echo $PATH'
   - emacs --version
   - cask exec emacs --version
   - cask install
