@@ -1,4 +1,7 @@
-language: minimal
+language: emacs-lisp
+group: deprecated-2017Q3
+
+
 
 script:
   - evm install $EVM_EMACS --use --skip
