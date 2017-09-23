@@ -8,7 +8,7 @@ script:
   - evm list
   - /usr/bin/env python --version
   - /usr/bin/env python -c "import sys; print('\n'.join(sys.path))"
-  - /usr/bin/env python -c "import os; print(os.envison[PATH])"
+  - /usr/bin/env python -c "import os; print(os.environ[PATH])"
   - echo $PATH
   - cask exec sh -c 'echo $PATH'
   - emacs --version
