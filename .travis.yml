@@ -6,6 +6,7 @@ group: deprecated-2017Q2
 script:
   - evm install $EVM_EMACS --use --skip
   - evm list
+  - export CASK_EMACS="$(evm bin "$EVM_EMACS")"
   - /usr/bin/env python --version
   - /usr/bin/env python -c "import sys; print('\n'.join(sys.path))"
   - /usr/bin/env python -c "import os; print(os.environ['PATH'])"
