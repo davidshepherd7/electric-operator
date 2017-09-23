@@ -2,6 +2,7 @@ language: emacs-lisp
 
 script:
   - evm install $EVM_EMACS --use --skip
+  - evm list
   - emacs --version
   - cask exec emacs --version
   - cask install
