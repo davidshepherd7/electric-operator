@@ -10,6 +10,7 @@ script:
   - cask exec sh -c 'echo $PATH'
   - emacs --version
   - cask exec emacs --version
+  - cask exec emacs --version
   - cask install
   - cask exec emacs --version
   - make test
