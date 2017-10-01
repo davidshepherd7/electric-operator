@@ -6,6 +6,7 @@ script:
   - evm install $EVM_EMACS --use --skip
   - evm list
   - echo $PATH
+  - echo $TRAVIS
   - cask exec sh -c 'echo $PATH'
   - emacs --version
   - cask exec emacs --version
