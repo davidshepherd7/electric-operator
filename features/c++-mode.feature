@@ -134,6 +134,11 @@ Feature: C++ specific operators
     When I type "[&ticket, &i]"
     Then I should see "[&ticket, &i]"
 
+  Scenario: value captures in lambda functions unspaced
+    When I'm inside C main
+    When I type "[=ticket, =i]"
+    Then I should see "[=ticket, =i]"
+
   Scenario: space -> in simple lambda return type
     When I'm inside C main
     When I type "[] ()->bool {"
@@ -143,5 +148,29 @@ Feature: C++ specific operators
     When I'm inside C main
     When I type "[] () mutable->bool {"
     Then I should see "[] () mutable -> bool {"
+
+  Scenario: default capture by value
+    When I'm inside C main
+    When I type "const auto x = [=]"
+    Then I should see "const auto x = [=]"
+
+  Scenario: default capture by reference
+    When I'm inside C main
+    When I type "const auto x = [&]"
+    Then I should see "const auto x = [&]"
+
+  Scenario: default capture by value with autopair
+    When I'm inside C main
+    When I type "const auto x = []"
+    When I place the cursor after "["
+    When I type "="
+    Then I should see "const auto x = [=]"
+
+  Scenario: default capture by reference with autopair
+    When I'm inside C main
+    When I type "const auto x = []"
+    When I place the cursor after "["
+    When I type "&"
+    Then I should see "const auto x = [&]"
 
   # I'm not even going to try to parse exception specifications...

@@ -422,6 +422,7 @@ Any better ideas would be welcomed."
 
                     ;; Lambdas
                     (cons "->" #'c++-mode-->)
+                    (cons "=" #'c++-mode-=)
 
                     ;; Templates are hard to deal with sensibly
                     (cons "<" nil)
@@ -563,7 +564,9 @@ Using `cc-mode''s syntactic analysis."
    (t " & ")))
 
 (defun c-mode-* ()
-  "Handle C dereference operator and pointer types"
+  "Handle C dereference operator and pointer types
+
+Also handles C++ lambda capture by reference."
   (cond
    ;; Pointer types
    ((or (c-after-type?) (c-is-function-or-class-definition?))
@@ -601,6 +604,13 @@ Using `cc-mode''s syntactic analysis."
   (if (c++-probably-lambda-arrow)
       " -> "
     "->"))
+
+(defun c++-mode-= ()
+  "Handle capture-by-value in lamdas"
+  (cond
+   ((probably-unary-operator?) " =")
+   ((just-inside-bracket) "=")
+   (t " = ")))
 
 
 
