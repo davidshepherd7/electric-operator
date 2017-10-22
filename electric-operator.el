@@ -230,8 +230,12 @@ Whitespace before the operator is captured for possible use later.
         ;; If action was a function which eval-d to nil then we do nothing.
         (when spaced-string
 
-          ;; Record the fact we are inserting something for passing fixup functions
+          ;; Record the fact we are inserting something for passing to fixup
+          ;; functions
           (setq operator-just-inserted t)
+
+          ;; Set an undo boundary for easy undo-ing of the automatic insertion
+          (undo-boundary)
 
           ;; Delete the characters matching this rule before point
           (delete-region op-match-beginning op-match-end)
