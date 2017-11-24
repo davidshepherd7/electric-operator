@@ -4,6 +4,7 @@ CASK ?= cask
 build :
 	cask exec $(EMACS) -Q --batch --eval             \
 	    "(progn                                \
+	      (pp (emacs-version)) \
 	      (setq byte-compile-error-on-warn t)  \
 	      (batch-byte-compile))" electric-operator.el
 
