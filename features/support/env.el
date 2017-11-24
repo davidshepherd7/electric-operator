@@ -25,6 +25,7 @@
  (load "ess-autoloads")
  (load "js2-mode-autoloads")
  (load "haskell-mode-autoloads")
+ (load "julia-mode-autoloads")
 
  ;; This fixes an issue in emacs 25.1 where the debugger would be invoked
  ;; incorrectly, breaking ert.

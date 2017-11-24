@@ -973,8 +973,20 @@ Also handles C++ lambda capture by reference."
 
 
 
+
+;;; Julia mode
+
+(defun julia-mode-kwargs-= ()
+  (cond
+   ((eq (enclosing-paren) ?\() "=")
+   (t " = ")))
+
 (apply #'add-rules-for-mode 'julia-mode prog-mode-rules)
 (add-rules-for-mode 'julia-mode
+
+                    (cons "=" #'julia-mode-kwargs-=)
+                    (cons ";" "; ")
+
                     ;; Cool! Unicode!
                     (cons "÷" " ÷ ")
                     (cons "≠" " ≠ ")
