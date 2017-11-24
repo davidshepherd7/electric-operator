@@ -973,6 +973,78 @@ Also handles C++ lambda capture by reference."
 
 
 
+(apply #'add-rules-for-mode 'julia-mode prog-mode-rules)
+(add-rules-for-mode 'julia-mode
+                    ;; Cool! Unicode!
+                    (cons "÷" " ÷ ")
+                    (cons "≠" " ≠ ")
+                    (cons "≤" " ≤ ")
+                    (cons "≥" " ≥ ")
+
+                    ;; something about fractions
+                    (cons "//" " // ")
+                    (cons ".//" " .// ")
+                    (cons "//=" " //= ")
+
+                    ;; pipe
+                    (cons "|>" " |> ")
+
+                    (cons "*" " * ")
+                    (cons "/" " / ")
+                    (cons "%" " % ")
+                    (cons "&" " & ")
+
+                    ;; \ (escaped), for solving matrix multiplies
+                    (cons "\\" " \\ ")
+                    (cons "\\=" " \\= ")
+                    (cons ".\\" " .\\ ")
+
+                    ;; XOR
+                    (cons "$" " $ ")
+
+                    ;; Even more equal!
+                    (cons "===" " === ")
+                    (cons "!==" " !== ")
+
+                    ;; vector operations and assign-operators
+                    (cons ".^" " .^ ")
+                    (cons ".*" " .* ")
+                    (cons "./" " ./ ")
+                    (cons ".%" " .% ")
+                    (cons "<<" " << ")
+                    (cons ">>" " >> ")
+                    (cons ">>>" " >>> ")
+                    (cons ".<<" " .<< ")
+                    (cons ".>>" " .>> ")
+                    (cons ".>>>" " .>>> ")
+                    (cons ".+" " .+ ")
+                    (cons ".-" " .- ")
+                    (cons ".>" " .> ")
+                    (cons ".<" " .< ")
+                    (cons ".>=" " .>= ")
+                    (cons ".<=" " .<= ")
+                    (cons ".==" " .== ")
+                    (cons ".!=" " .!= ")
+                    (cons "^=" " ^= ")
+                    (cons "÷=" " ÷= ")
+                    (cons "%=" " %= ")
+                    (cons "|=" " |= ")
+                    (cons "&=" " &= ")
+                    (cons "$=" " $= ")
+                    (cons "<<=" " <<= ")
+                    (cons ">>=" " >>= ")
+                    (cons ">>>=" " >>>= ")
+                    (cons ".+=" " .+= ")
+                    (cons ".-=" " .-= ")
+                    (cons ".*=" " .*= ")
+                    (cons "./=" " ./= ")
+                    (cons ".//=" " .//= ")
+                    (cons ".\\=" " .\\= ")
+                    (cons ".^=" " .^= ")
+                    (cons ".÷=" " .÷= ")
+                    (cons ".%=" " .%= "))
+
+
 ) ; end of namespace
 
 (provide 'electric-operator)
