@@ -987,6 +987,9 @@ Also handles C++ lambda capture by reference."
                     (cons "=" #'julia-mode-kwargs-=)
                     (cons ";" "; ")
 
+                    ;; Subtype comparison
+                    (cons "<:" " <: ")
+
                     ;; Cool! Unicode!
                     (cons "÷" " ÷ ")
                     (cons "≠" " ≠ ")
