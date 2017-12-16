@@ -19,5 +19,6 @@
  (depends-on "ess")
  (depends-on "haskell-mode")
  (depends-on "julia-mode")
+ (depends-on "js2-mode")
  (depends-on "php-mode")
  )
