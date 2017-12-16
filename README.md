@@ -175,6 +175,14 @@ to be too heavy to add to electric-spacing.
 
 ### Unstable
 
+* Typescript support
+* Julia support
+* Better comment handling in C-like languages
+* Type annotations in Python
+* C++ lambda captures
+
+### Version 1.0
+
 * Improve SQL support
 * Add basic Haskell support (no partially-evaluated operators)
 * Add js2-mode support
