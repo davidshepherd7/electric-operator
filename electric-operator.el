@@ -302,7 +302,7 @@ if not inside any parens."
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
    (looking-back-locally "^\\s-*")
-   (looking-back-locally "[=,:\*\+-/><&^{]\\s-*")
+   (looking-back-locally "[=,:\*\+-/><&^{;]\\s-*")
    (looking-back-locally "\\(return\\)\\s-*")))
 
 (defun just-inside-bracket ()
@@ -353,6 +353,31 @@ Any better ideas would be welcomed."
         ((hashbang-line?) "/")
         (t " / ")))
 
+
+(defun handle-c-style-comments-start ()
+  "Handle / being (probably) the start of a full-line comment"
+  (when (looking-back-locally "^\\s-*")
+    "/")
+  ;; else return nil so that it passes to the next cond in blocks
+  )
+
+
+;; Functions to handle comments in C-like languages
+(defun c-like-mode-/ ()
+  "Handle / being the first character of a comment"
+  (cond
+   ((handle-c-style-comments-start))
+   (t (prog-mode-/))))
+
+(defun c-like-mode-// ()
+  "Handle // comments on (non-)empty lines."
+  (if (looking-back-locally "^\s*") "// " " // "))
+
+(defun c-like-mode-/* ()
+  "Handle /* comments on (non-)empty lines."
+  (if (looking-back-locally "^\s*") "/* " " /* "))
+
+
 
 
 ;;; C/C++ mode tweaks
@@ -385,8 +410,8 @@ Any better ideas would be welcomed."
                     (cons ">>" " >> ")
 
                     ;; Comments
-                    (cons "/*" #'c-mode-/*)
-                    (cons "//" #'c-mode-//)
+                    (cons "/*" #'c-like-mode-/*)
+                    (cons "//" #'c-like-mode-//)
 
                     ;; End of statement inc/decrement, handled separately
                     ;; because there is no space after the ++/--.
@@ -597,16 +622,8 @@ Also handles C++ lambda capture by reference."
   "Handle / in #include <a/b> and start of full-line comment"
   (cond
    ((c-mode-include-line?) "/")
-   ;; We are probably about to insert a comment, so don't add a space
-   ((looking-back-locally "^\\s-*") "/")
+   ((handle-c-style-comments-start))
    (t (prog-mode-/))))
-
-(defun c-mode-// ()
-  "Handle // on (non-)empty lines."
-  (if (looking-back-locally "^\s*") "// " " // "))
-(defun c-mode-/* ()
-  "Handle /* on (non-)empty lines."
-  (if (looking-back-locally "^\s*") "/* " " /* "))
 
 (defun c++-probably-lambda-arrow ()
   "Try to guess if we are writing a lambda statement"
@@ -701,11 +718,13 @@ Also handles C++ lambda capture by reference."
 
 (defun js-mode-/ ()
   "Handle regex literals and division"
-  ;; Closing / counts as being inside a string so we don't need to do
-  ;; anything.
-  (if (probably-unary-operator?)
-      nil
-    (prog-mode-/)))
+  ;; Closing / counts as being inside a string so we don't need to do anything.
+  (cond
+   ;; Probably starting a comment or regex
+   ((handle-c-style-comments-start))
+   ;; Probably starting a regex
+   ((probably-unary-operator?) nil)
+   (t (prog-mode-/))))
 
 (apply #'add-rules-for-mode 'js-mode prog-mode-rules)
 (add-rules-for-mode 'js-mode
@@ -719,8 +738,8 @@ Also handles C++ lambda capture by reference."
                     (cons ":" #'js-mode-:)
                     (cons "?" " ? ")
                     (cons "/" #'js-mode-/)
-                    (cons "//" "// ")
-                    (cons "/*" "/* ")
+                    (cons "//" #'c-like-mode-//)
+                    (cons "/*" #'c-like-mode-/*)
                     (cons "=>" " => ") ; ES6 arrow functions
                     )
 
@@ -749,7 +768,9 @@ Also handles C++ lambda capture by reference."
                     (cons "*" nil)
 
                     ;; Comments are not division
-                    (cons "//" "// ")
+                    (cons "/" #'c-like-mode-/)
+                    (cons "/*" #'c-like-mode-/*)
+                    (cons "//" #'c-like-mode-//)
 
                     ;; Extra operators
                     (cons "<<" " << ")
@@ -840,8 +861,9 @@ Also handles C++ lambda capture by reference."
                     (cons ">>=" " >>= ")
 
                     ;; Comments
-                    (cons "/*" "/* ")
-                    (cons "//" "// ")
+                    (cons "/" #'c-like-mode-/)
+                    (cons "/*" #'c-like-mode-/*)
+                    (cons "//" #'c-like-mode-//)
 
                     ;; Generics are hard
                     (cons "<" nil)

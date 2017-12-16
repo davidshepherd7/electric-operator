@@ -9,6 +9,27 @@ Feature: Rust specific operators
     When I type "//a comment"
     Then I should see "// a comment"
 
+  Scenario: Division / still works
+    When I type "int a = x/y"
+    Then I should see "int a = x / y"
+
+  Scenario: // adds space before if not on empty line
+    When I type "expression;//"
+    Then I should see "expression; //"
+
+  Scenario: // does not add space before when at indentation of line
+    When I type "   //"
+    Then I should see pattern "^   // $"
+
+  Scenario: /* adds space before if not on empty line
+    When I type "expression;/*"
+    Then I should see "expression; /*"
+
+  Scenario: /* does not add space before when at indentation of line
+    When I type "   /*"
+    Then I should see pattern "^   /\* $"
+
+
   Scenario: Function return value
     When I type "fn foo()->i32"
     Then I should see "fn foo() -> i32"
