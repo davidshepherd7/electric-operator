@@ -727,7 +727,10 @@ Also handles C++ lambda capture by reference."
 (apply #'add-rules-for-mode 'js2-mode (get-rules-for-mode 'js-mode))
 
 (apply #'add-rules-for-mode 'typescript-mode (get-rules-for-mode 'js-mode))
-(add-rules-for-mode 'typescript-mode (cons ":" nil))
+(add-rules-for-mode 'typescript-mode
+                    (cons ":" nil)
+                    ;; generics closing tag
+                    (cons ">>" nil))
 
 
 
