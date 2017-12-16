@@ -118,3 +118,9 @@ Feature: Haskell mode
   Scenario: Infix in brackets
     When I type "(1/2)"
     Then I should see "(1 / 2)"
+
+
+
+  Scenario: Comments don't change the current indentation
+    When I type "            --"
+    Then I should see "            -- "
