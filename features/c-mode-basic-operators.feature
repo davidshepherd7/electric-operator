@@ -139,16 +139,21 @@ Feature: C basic operators
 
 
   # Comments
+  Scenario: Division / still works
+    When I type "int a = x/y"
+    Then I should see "int a = x / y"
+
   Scenario: // is not spaced internally
     When I type "//"
-    Then I should see pattern "^  // $"
+    Then I should see "//"
 
   Scenario: // adds space before if not on empty line
     When I type "expression;//"
-    Then I should see pattern "^  expression; // $"
+    Then I should see "expression; //"
 
   Scenario: // does not add space before when at indentation of line
-    When I type "expression;"
+    When I set c-electric-flag to nil
+    When I type "  expression;"
     When I execute newline-and-indent
     When I type "//"
     Then I should see pattern "^  expression;$"
@@ -156,11 +161,25 @@ Feature: C basic operators
 
   Scenario: /* is not spaced internally
     When I type "/*"
-    Then I should see pattern "^/\* $"
+    Then I should see "/*"
 
   Scenario: /* */ is not spaced internally
     When I type "/**/"
-    Then I should see pattern "^  /\* \*/$"
+    Then I should see "/* */"
+
+  Scenario: /* adds space before if not on empty line
+    When I set c-electric-flag to nil
+    When I type "expression;/*"
+    Then I should see "expression; /*"
+
+  Scenario: /* does not add space before when at indentation of line
+    When I set c-electric-flag to nil
+    When I type "  expression;"
+    When I execute newline-and-indent
+    When I type "/*"
+    Then I should see pattern "^  expression;$"
+    Then I should see pattern "^  /\* $"
+
 
 
   # Type keywords for pointers vs multiplication
@@ -203,27 +222,3 @@ Feature: C basic operators
   Scenario: Multiplication with pointer deref
     When I type "result = foo * *bar"
     Then I should see "result = foo * *bar"
-
-  Scenario: // does not lose indentation
-    When I insert:
-      """
-      {
-        /
-      }
-      """
-    Then I should see:
-      """
-      {
-        /
-      }
-      """
-    When I go to line "3"
-    When I go to end of line
-    When I type "/"
-    # The trailing white-space after '//' is intentionally
-    Then I should see:
-      """
-      {
-        // 
-      }
-      """

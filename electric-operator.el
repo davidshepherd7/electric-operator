@@ -391,7 +391,7 @@ Any better ideas would be welcomed."
                     (cons ">>" " >> ")
 
                     ;; Comments
-                    (cons "/*" "/* ")
+                    (cons "/*" #'c-mode-/*)
                     (cons "//" #'c-mode-//)
 
                     ;; End of statement inc/decrement, handled separately
@@ -610,6 +610,9 @@ Also handles C++ lambda capture by reference."
 (defun c-mode-// ()
   "Handle // on (non-)empty lines."
   (if (looking-back-locally "^\s*") "// " " // "))
+(defun c-mode-/* ()
+  "Handle /* on (non-)empty lines."
+  (if (looking-back-locally "^\s*") "/* " " /* "))
 
 (defun c++-probably-lambda-arrow ()
   "Try to guess if we are writing a lambda statement"
