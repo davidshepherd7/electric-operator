@@ -93,32 +93,29 @@ should just work.
 If you use `electric-operator` for a major mode not listed below here
 please open an issue to let me know what works.
 
-Complete support is implemented for
+Good support is implemented for:
 
 * Python
 * R
-* Javascript
-* Coffeescript
-* PHP
+* Javascript (and coffeescript, typescript)
 * SQL
-
-
-Languages with good but imperfect support are
-
 * C
 * C++
 * Java
 * Rust
+* Haskell
+* PHP
+* Julia
+* CSS
 
-there are difficulties with distinguishing between `*` for pointer types
-and for multiplication. Similiarly for `&` (reference types vs bitwise
-and), and `<`, `>` (comparision operators vs angle brackets.
+In C-like languages there are some difficulties with distinguishing between `*`
+for pointer types and for multiplication. Similiarly for `&` (reference types vs
+bitwise and), and `<`, `>` (comparision operators vs angle brackets.
 
 
 The following languages are supported but not extensively tested (as far as
 I know), please open an issue to let me know if you use them.
 
-* Haskell
 * Perl
 * Ruby
 
