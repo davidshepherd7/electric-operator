@@ -44,3 +44,14 @@
 (When "^I let js2-mode reparse$"
       (lambda ()
         (js2-reparse)))
+
+;; TODO: Figure out why this fails with call-interactively
+;; It works correct with ert but seems to be problematic when used with ecukes
+(When "^I go to end of line$"
+      "Places the cursor at the end of the line."
+      (lambda ()
+        (funcall #'move-end-of-line nil)))
+
+(When "^I execute newline-and-indent$"
+      (lambda ()
+        (newline-and-indent)))

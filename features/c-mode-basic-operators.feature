@@ -141,11 +141,26 @@ Feature: C basic operators
   # Comments
   Scenario: // is not spaced internally
     When I type "//"
-    Then I should see "// "
+    Then I should see pattern "^  // $"
+
+  Scenario: // adds space before if not on empty line
+    When I type "expression;//"
+    Then I should see pattern "^  expression; // $"
+
+  Scenario: // does not add space before when at indentation of line
+    When I type "expression;"
+    When I execute newline-and-indent
+    When I type "//"
+    Then I should see pattern "^  expression;$"
+    Then I should see pattern "^  // $"
 
   Scenario: /* is not spaced internally
     When I type "/*"
-    Then I should see "/* "
+    Then I should see pattern "^/\* $"
+
+  Scenario: /* */ is not spaced internally
+    When I type "/**/"
+    Then I should see pattern "^  /\* \*/$"
 
 
   # Type keywords for pointers vs multiplication
@@ -189,27 +204,26 @@ Feature: C basic operators
     When I type "result = foo * *bar"
     Then I should see "result = foo * *bar"
 
-  # # This doesn't actually test what it should, it always passes. Possible
-  # # ecukes bug?
-  # Scenario: // does not lose indentation
-  #   When I insert:
-  #     """
-  #     {
-  #       /
-  #     }
-  #     """
-  #   Then I should see:
-  #     """
-  #     {
-  #       /
-  #     }
-  #     """
-  #   When I go to line "2"
-  #   When I go to end of line
-  #   When I type "/"
-  #   Then I should see:
-  #     """
-  #     {
-  #       //
-  #     }
-  #     """
+  Scenario: // does not lose indentation
+    When I insert:
+      """
+      {
+        /
+      }
+      """
+    Then I should see:
+      """
+      {
+        /
+      }
+      """
+    When I go to line "3"
+    When I go to end of line
+    When I type "/"
+    # The trailing white-space after '//' is intentionally
+    Then I should see:
+      """
+      {
+        // 
+      }
+      """
