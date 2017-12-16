@@ -321,12 +321,6 @@ Any better ideas would be welcomed."
                         (point))))
     (looking-back string two-lines-up greedy)))
 
-(defun at-indentation? (&optional pos)
-  "Are we at the beginning of the indentation of the current line?"
-  (save-excursion
-    (let ((point (or pos (point))))
-      (back-to-indentation)
-      (eq point (point)))))
 
 
 
