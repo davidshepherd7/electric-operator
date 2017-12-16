@@ -610,7 +610,7 @@ Also handles C++ lambda capture by reference."
   "Handle / in #include <a/b>"
   (cond
    ((c-mode-include-line?) "/")
-   ((at-indentation? (alist-get 'start-pos state)) "/") ; Line comment
+   ((at-indentation? (cdr-safe (assq 'start-pos state))) "/") ; Line comment
    (t (prog-mode-/))))
 
 (defun c-mode-// (_)
