@@ -20,4 +20,5 @@
  (depends-on "js2-mode" :git "https://github.com/mooz/js2-mode" :ref "c0801b25d6ada38cc93e7a6d33d5de0d1ad5bc1a")
  (depends-on "haskell-mode")
  (depends-on "julia-mode")
+ (depends-on "php-mode")
  )

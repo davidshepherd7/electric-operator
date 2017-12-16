@@ -767,7 +767,6 @@ Also handles C++ lambda capture by reference."
                     ;; pointer deref vs multiplication
                     (cons "*" nil)
 
-                    ;; Comments are not division
                     (cons "/" #'c-like-mode-/)
                     (cons "/*" #'c-like-mode-/*)
                     (cons "//" #'c-like-mode-//)
@@ -977,9 +976,12 @@ Also handles C++ lambda capture by reference."
                     (cons "." " . ")   ; string concat
                     (cons ".=" " .= ")
                     (cons "->" "->")
-                    (cons "//" "// ")
                     (cons "=>" " => ")
                     (cons "<?" "<?")
+
+                    (cons "/" #'c-like-mode-/)
+                    (cons "/*" #'c-like-mode-/*)
+                    (cons "//" #'c-like-mode-//)
                     )
 
 
