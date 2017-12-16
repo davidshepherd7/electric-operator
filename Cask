@@ -13,12 +13,12 @@
  (depends-on "espuds")
 
  ;; For testing, not available on melpa stable so pull from github directly
- (depends-on "rust-mode" :git "https://github.com/rust-lang/rust-mode.git")
+ (depends-on "rust-mode")
 
  ;; For testing
  (depends-on "ess")
- (depends-on "js2-mode" :git "https://github.com/mooz/js2-mode" :ref "c0801b25d6ada38cc93e7a6d33d5de0d1ad5bc1a")
  (depends-on "haskell-mode")
  (depends-on "julia-mode")
+ (depends-on "js2-mode")
  (depends-on "php-mode")
  )
