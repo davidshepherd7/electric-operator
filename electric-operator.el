@@ -201,15 +201,10 @@ Whitespace before the operator is captured for possible use later.
        (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))) it)
        (car it)))
 
-(defun eval-action (action point state)
+(defun eval-action (action point)
   (cond
    ((functionp action)
-    (save-excursion
-      (goto-char point)
-      ;; For backwards-compatibility only pass state to
-      ;; actions taking parameters
-      (let ((arg-list (help-function-arglist action)))
-        (if arg-list (funcall action state) (funcall action)))))
+    (save-excursion (goto-char point) (funcall action)))
    ((stringp action) action)
    (t (error "Unrecognised action: %s" action))))
 
@@ -231,9 +226,7 @@ Whitespace before the operator is captured for possible use later.
       (let* ((pre-whitespace (match-string 1))
              (op-match-beginning (match-beginning 0))
              (op-match-end (match-end 0))
-             (op-start-pos (+ op-match-beginning (length pre-whitespace)))
-             (state `((start-pos . ,op-start-pos)))
-             (spaced-string (eval-action action op-match-beginning state)))
+             (spaced-string (eval-action action op-match-beginning)))
 
         ;; If action was a function which eval-d to nil then we do nothing.
         (when spaced-string
@@ -606,14 +599,15 @@ Also handles C++ lambda capture by reference."
       (c-space-pointer-type "&&")
     " && "))
 
-(defun c-mode-/ (state)
-  "Handle / in #include <a/b>"
+(defun c-mode-/ ()
+  "Handle / in #include <a/b> and start of full-line comment"
   (cond
    ((c-mode-include-line?) "/")
-   ((at-indentation? (cdr-safe (assq 'start-pos state))) "/") ; Line comment
+   ;; We are probably about to insert a comment, so don't add a space
+   ((looking-back-locally "^\\s-*") "/")
    (t (prog-mode-/))))
 
-(defun c-mode-// (_)
+(defun c-mode-// ()
   "Handle // on (non-)empty lines."
   (if (looking-back-locally "^\s*") "// " " // "))
 
