@@ -75,6 +75,36 @@ results in f(foo=1)."
 
 
 
+;;; Rule data structure helpers
+
+(defun make-compiled-rule (rule)
+  (if (-simple-rule? rule)
+      (list (rule-operator rule)
+            (rule-regex-with-whitespace (rule-operator rule))
+            (rule-action rule))
+    rule))
+
+(defun -simple-rule? (rule)
+  "Check if rule is of the form (op . action) (i.e. not a compiled rule)"
+  (or (not (consp (cdr rule)))
+      ;; closures as used for haskell-mode and are consp and functionp
+      (functionp (cdr rule))))
+
+(defun rule-regex (rule)
+  (if (-simple-rule? rule)
+      (rule-regex-with-whitespace (rule-operator rule))
+    (nth 1 rule)))
+
+(defun rule-action (rule)
+  (if (-simple-rule? rule)
+      (cdr rule)
+    (nth 2 rule)))
+
+(defun rule-operator (rule)
+  (car rule))
+
+
+
 ;;; Rule list helper functions
 
 (defun rule-regex-with-whitespace (op)
@@ -88,29 +118,16 @@ Whitespace before the operator is captured for possible use later.
           (mapconcat #'regexp-quote (split-string op "" t) "\s*")
           "\\(\s*\\)"))
 
-(defun -simple-rule? (rule)
-  "Check if rule is of the form (op . action)."
-  (or (not (consp (cdr rule)))
-       ;; closures as used for haskell-mode and are consp and functionp
-      (functionp (cdr rule))))
-
 (defun -add-rule (initial new-rule)
   "Replace or append a new rule
 
-Rules of the form (op . action) are transformed into
-(op . (regex . action)).
-
 Returns a modified copy of the rule list."
-  (let* ((op (car new-rule))
+  (let* ((op (rule-operator new-rule))
+         (compiled (make-compiled-rule new-rule))
          (existing-rule (assoc op initial)))
-    (setq new-rule
-          (cond
-           ((-simple-rule? new-rule)
-            `(,op . (,(rule-regex-with-whitespace op) . ,(cdr new-rule))))
-           (t new-rule)))
     (if existing-rule
-        (-replace existing-rule new-rule initial)
-      (-snoc initial new-rule))))
+        (-replace existing-rule compiled initial)
+      (-snoc initial compiled))))
 
 (defun -add-rule-list (initial new-rules)
   "Replace or append a list of rules
@@ -176,7 +193,6 @@ the given major mode."
         (cons "||" " || ")
         )
   "Default spacing rules for programming modes")
-(apply #'add-rules-for-mode 'electric-operator-prog-mode prog-mode-rules)
 
 
 (defvar prose-rules
@@ -185,7 +201,6 @@ the given major mode."
              (cons "," ", ")
              )
   "Rules to use in comments, strings and text modes.")
-(apply #'add-rules-for-mode 'electric-operator-prose-mode prose-rules)
 
 
 
@@ -208,15 +223,15 @@ the given major mode."
      ((get-rules-for-mode major-mode))
 
      ;; Default modes
-     ((derived-mode-p 'prog-mode) (get-rules-for-mode 'electric-operator-prog-mode))
-     (t (get-rules-for-mode 'electric-operator-prose-mode)))))
+     ((derived-mode-p 'prog-mode) prog-mode-rules)
+     (t prose-rules))))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
   (--> rule-list
-       (-filter (lambda (rule) (looking-back-locally (cadr rule))) it)
-       (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))) it)
-       (cdar it)))
+       (-filter (lambda (rule) (looking-back-locally (rule-regex rule))) it)
+       (-sort (lambda (p1 p2) (> (length (rule-operator p1)) (length (rule-operator p2)))) it)
+       (car it)))
 
 (defun eval-action (action point)
   (cond
@@ -228,17 +243,18 @@ the given major mode."
 (defun post-self-insert-function ()
   "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
-          ((operator . action) rule)
+          (operator-regex (and rule (rule-regex rule)))
+          (action (and rule (rule-action rule)))
           (operator-just-inserted nil))
     (when (and rule action)
 
       ;; Find point where operator starts
-      (looking-back-locally operator t)
+      (looking-back-locally operator-regex t)
 
       ;; Capture operator include all leading and *trailing* whitespace
       (save-excursion
         (goto-char (match-beginning 0))
-        (looking-at operator))
+        (looking-at operator-regex))
 
       (let* ((pre-whitespace (match-string 1))
              (op-match-beginning (match-beginning 0))
