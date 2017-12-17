@@ -143,3 +143,9 @@ Feature: Generic programming mode spacing
   Scenario: return
     When I type "return -1"
     Then I should see "return -1"
+
+
+  Scenario: Custom rules are applied
+    When I add a custom rule "++" " ++ " to electric-operator-prog-mode-rules
+    When I type "hello++world"
+    Then I should see "hello ++ world"

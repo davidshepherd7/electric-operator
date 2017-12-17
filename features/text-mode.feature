@@ -14,3 +14,8 @@ Feature: Double spacing when requested
     When I set electric-operator-double-space-docs to t
     When I type "hello.World"
     Then I should see "hello.  World"
+
+  Scenario: Custom rules are applied
+    When I add a custom rule "-" "-  " to electric-operator-prose-rules
+    When I type "hello-world"
+    Then I should see "hello-  world"
