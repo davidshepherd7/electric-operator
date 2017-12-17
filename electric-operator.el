@@ -77,12 +77,37 @@ results in f(foo=1)."
 
 ;;; Rule list helper functions
 
+(defun rule-regex-with-whitespace (op)
+  "Construct regex matching operator and any whitespace before/inside/after.
+
+For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
+
+Whitespace before the operator is captured for possible use later.
+"
+  (concat "\\(\s*\\)"
+          (mapconcat #'regexp-quote (split-string op "" t) "\s*")
+          "\\(\s*\\)"))
+
+(defun -simple-rule? (rule)
+  "Check if rule is of the form (op . action)."
+  (or (not (consp (cdr rule)))
+       ;; closures as used for haskell-mode and are consp and functionp
+      (functionp (cdr rule))))
+
 (defun -add-rule (initial new-rule)
   "Replace or append a new rule
+
+Rules of the form (op . action) are transformed into
+(op . (regex . action)).
 
 Returns a modified copy of the rule list."
   (let* ((op (car new-rule))
          (existing-rule (assoc op initial)))
+    (setq new-rule
+          (cond
+           ((-simple-rule? new-rule)
+            `(,op . (,(rule-regex-with-whitespace op) . ,(cdr new-rule))))
+           (t new-rule)))
     (if existing-rule
         (-replace existing-rule new-rule initial)
       (-snoc initial new-rule))))
@@ -151,6 +176,8 @@ the given major mode."
         (cons "||" " || ")
         )
   "Default spacing rules for programming modes")
+(apply #'add-rules-for-mode 'electric-operator-prog-mode prog-mode-rules)
+
 
 (defvar prose-rules
   (add-rules '()
@@ -158,6 +185,7 @@ the given major mode."
              (cons "," ", ")
              )
   "Rules to use in comments, strings and text modes.")
+(apply #'add-rules-for-mode 'electric-operator-prose-mode prose-rules)
 
 
 
@@ -180,26 +208,15 @@ the given major mode."
      ((get-rules-for-mode major-mode))
 
      ;; Default modes
-     ((derived-mode-p 'prog-mode) prog-mode-rules)
-     (t prose-rules))))
-
-(defun rule-regex-with-whitespace (op)
-  "Construct regex matching operator and any whitespace before/inside/after.
-
-For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
-
-Whitespace before the operator is captured for possible use later.
-"
-  (concat "\\(\s*\\)"
-          (mapconcat #'regexp-quote (split-string op "" t) "\s*")
-          "\\(\s*\\)"))
+     ((derived-mode-p 'prog-mode) (get-rules-for-mode 'electric-operator-prog-mode))
+     (t (get-rules-for-mode 'electric-operator-prose-mode)))))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
   (--> rule-list
-       (-filter (lambda (rule) (looking-back-locally (rule-regex-with-whitespace (car rule)))) it)
+       (-filter (lambda (rule) (looking-back-locally (cadr rule))) it)
        (-sort (lambda (p1 p2) (> (length (car p1)) (length (car p2)))) it)
-       (car it)))
+       (cdar it)))
 
 (defun eval-action (action point)
   (cond
@@ -216,12 +233,12 @@ Whitespace before the operator is captured for possible use later.
     (when (and rule action)
 
       ;; Find point where operator starts
-      (looking-back-locally (rule-regex-with-whitespace operator) t)
+      (looking-back-locally operator t)
 
       ;; Capture operator include all leading and *trailing* whitespace
       (save-excursion
         (goto-char (match-beginning 0))
-        (looking-at (rule-regex-with-whitespace operator)))
+        (looking-at operator))
 
       (let* ((pre-whitespace (match-string 1))
              (op-match-beginning (match-beginning 0))
