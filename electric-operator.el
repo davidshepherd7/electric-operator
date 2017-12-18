@@ -1011,6 +1011,10 @@ Also handles C++ lambda capture by reference."
                     (cons ":" ": ")
                     (cons "," ", "))
 
+(add-rules-for-mode 'scss-mode
+                    (cons ":" ": ")
+                    (cons "," ", "))
+
 
 
 
