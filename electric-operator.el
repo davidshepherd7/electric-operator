@@ -77,31 +77,22 @@ results in f(foo=1)."
 
 ;;; Rule data structure helpers
 
-(defun make-compiled-rule (rule)
-  (if (-simple-rule? rule)
-      (list (rule-operator rule)
-            (rule-regex-with-whitespace (rule-operator rule))
-            (rule-action rule))
-    rule))
 
-(defun -simple-rule? (rule)
-  "Check if rule is of the form (op . action) (i.e. not a compiled rule)"
-  (or (not (consp (cdr rule)))
-      ;; closures as used for haskell-mode and are consp and functionp
-      (functionp (cdr rule))))
+;; Uncomment safety for debugging, otherwise use speed. This seems to be faster
+;; than speed 3.
+(cl-declaim (optimize (speed 2) (safety 1)))
+;; (cl-declaim (optimize (safety 3)))
 
-(defun rule-regex (rule)
-  (if (-simple-rule? rule)
-      (rule-regex-with-whitespace (rule-operator rule))
-    (nth 1 rule)))
 
-(defun rule-action (rule)
-  (if (-simple-rule? rule)
-      (cdr rule)
-    (nth 2 rule)))
+(cl-defstruct compiled-rule operator regex action)
 
-(defun rule-operator (rule)
-  (car rule))
+(defun make-compiled-rule-wrapper (rule)
+  (when rule
+    (if (not (compiled-rule-p rule))
+        (make-compiled-rule :operator (car rule)
+                            :regex (rule-regex-with-whitespace (car rule))
+                            :action (cdr rule))
+      rule)))
 
 
 
@@ -122,11 +113,12 @@ Whitespace before the operator is captured for possible use later.
   "Replace or append a new rule
 
 Returns a modified copy of the rule list."
-  (let* ((op (rule-operator new-rule))
-         (compiled (make-compiled-rule new-rule))
-         (existing-rule (assoc op initial)))
+  (let* ((compiled (make-compiled-rule-wrapper new-rule))
+         (op (compiled-rule-operator compiled))
+         (existing-rule (--find (equal op (compiled-rule-operator it)) initial)))
     (if existing-rule
-        (-replace existing-rule compiled initial)
+        (progn
+          (-replace existing-rule compiled initial))
       (-snoc initial compiled))))
 
 (defun -add-rule-list (initial new-rules)
@@ -196,10 +188,9 @@ the given major mode."
 
 
 (defvar prose-rules
-  (add-rules '()
-             (cons "." #'docs-.)
-             (cons "," ", ")
-             )
+  (list (cons "." #'docs-.)
+        (cons "," ", ")
+        )
   "Rules to use in comments, strings and text modes.")
 
 
@@ -217,20 +208,20 @@ the given major mode."
 
     (cond
      ;; In comment or string?
-     ((in-docs?) (if enable-in-docs prose-rules (list)))
+     ((in-docs?) (if enable-in-docs (-map #'make-compiled-rule-wrapper prose-rules) (list)))
 
      ;; Try to find an entry for this mode in the table
      ((get-rules-for-mode major-mode))
 
      ;; Default modes
-     ((derived-mode-p 'prog-mode) prog-mode-rules)
-     (t prose-rules))))
+     ((derived-mode-p 'prog-mode) (-map #'make-compiled-rule-wrapper prog-mode-rules))
+     (t (-map #'make-compiled-rule-wrapper prose-rules)))))
 
 (defun longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
   (--> rule-list
-       (-filter (lambda (rule) (looking-back-locally (rule-regex rule))) it)
-       (-sort (lambda (p1 p2) (> (length (rule-operator p1)) (length (rule-operator p2)))) it)
+       (-filter (lambda (rule) (looking-back-locally (compiled-rule-regex rule))) it)
+       (-sort (lambda (p1 p2) (> (length (compiled-rule-operator p1)) (length (compiled-rule-operator p2)))) it)
        (car it)))
 
 (defun eval-action (action point)
@@ -243,8 +234,8 @@ the given major mode."
 (defun post-self-insert-function ()
   "Check for a matching rule and apply it"
   (-let* ((rule (longest-matching-rule (get-rules-list)))
-          (operator-regex (and rule (rule-regex rule)))
-          (action (and rule (rule-action rule)))
+          (operator-regex (and rule (compiled-rule-regex rule)))
+          (action (and rule (compiled-rule-action rule)))
           (operator-just-inserted nil))
     (when (and rule action)
 
@@ -336,7 +327,7 @@ if not inside any parens."
   (or
    (looking-back-locally "^\\s-*")
    (looking-back-locally "[=,:\*\+-/><&^{;]\\s-*")
-   (looking-back-locally "\\(return\\)\\s-*")))
+                           (looking-back-locally "\\(return\\)\\s-*")))
 
 (defun just-inside-bracket ()
   (looking-back-locally "[([{]"))
@@ -491,7 +482,7 @@ Any better ideas would be welcomed."
 
 ;; Construct and add null rules for operator=, operator<< etc.
 (--> (get-rules-for-mode 'c++-mode)
-     (-map (lambda (p) (cons (concat "operator" (car p)) nil)) it)
+     (-map (lambda (p) (cons (concat "operator" (compiled-rule-operator p)) nil)) it)
      (apply #'add-rules-for-mode 'c++-mode it))
 
 ;; Use the c rules for arduino mode
