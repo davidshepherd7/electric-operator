@@ -161,7 +161,7 @@ the given major mode."
         (cons "<" " < ")
         (cons ">" " > ")
         (cons "%" " % ")
-        (cons "+" " + ")
+        (cons "+" #'prog-mode-+)
         (cons "-" #'prog-mode--)
         (cons "*" " * ")
         (cons "/" #'prog-mode-/)
@@ -325,9 +325,8 @@ if not inside any parens."
 
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
-   (looking-back-locally "^\\s-*")
    (looking-back-locally "[=,:\*\+-/><&^{;]\\s-*")
-                           (looking-back-locally "\\(return\\)\\s-*")))
+   (looking-back-locally "\\(return\\)\\s-*")))
 
 (defun just-inside-bracket ()
   (looking-back-locally "[([{]"))
@@ -363,12 +362,27 @@ Any better ideas would be welcomed."
    ((looking-back-locally "[0-9.]+[eE]") "-")
 
    ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or -1
-   ;; alone at all). This will proabaly need to be major mode specific
+   ;; alone at all). This will probably need to be major mode specific
    ;; eventually.
    ((probably-unary-operator?) " -")
    ((just-inside-bracket) "-")
+   ;; Unary - at beginning of line/indentation
+   ((looking-back-locally "^\\s-*") "-")
 
    (t " - ")))
+
+(defun prog-mode-+ ()
+  "Handle +-prefix number notation"
+  (cond
+   ;; Space positive numbers as e.g. a = +1 (but don't space f(+1) or +1
+   ;; alone at all). This will probably need to be major mode specific
+   ;; eventually.
+   ((probably-unary-operator?) " +")
+   ((just-inside-bracket) "+")
+   ;; Unary + at beginning of line/indentation
+   ((looking-back-locally "^\\s-*") "+")
+
+   (t " + ")))
 
 (defun prog-mode-/ ()
   "Handle path separator in UNIX hashbangs"
@@ -565,15 +579,15 @@ Using `cc-mode''s syntactic analysis."
 
 (defun c-mode-++ ()
   "Handle ++ operator pre/postfix"
-  (if (looking-back-locally "[a-zA-Z0-9_]\s*")
-      "++ "
-    " ++"))
+  (cond ((looking-back-locally "[a-zA-Z0-9_]\s*") "++ ")
+        ((looking-back-locally "^\s*") "++")
+        (t " ++")))
 
 (defun c-mode--- ()
   "Handle -- operator pre/postfix"
-  (if (looking-back-locally "[a-zA-Z0-9_]\s*")
-      "-- "
-    " --"))
+  (cond ((looking-back-locally "[a-zA-Z0-9_]\s*") "-- ")
+        ((looking-back-locally "^\s*") "--")
+        (t " --")))
 
 (defun c-mode-< ()
   "Handle #include brackets and templates"
@@ -609,7 +623,8 @@ Using `cc-mode''s syntactic analysis."
     (c-space-pointer-type "&"))
 
    ;; Address-of operator or lambda pass-by-reference specifier
-   ((just-inside-bracket) "&")
+   ((or (just-inside-bracket)
+        (looking-back-locally "^\\s-*")) "&")
    ((probably-unary-operator?) " &")
 
    (t " & ")))
@@ -624,7 +639,8 @@ Also handles C++ lambda capture by reference."
     (c-space-pointer-type "*"))
 
    ;; Pointer dereference
-   ((just-inside-bracket) "*")
+   ((or (just-inside-bracket)
+        (looking-back-locally "^\\s-*")) "*")
    ((probably-unary-operator?) " *")
 
    (t " * ")))
@@ -661,10 +677,10 @@ Also handles C++ lambda capture by reference."
 
 (defun c++-mode-= ()
   "Handle capture-by-value in lamdas"
-  (cond
-   ((probably-unary-operator?) " =")
-   ((just-inside-bracket) "=")
-   (t " = ")))
+  (cond ((probably-unary-operator?) " =")
+        ((or (just-inside-bracket)
+             (looking-back-locally "^\\s-*")) "=")
+        (t " = ")))
 
 
 

@@ -37,6 +37,15 @@ Feature: C basic operators
     When I type "b=++a+c"
     Then I should see "b = ++a + c"
 
+  Scenario: Pre-increment at beginning of line
+    When I turn off minor mode c-toggle-electric-state
+    And  I press "TAB"
+    And  I type "++a;"
+    And  I press "RET"
+    And  I press "TAB"
+    And  I type "++b;"
+    Then I should see pattern "^  \+\+b;$"
+
   Scenario: Post-decrement
     When I type "b=c-a--"
     Then I should see "b = c - a--"
@@ -44,6 +53,15 @@ Feature: C basic operators
   Scenario: Pre-decrement
     When I type "b=--a-c"
     Then I should see "b = --a - c"
+
+  Scenario: Pre-decrement at beginning of line
+    When I turn off minor mode c-toggle-electric-state
+    And  I press "TAB"
+    And  I type "--a;"
+    And  I press "RET"
+    And  I press "TAB"
+    And  I type "--b;"
+    Then I should see pattern "^  --b;$"
 
   Scenario: Post-increment with semi-colon
     When I type "a++;"
@@ -99,6 +117,14 @@ Feature: C basic operators
   Scenario: Assign address of
     When I type "a=&b"
     Then I should see "a = &b"
+
+  Scenario: Address of at beginning of line
+    When I type "&a"
+    And  I press "RET"
+    And  I press "TAB"
+    And  I type "  &b"
+    Then I should see pattern "^&a$"
+    And  I should see pattern "^  &b$"
 
   Scenario: Function call with address of
     Then I type "f(&p,&q)"

@@ -56,7 +56,6 @@
       (lambda ()
         (newline-and-indent)))
 
-
 (When "^I add a custom rule \"\\([^\"]+\\)\" \"\\([^\"]+\\)\" to \\(.*\\)$"
       (lambda (from to rule-list)
         (add-to-list (intern rule-list) (cons from to))))
