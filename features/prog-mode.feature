@@ -94,7 +94,17 @@ Feature: Generic programming mode spacing
 
   Scenario: Don't space -1
     When I type "-1"
-    Then I should see "-1"
+    And  I press "RET"
+    And  I type "  -1"
+    Then I should see pattern "^-1$"
+    And  I should see pattern "^  -1$"
+
+  Scenario: Don't space +1
+    When I type "+1"
+    And  I press "RET"
+    And  I type "  +1"
+    Then I should see pattern "^\+1$"
+    And  I should see pattern "^  \+1$"
 
   Scenario: a = -1
     When I type "a=-1"
@@ -143,6 +153,54 @@ Feature: Generic programming mode spacing
   Scenario: return
     When I type "return -1"
     Then I should see "return -1"
+
+  Scenario: a = +1
+    When I type "a=+1"
+    Then I should see "a = +1"
+
+  Scenario: a * +1
+    When I type "a*+1"
+    Then I should see "a * +1"
+
+  Scenario: a + +1
+    When I type "a++1"
+    Then I should see "a + +1"
+
+  Scenario: a + +1
+    When I type "a++1"
+    Then I should see "a + +1"
+
+  Scenario: a / +1
+    When I type "a/+1"
+    Then I should see "a / +1"
+
+  Scenario: a ^ +1
+    When I type "a^+1"
+    Then I should see "a ^ +1"
+
+  Scenario: a < +1
+    When I type "a<+1"
+    Then I should see "a < +1"
+
+  Scenario: a > +1
+    When I type "a>+1"
+    Then I should see "a > +1"
+
+  Scenario: a = [+1]
+    When I type "a=[+1]"
+    Then I should see "a = [+1]"
+
+  Scenario: f(+1)
+    When I type "f(+1)"
+    Then I should see "f(+1)"
+
+  Scenario: f(x, +1)
+    When I type "f(x,+1)"
+    Then I should see "f(x, +1)"
+
+  Scenario: return
+    When I type "return +1"
+    Then I should see "return +1"
 
 
   Scenario: Custom rules are applied

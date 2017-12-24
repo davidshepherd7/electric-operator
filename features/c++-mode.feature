@@ -4,6 +4,14 @@ Feature: C++ specific operators
     When I turn on c++-mode
     When I turn on electric-operator-mode
 
+  Scenario: Assignment at beginning of line
+    When I type "="
+    And  I press "RET"
+    And  I go to beginning of line
+    And  I type "  ="
+    Then I should see pattern "^=$"
+    And  I should see pattern "^  =$"
+
   Scenario: Automatic type references
     When I type "auto&thing"
     Then I should see "auto &thing"
