@@ -15,3 +15,7 @@ Feature: #include directives
   Scenario: Include statement with path inside angle brackets
     When I type "#include<old/stdio.h>"
     Then I should see "#include <old/stdio.h>"
+
+  Scenario: Include statement with dash inside angle brackets
+    When I type "#include<some-file.h>"
+    Then I should see "#include <some-file.h>"

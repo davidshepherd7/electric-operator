@@ -425,6 +425,7 @@ Any better ideas would be welcomed."
                     (cons "->" "->")
 
                     (cons "/" #'c-mode-/)
+                    (cons "-" #'c-mode--)
 
                     ;; ternary operator
                     (cons "?" " ? ")
@@ -664,6 +665,12 @@ Also handles C++ lambda capture by reference."
    ((c-mode-include-line?) "/")
    ((handle-c-style-comments-start))
    (t (prog-mode-/))))
+
+(defun c-mode-- ()
+  "Handle - in #include <a-b.h>"
+  (cond
+   ((c-mode-include-line?) "-")
+   (t (prog-mode--))))
 
 (defun c++-probably-lambda-arrow ()
   "Try to guess if we are writing a lambda statement"
