@@ -120,11 +120,12 @@ Feature: C basic operators
 
   Scenario: Address of at beginning of line
     When I type "&a"
-    And  I press "RET"
-    And  I press "TAB"
-    And  I type "  &b"
     Then I should see pattern "^&a$"
-    And  I should see pattern "^  &b$"
+
+  Scenario: Address of at beginning of line with indentation
+    When I press "TAB"
+    And  I type "&a"
+    Then I should see pattern "^  &a$"
 
   Scenario: Function call with address of
     Then I type "f(&p,&q)"
