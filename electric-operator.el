@@ -426,6 +426,7 @@ Any better ideas would be welcomed."
 
                     (cons "/" #'c-mode-/)
                     (cons "-" #'c-mode--)
+                    (cons "\"" #'c-mode-\")
 
                     ;; ternary operator
                     (cons "?" " ? ")
@@ -548,11 +549,20 @@ Using `cc-mode''s syntactic analysis."
        (-map #'car it)
        (-intersection c-function-definition-syntax-list it)))
 
+(defun c-mode-include-line-opening-quote? ()
+  (looking-back-locally "#\s*include\s*"))
+
 (defun c-mode-include-line? ()
   (looking-back-locally "#\s*include.*"))
 
 (defun c-mode-probably-ternary ()
   (looking-back-locally "\\?.+"))
+
+(defun c-mode-\" ()
+  "Handle the opening quote of an include directive"
+  (if (c-mode-include-line-opening-quote?)
+      " \""
+    "\""))
 
 (defun c-mode-: ()
   "Handle the : part of ternary operator"

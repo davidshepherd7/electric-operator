@@ -4,9 +4,13 @@ Feature: #include directives
     When I turn on c-mode
     When I turn on electric-operator-mode
 
-  Scenario: Include statement
+  Scenario: Include statement with angle brackets
     When I type "#include<stdio.h>"
     Then I should see "#include <stdio.h>"
+
+  Scenario: Include statement with double quotes
+    When I type "#include"stdio.h""
+    Then I should see "#include "stdio.h""
 
   Scenario: Include statement with spaces
     When I type "# include<stdio.h>"
@@ -19,3 +23,7 @@ Feature: #include directives
   Scenario: Include statement with dash inside angle brackets
     When I type "#include<some-file.h>"
     Then I should see "#include <some-file.h>"
+
+  Scenario: Include statement with dash inside quotes
+    When I type "#include"some-file.h""
+    Then I should see "#include "some-file.h""
