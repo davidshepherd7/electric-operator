@@ -116,6 +116,17 @@ Feature: C++ specific operators
     When I type "private:"
     Then I should see "private:"
 
+  Scenario: Fully qualified public inheritance
+    When I type "struct A:public::testing::Test"
+    Then I should see "struct A : public ::testing::Test"
+
+  Scenario: Fully qualified protected inheritance
+    When I type "struct A:protected::testing::Test"
+    Then I should see "struct A : protected ::testing::Test"
+
+  Scenario: Fully qualified private inheritance
+    When I type "struct A:private::testing::Test"
+    Then I should see "struct A : private ::testing::Test"
 
   # Operator overloads should never be spaced
   Scenario: operator<<
