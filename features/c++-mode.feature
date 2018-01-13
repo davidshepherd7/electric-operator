@@ -128,6 +128,10 @@ Feature: C++ specific operators
     When I type "struct A:private::testing::Test"
     Then I should see "struct A : private ::testing::Test"
 
+  Scenario: Fully qualified inheritance without access-specifier
+    When I type "struct A:::testing::Test"
+    Then I should see "struct A : ::testing::Test"
+
   # Operator overloads should never be spaced
   Scenario: operator<<
     When I type "operator<<"
