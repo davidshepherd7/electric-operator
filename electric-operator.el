@@ -591,7 +591,9 @@ Using `cc-mode''s syntactic analysis."
   "Handle qualified inheritance"
   (cond
    ;; Public/protected/private inheritance
-   ((looking-back-locally "private\\|public\\|protected") " ::")
+   ((looking-back-locally "private\\|public\\|protected\\|:") " ::")
+   ;; First colon of fully qualified inheritance without access-specifier
+   ((looking-back-locally "\\(struct\\|class\\)[^:{]+") " : :")
    (t "::" )))
 
 
