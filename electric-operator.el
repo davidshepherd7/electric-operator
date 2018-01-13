@@ -560,9 +560,10 @@ Using `cc-mode''s syntactic analysis."
 
 (defun c-mode-\" ()
   "Handle the opening quote of an include directive"
-  (if (c-mode-include-line-opening-quote?)
-      " \""
-    "\""))
+  (cond
+   ((c-mode-include-line-opening-quote?) " \"")
+   ((in-docs?) (match-string 0))
+   (t "\"")))
 
 (defun c-mode-: ()
   "Handle the : part of ternary operator"

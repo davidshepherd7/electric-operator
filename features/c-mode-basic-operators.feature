@@ -13,6 +13,9 @@ Feature: C basic operators
     When I type "error:"
     Then I should see "error:"
 
+  Scenario: don't modify string literal
+    When I type ""var: " "
+    Then I should see ""var: " "
 
   # Pointer dereference
   Scenario: Space >
