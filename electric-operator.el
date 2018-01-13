@@ -485,7 +485,7 @@ Any better ideas would be welcomed."
                     (cons ":" #'c++-mode-:)
 
                     ;; Namespaces
-                    (cons "::" "::")
+                    (cons "::" #'c++-mode-::)
 
                     ;; Lambdas
                     (cons "->" #'c++-mode-->)
@@ -586,6 +586,13 @@ Using `cc-mode''s syntactic analysis."
 
    ;; probably a case statement
    (t ":" )))
+
+(defun c++-mode-:: ()
+  "Handle qualified inheritance"
+  (cond
+   ;; Public/protected/private inheritance
+   ((looking-back-locally "private\\|public\\|protected") " ::")
+   (t "::" )))
 
 
 (defun c-mode-++ ()
