@@ -175,6 +175,8 @@ to be too heavy to add to electric-spacing.
 
 ### Unstable
 
+* Major performance improvements
+* Expansions of operators at the start of a line now won't modify indentation
 * Typescript support
 * Julia support
 * Better comment handling in C-like languages
