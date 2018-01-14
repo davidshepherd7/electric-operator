@@ -562,7 +562,7 @@ Using `cc-mode''s syntactic analysis."
   "Handle the opening quote of an include directive"
   (cond
    ((c-mode-include-line-opening-quote?) " \"")
-   ((in-docs?) (match-string 0))
+   ((in-docs?) nil)
    (t "\"")))
 
 (defun c-mode-: ()
