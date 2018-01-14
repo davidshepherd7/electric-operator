@@ -197,6 +197,14 @@ the given major mode."
 
 ;;; Core functions
 
+;; Borrowed from s.el
+(defun -trim-left (s)
+  "Remove whitespace at the beginning of S."
+  (save-match-data
+    (if (string-match "\\`[ \t\n\r]+" s)
+        (replace-match "" t t s)
+      s)))
+
 (defun get-rules-list ()
   "Pick which rule list is appropriate for spacing just before point"
   (save-excursion
@@ -265,13 +273,15 @@ the given major mode."
           ;; Delete the characters matching this rule before point
           (delete-region op-match-beginning op-match-end)
 
-          ;; If this is the first thing in a line then restore the
-          ;; indentation.
-          (when (looking-back-locally "^\\s-*")
-            (insert pre-whitespace))
+          (if (looking-back-locally "^\\s-*")
 
-          ;; Insert correctly spaced operator
-          (insert spaced-string))))
+              ;; This is the first thing in a line: leave the indentation alone.
+              (progn
+                (insert pre-whitespace)
+                (insert (-trim-left spaced-string)))
+
+            ;; Insert correctly spaced operator
+            (insert spaced-string)))))
 
     (when (derived-mode-p 'haskell-mode)
       (haskell-mode-fixup-partial-operator-parens operator-just-inserted))))
@@ -326,7 +336,8 @@ if not inside any parens."
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
    (looking-back-locally "[=,:\*\+-/><&^{;]\\s-*")
-                           (looking-back-locally "\\(return\\)\\s-*")))
+                           (looking-back-locally "\\(return\\)\\s-*")
+                           (looking-back-locally "^\\s-*")))
 
 (defun just-inside-bracket ()
   (looking-back-locally "[([{]"))
@@ -366,8 +377,6 @@ Any better ideas would be welcomed."
    ;; eventually.
    ((probably-unary-operator?) " -")
    ((just-inside-bracket) "-")
-   ;; Unary - at beginning of line/indentation
-   ((looking-back-locally "^\\s-*") "-")
 
    (t " - ")))
 
@@ -379,8 +388,6 @@ Any better ideas would be welcomed."
    ;; eventually.
    ((probably-unary-operator?) " +")
    ((just-inside-bracket) "+")
-   ;; Unary + at beginning of line/indentation
-   ((looking-back-locally "^\\s-*") "+")
 
    (t " + ")))
 
@@ -390,30 +397,6 @@ Any better ideas would be welcomed."
   (cond ((and (hashbang-line?) (looking-back-locally "#!")) " /")
         ((hashbang-line?) "/")
         (t " / ")))
-
-
-(defun handle-c-style-comments-start ()
-  "Handle / being (probably) the start of a full-line comment"
-  (when (looking-back-locally "^\\s-*")
-    "/")
-  ;; else return nil so that it passes to the next cond in blocks
-  )
-
-
-;; Functions to handle comments in C-like languages
-(defun c-like-mode-/ ()
-  "Handle / being the first character of a comment"
-  (cond
-   ((handle-c-style-comments-start))
-   (t (prog-mode-/))))
-
-(defun c-like-mode-// ()
-  "Handle // comments on (non-)empty lines."
-  (if (looking-back-locally "^\\s-*") "// " " // "))
-
-(defun c-like-mode-/* ()
-  "Handle /* comments on (non-)empty lines."
-  (if (looking-back-locally "^\\s-*") "/* " " /* "))
 
 
 
@@ -450,8 +433,8 @@ Any better ideas would be welcomed."
                     (cons ">>" " >> ")
 
                     ;; Comments
-                    (cons "/*" #'c-like-mode-/*)
-                    (cons "//" #'c-like-mode-//)
+                    (cons "/*" " /* ")
+                    (cons "//" " // ")
 
                     ;; End of statement inc/decrement, handled separately
                     ;; because there is no space after the ++/--.
@@ -601,13 +584,11 @@ Using `cc-mode''s syntactic analysis."
 (defun c-mode-++ ()
   "Handle ++ operator pre/postfix"
   (cond ((looking-back-locally "[a-zA-Z0-9_]\\s-*") "++ ")
-        ((looking-back-locally "^\\s-*") "++")
         (t " ++")))
 
 (defun c-mode--- ()
   "Handle -- operator pre/postfix"
   (cond ((looking-back-locally "[a-zA-Z0-9_]\\s-*") "-- ")
-        ((looking-back-locally "^\\s-*") "--")
         (t " --")))
 
 (defun c-mode-< ()
@@ -644,8 +625,7 @@ Using `cc-mode''s syntactic analysis."
     (c-space-pointer-type "&"))
 
    ;; Address-of operator or lambda pass-by-reference specifier
-   ((or (just-inside-bracket)
-        (looking-back-locally "^\\s-*")) "&")
+   ((just-inside-bracket) "&")
    ((probably-unary-operator?) " &")
 
    (t " & ")))
@@ -660,8 +640,7 @@ Also handles C++ lambda capture by reference."
     (c-space-pointer-type "*"))
 
    ;; Pointer dereference
-   ((or (just-inside-bracket)
-        (looking-back-locally "^\\s-*")) "*")
+   ((just-inside-bracket) "*")
    ((probably-unary-operator?) " *")
 
    (t " * ")))
@@ -683,7 +662,6 @@ Also handles C++ lambda capture by reference."
   "Handle / in #include <a/b> and start of full-line comment"
   (cond
    ((c-mode-include-line?) "/")
-   ((handle-c-style-comments-start))
    (t (prog-mode-/))))
 
 (defun c-mode-- ()
@@ -705,8 +683,7 @@ Also handles C++ lambda capture by reference."
 (defun c++-mode-= ()
   "Handle capture-by-value in lamdas"
   (cond ((probably-unary-operator?) " =")
-        ((or (just-inside-bracket)
-             (looking-back-locally "^\\s-*")) "=")
+        ((just-inside-bracket) "=")
         (t " = ")))
 
 
@@ -787,8 +764,6 @@ Also handles C++ lambda capture by reference."
   "Handle regex literals and division"
   ;; Closing / counts as being inside a string so we don't need to do anything.
   (cond
-   ;; Probably starting a comment or regex
-   ((handle-c-style-comments-start))
    ;; Probably starting a regex
    ((probably-unary-operator?) nil)
    (t (prog-mode-/))))
@@ -805,8 +780,8 @@ Also handles C++ lambda capture by reference."
                     (cons ":" #'js-mode-:)
                     (cons "?" " ? ")
                     (cons "/" #'js-mode-/)
-                    (cons "//" #'c-like-mode-//)
-                    (cons "/*" #'c-like-mode-/*)
+                    (cons "//" " // ")
+                    (cons "/*" " /* ")
                     (cons "=>" " => ") ; ES6 arrow functions
                     )
 
@@ -837,9 +812,9 @@ Also handles C++ lambda capture by reference."
                     ;; pointer deref vs multiplication
                     (cons "*" nil)
 
-                    (cons "/" #'c-like-mode-/)
-                    (cons "/*" #'c-like-mode-/*)
-                    (cons "//" #'c-like-mode-//)
+                    (cons "/" #'prog-mode-/)
+                    (cons "/*" " /* ")
+                    (cons "//" " // ")
 
                     ;; Extra operators
                     (cons "<<" " << ")
@@ -930,9 +905,9 @@ Also handles C++ lambda capture by reference."
                     (cons ">>=" " >>= ")
 
                     ;; Comments
-                    (cons "/" #'c-like-mode-/)
-                    (cons "/*" #'c-like-mode-/*)
-                    (cons "//" #'c-like-mode-//)
+                    (cons "/" #'prog-mode-/)
+                    (cons "/*" " /* ")
+                    (cons "//" " // ")
 
                     ;; Generics are hard
                     (cons "<" nil)
@@ -1049,9 +1024,9 @@ Also handles C++ lambda capture by reference."
                     (cons "=>" " => ")
                     (cons "<?" "<?")
 
-                    (cons "/" #'c-like-mode-/)
-                    (cons "/*" #'c-like-mode-/*)
-                    (cons "//" #'c-like-mode-//)
+                    (cons "/" #'prog-mode-/)
+                    (cons "/*" " /* ")
+                    (cons "//" " // ")
                     )
 
 
