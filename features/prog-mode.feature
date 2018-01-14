@@ -94,17 +94,19 @@ Feature: Generic programming mode spacing
 
   Scenario: Don't space -1
     When I type "-1"
-    And  I press "RET"
-    And  I type "  -1"
     Then I should see pattern "^-1$"
-    And  I should see pattern "^  -1$"
+
+  Scenario: Don't modify indentation of -1
+    When I type "  -1"
+    Then I should see pattern "^  -1$"
 
   Scenario: Don't space +1
     When I type "+1"
-    And  I press "RET"
-    And  I type "  +1"
     Then I should see pattern "^\+1$"
-    And  I should see pattern "^  \+1$"
+
+  Scenario: Don't modify indentation of +1
+    When I type "  +1"
+    Then I should see pattern "^  \+1$"
 
   Scenario: a = -1
     When I type "a=-1"
