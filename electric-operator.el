@@ -105,9 +105,9 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 
 Whitespace before the operator is captured for possible use later.
 "
-  (concat "\\(\s*\\)"
-          (mapconcat #'regexp-quote (split-string op "" t) "\s*")
-          "\\(\s*\\)"))
+  (concat "\\(\\s-*\\)"
+          (mapconcat #'regexp-quote (split-string op "" t) "\\s-*")
+          "\\(\\s-*\\)"))
 
 (defun -add-rule (initial new-rule)
   "Replace or append a new rule
@@ -267,7 +267,7 @@ the given major mode."
 
           ;; If this is the first thing in a line then restore the
           ;; indentation.
-          (when (looking-back-locally "^\s*")
+          (when (looking-back-locally "^\\s-*")
             (insert pre-whitespace))
 
           ;; Insert correctly spaced operator
@@ -326,7 +326,7 @@ if not inside any parens."
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
    (looking-back-locally "[=,:\*\+-/><&^{;]\\s-*")
-   (looking-back-locally "\\(return\\)\\s-*")))
+                           (looking-back-locally "\\(return\\)\\s-*")))
 
 (defun just-inside-bracket ()
   (looking-back-locally "[([{]"))
@@ -409,11 +409,11 @@ Any better ideas would be welcomed."
 
 (defun c-like-mode-// ()
   "Handle // comments on (non-)empty lines."
-  (if (looking-back-locally "^\s*") "// " " // "))
+  (if (looking-back-locally "^\\s-*") "// " " // "))
 
 (defun c-like-mode-/* ()
   "Handle /* comments on (non-)empty lines."
-  (if (looking-back-locally "^\s*") "/* " " /* "))
+  (if (looking-back-locally "^\\s-*") "/* " " /* "))
 
 
 
@@ -550,10 +550,10 @@ Using `cc-mode''s syntactic analysis."
        (-intersection c-function-definition-syntax-list it)))
 
 (defun c-mode-include-line-opening-quote? ()
-  (looking-back-locally "#\s*include\s*"))
+  (looking-back-locally "#\\s-*include\\s-*"))
 
 (defun c-mode-include-line? ()
-  (looking-back-locally "#\s*include.*"))
+  (looking-back-locally "#\\s-*include.*"))
 
 (defun c-mode-probably-ternary ()
   (looking-back-locally "\\?.+"))
@@ -600,14 +600,14 @@ Using `cc-mode''s syntactic analysis."
 
 (defun c-mode-++ ()
   "Handle ++ operator pre/postfix"
-  (cond ((looking-back-locally "[a-zA-Z0-9_]\s*") "++ ")
-        ((looking-back-locally "^\s*") "++")
+  (cond ((looking-back-locally "[a-zA-Z0-9_]\\s-*") "++ ")
+        ((looking-back-locally "^\\s-*") "++")
         (t " ++")))
 
 (defun c-mode--- ()
   "Handle -- operator pre/postfix"
-  (cond ((looking-back-locally "[a-zA-Z0-9_]\s*") "-- ")
-        ((looking-back-locally "^\s*") "--")
+  (cond ((looking-back-locally "[a-zA-Z0-9_]\\s-*") "-- ")
+        ((looking-back-locally "^\\s-*") "--")
         (t " --")))
 
 (defun c-mode-< ()
