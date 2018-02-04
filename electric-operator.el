@@ -582,9 +582,11 @@ Using `cc-mode''s syntactic analysis."
 
 
 (defun c-mode-++ ()
-  "Handle ++ operator pre/postfix"
-  (cond ((looking-back-locally "[a-zA-Z0-9_]\\s-*") "++ ")
-        (t " ++")))
+  "Handle ++ operator pre/postfix and c++ in include strings"
+  (cond
+   ((c-mode-include-line?) "++")
+   ((looking-back-locally "[a-zA-Z0-9_]\\s-*") "++ ")
+   (t " ++")))
 
 (defun c-mode--- ()
   "Handle -- operator pre/postfix"

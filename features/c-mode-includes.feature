@@ -27,3 +27,7 @@ Feature: #include directives
   Scenario: Include statement with dash inside quotes
     When I type "#include"some-file.h""
     Then I should see "#include "some-file.h""
+
+  Scenario: Includes with angle brackets and symbols
+    When I type "#include <bits/stdc++.h>"
+    Then I should see "#include <bits/stdc++.h>"
