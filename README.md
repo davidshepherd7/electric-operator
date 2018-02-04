@@ -110,7 +110,7 @@ Good support is implemented for:
 
 In C-like languages there are some difficulties with distinguishing between `*`
 for pointer types and for multiplication. Similiarly for `&` (reference types vs
-bitwise and), and `<`, `>` (comparision operators vs angle brackets.
+bitwise and), and `<`, `>` (comparision operators vs angle brackets).
 
 
 The following languages are supported but not extensively tested (as far as
