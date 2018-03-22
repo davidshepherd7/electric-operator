@@ -17,6 +17,11 @@ Feature: C basic operators
     When I type ""var: " "
     Then I should see ""var: " "
 
+  Scenario: don't modify string literal after operator
+    When I type "a+"""
+    Then I should see "a + """
+
+
   # Pointer dereference
   Scenario: Space >
     When I type "a>b"
