@@ -659,7 +659,7 @@ Also handles C++ lambda capture by reference."
     " && "))
 
 (defun c-mode-/ ()
-  "Handle / in #include <a/b> and start of full-line comment"
+  "Handle / in #include <a/b>"
   (cond
    ((c-mode-include-line?) "/")
    (t (prog-mode-/))))
