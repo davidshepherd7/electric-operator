@@ -53,14 +53,12 @@ Feature: Rust specific operators
     When I type "if i<42"
     Then I should see "if i < 42"
 
-  @known-failure
   Scenario: Template brackets
     When I type "type Pair<'a>"
     Then I should see "type Pair<'a>"
 
 
   # Ref vs bitwise and
-  @known-failure
   Scenario: Reference argument
     When I type "fn insert(&mut self"
     Then I should see "fn insert(&mut self"
@@ -78,7 +76,6 @@ Feature: Rust specific operators
     When I type "Foo|Foo;"
     Then I should see "Foo | Foo;"
 
-  @known-failure
   Scenario: Lambda functions
     When I type "ten_times(|j| println!(\"hello, {}\", j));"
     Then I should see "ten_times(|j| println!(\"hello, {}\", j));"

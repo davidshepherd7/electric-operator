@@ -822,7 +822,8 @@ Also handles C++ lambda capture by reference."
                     (cons "->" " -> ")
                     (cons "=>" " => ")
 
-                    )
+                    ;; Bar is used for lambdas as well as or
+                    (cons "|" nil))
 
 
 
