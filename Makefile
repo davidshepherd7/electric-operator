@@ -13,6 +13,9 @@ clean :
 test: build
 	./test.sh
 
+benchmark: build
+	${CASK} emacs -Q --batch -l ./electric-operator.el -l ./electric-operator-benchmark.el
+
 install:
 	${CASK} install
 
