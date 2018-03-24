@@ -1,4 +1,5 @@
 (require 'benchmark)
+(require 'elp)
 (require 'electric-operator)
 (require 'python)
 
@@ -23,8 +24,53 @@
                                                  (delete-region 1 (point-max)))) it)
            (--min-by (< (car it) (car other)) it)))))
 
-(princ (other-benchmark))
-(terpri)
+;; (princ (other-benchmark))
+;; (terpri)
+
+
+(defun elp-benchmark (repeats &optional setup-fn)
+  (interactive)
+
+  ;; (elp-instrument-function #'electric-operator-post-self-insert-function)
+  ;; (elp-instrument-function #'electric-operator-get-rules-for-mode)
+  (elp-instrument-package "electric-operator")
+  (elp-instrument-package "electric-operator-")
+  (elp-instrument-function #'looking-back)
+  (setq elp-report-limit 50)
+  (elp-set-master #'electric-operator-longest-matching-rule)
+
+  (let ((gc-cons-threshold most-positive-fixnum))
+    (garbage-collect)
+    (dolist (_ (-repeat 1000 0))
+      (with-temp-buffer
+        (when setup-fn (funcall setup-fn))
+        (electric-operator-post-self-insert-function))))
+  (elp-results))
+
+(setq python-indent-guess-indent-offset nil)
+
+;; (elp-benchmark 1000 (lambda ()
+;;                       (python-mode)
+;;                       (insert "a->")))
+
+;; (elp-benchmark 1000 (lambda ()
+;;                       (python-mode)
+;;                       (insert "a=")))
+
+(elp-benchmark 1000 (lambda ()
+                      (c++-mode)
+                      (insert "a=")))
+
+;; (elp-benchmark 1000 (lambda ()
+;;                       (c++-mode)
+;;                       (insert "aaorsitenar")))
+
+
+
+
+
+
+
 
 
 ;; (defun do-pair ()
