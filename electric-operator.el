@@ -197,18 +197,16 @@ Whitespace before the operator is captured for possible use later.
 
 Returns a modified copy of the rule list."
   (let* ((compiled (electric-operator-make-compiled-rule-wrapper new-rule))
-         (op (electric-operator-compiled-rule-operator compiled))
-         (existing-rule (--find (equal op (electric-operator-compiled-rule-operator it)) initial)))
-    (if existing-rule
-        (progn
-          (-replace existing-rule compiled initial))
-      (-snoc initial compiled))))
+         (op (electric-operator-compiled-rule-operator compiled)))
+    (electric-operator--trie-put-operator op compiled initial)
+    initial))
 
 (defun electric-operator--add-rule-list (initial new-rules)
   "Replace or append a list of rules
 
 Returns a modified copy of the rule list."
-  (-reduce #'electric-operator--add-rule (-concat (list initial) new-rules)))
+  (-each new-rules (lambda (r) (electric-operator--add-rule initial r)))
+  initial)
 
 (defun electric-operator-add-rules (initial &rest new-rules)
   "Replace or append multiple rules
@@ -223,6 +221,10 @@ Returns a modified copy of the rule list."
 
 (defun electric-operator-get-rules-for-mode (major-mode-symbol)
   "Get the spacing rules for major mode"
+  (electric-operator--trie-get-all (electric-operator-get-rules-trie-for-mode major-mode-symbol)))
+
+(defun electric-operator-get-rules-trie-for-mode (major-mode-symbol)
+  "Get the spacing rules for major mode"
   (gethash major-mode-symbol electric-operator--mode-rules-table))
 
 (defun electric-operator-add-rules-for-mode (major-mode-symbol &rest new-rules)
@@ -231,7 +233,8 @@ Returns a modified copy of the rule list."
 Destructively modifies `electric-operator--mode-rules-table' to use the new rules for
 the given major mode."
   (puthash major-mode-symbol
-           (electric-operator--add-rule-list (electric-operator-get-rules-for-mode major-mode-symbol)
+           (electric-operator--add-rule-list (or (electric-operator-get-rules-trie-for-mode major-mode-symbol)
+                                (make-electric-operator--trie))
                             new-rules)
            electric-operator--mode-rules-table))
 
@@ -239,42 +242,39 @@ the given major mode."
 
 ;;; Default rule lists
 
-(defvar electric-operator-prog-mode-rules
-  (list (cons "=" " = ")
-        (cons "<" " < ")
-        (cons ">" " > ")
-        (cons "%" " % ")
-        (cons "+" #'electric-operator-prog-mode-+)
-        (cons "-" #'electric-operator-prog-mode--)
-        (cons "*" " * ")
-        (cons "/" #'electric-operator-prog-mode-/)
-        (cons "&" " & ")
-        (cons "|" " | ")
-        (cons "?" "? ")
-        (cons "," ", ")
-        (cons "^" " ^ ")
+(electric-operator-add-rules-for-mode 'prog-mode
+                     (cons "=" " = ")
+                     (cons "<" " < ")
+                     (cons ">" " > ")
+                     (cons "%" " % ")
+                     (cons "+" #'electric-operator-prog-mode-+)
+                     (cons "-" #'electric-operator-prog-mode--)
+                     (cons "*" " * ")
+                     (cons "/" #'electric-operator-prog-mode-/)
+                     (cons "&" " & ")
+                     (cons "|" " | ")
+                     (cons "?" "? ")
+                     (cons "," ", ")
+                     (cons "^" " ^ ")
 
-        (cons "==" " == ")
-        (cons "!=" " != ")
-        (cons "<=" " <= ")
-        (cons ">=" " >= ")
+                     (cons "==" " == ")
+                     (cons "!=" " != ")
+                     (cons "<=" " <= ")
+                     (cons ">=" " >= ")
 
-        (cons "*=" " *= ")
-        (cons "+=" " += ")
-        (cons "/=" " /= ")
-        (cons "-=" " -= ")
+                     (cons "*=" " *= ")
+                     (cons "+=" " += ")
+                     (cons "/=" " /= ")
+                     (cons "-=" " -= ")
 
-        (cons "&&" " && ")
-        (cons "||" " || ")
-        )
-  "Default spacing rules for programming modes")
+                     (cons "&&" " && ")
+                     (cons "||" " || ")
+                     )
 
-
-(defvar electric-operator-prose-rules
-  (list (cons "." #'electric-operator-docs-.)
-        (cons "," ", ")
-        )
-  "Rules to use in comments, strings and text modes.")
+(electric-operator-add-rules-for-mode 'text-mode
+                     (cons "." #'electric-operator-docs-.)
+                     (cons "," ", ")
+                     )
 
 
 
@@ -299,21 +299,22 @@ the given major mode."
 
     (cond
      ;; In comment or string?
-     ((electric-operator-in-docs?) (if electric-operator-enable-in-docs (-map #'electric-operator-make-compiled-rule-wrapper electric-operator-prose-rules) (list)))
+     ((electric-operator-in-docs?) (if electric-operator-enable-in-docs
+                      (electric-operator-get-rules-trie-for-mode 'text-mode)
+                    (make-electric-operator--trie)))
 
      ;; Try to find an entry for this mode in the table
-     ((electric-operator-get-rules-for-mode major-mode))
+     ((electric-operator-get-rules-trie-for-mode major-mode))
 
      ;; Default modes
-     ((derived-mode-p 'prog-mode) (-map #'electric-operator-make-compiled-rule-wrapper electric-operator-prog-mode-rules))
-     (t (-map #'electric-operator-make-compiled-rule-wrapper electric-operator-prose-rules)))))
+     ((derived-mode-p 'prog-mode) (electric-operator-get-rules-trie-for-mode 'prog-mode))
+     (t (electric-operator-get-rules-trie-for-mode 'text-mode)))))
 
 (defun electric-operator-longest-matching-rule (rule-list)
   "Return the rule with the most characters that applies to text before point"
-  (--> rule-list
-       (-filter (lambda (rule) (electric-operator-looking-back-locally (electric-operator-compiled-rule-regex rule))) it)
-       (-sort (lambda (p1 p2) (> (length (electric-operator-compiled-rule-operator p1)) (length (electric-operator-compiled-rule-operator p2)))) it)
-       (car it)))
+  (electric-operator--trie-get-operator (buffer-substring-no-properties (max (point-min) (- (point) 20))
+                                                       (point))
+                       rule-list))
 
 (defun electric-operator-eval-action (action point)
   (cond
@@ -486,7 +487,7 @@ Any better ideas would be welcomed."
 
 ;;; C/C++ mode tweaks
 
-(apply #'electric-operator-add-rules-for-mode 'c-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'c-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'c-mode
                      (cons "->" "->")
 
@@ -541,26 +542,26 @@ Any better ideas would be welcomed."
 ;; And some extra rules
 (electric-operator-add-rules-for-mode 'c++-mode
 
-                    ;; Move constructor or `and' operator
-                    (cons "&&" #'electric-operator-c++-mode-&&)
+                                      ;; Move constructor or `and' operator
+                                      (cons "&&" #'electric-operator-c++-mode-&&)
 
-                    ;; Nested templates
-                    (cons ">>" #'electric-operator-c++-mode->>)
+                                      ;; Nested templates
+                                      (cons ">>" #'electric-operator-c++-mode->>)
 
-                    ;; Handle for-each loops, public/private as well
-                    (cons ":" #'electric-operator-c++-mode-:)
+                                      ;; Handle for-each loops, public/private as well
+                                      (cons ":" #'electric-operator-c++-mode-:)
 
-                    ;; Namespaces
-                    (cons "::" #'electric-operator-c++-mode-::)
+                                      ;; Namespaces
+                                      (cons "::" #'electric-operator-c++-mode-::)
 
-                    ;; Lambdas
-                    (cons "->" #'electric-operator-c++-mode-->)
-                    (cons "=" #'electric-operator-c++-mode-=)
+                                      ;; Lambdas
+                                      (cons "->" #'electric-operator-c++-mode-->)
+                                      (cons "=" #'electric-operator-c++-mode-=)
 
-                    ;; Templates are hard to deal with sensibly
-                    (cons "<" nil)
-                    (cons ">" nil)
-                    )
+                                      ;; Templates are hard to deal with sensibly
+                                      (cons "<" nil)
+                                      (cons ">" nil)
+                                      )
 
 ;; Construct and add null rules for operator=, operator<< etc.
 (--> (electric-operator-get-rules-for-mode 'c++-mode)
@@ -773,7 +774,7 @@ Also handles C++ lambda capture by reference."
 
 ;;; Python mode tweaks
 
-(apply #'electric-operator-add-rules-for-mode 'python-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'python-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'python-mode
                      (cons "**" #'electric-operator-python-mode-**)
                      (cons "*" #'electric-operator-python-mode-*)
@@ -851,7 +852,7 @@ Also handles C++ lambda capture by reference."
    ((electric-operator-probably-unary-operator?) nil)
    (t (electric-operator-prog-mode-/))))
 
-(apply #'electric-operator-add-rules-for-mode 'js-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'js-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'js-mode
                      (cons "%=" " %= ")
                      (cons "++" "++ ")
@@ -883,7 +884,7 @@ Also handles C++ lambda capture by reference."
 
 ;;; Rust mode tweaks
 
-(apply #'electric-operator-add-rules-for-mode 'rust-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'rust-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'rust-mode
                      ;; templates are hard
                      (cons "<" nil)
@@ -918,7 +919,7 @@ Also handles C++ lambda capture by reference."
       "="
     " = "))
 
-(apply #'electric-operator-add-rules-for-mode 'ess-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'ess-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'ess-mode
                      (cons "." nil) ; word separator
                      (cons "<-" " <- ") ; assignment
@@ -950,12 +951,12 @@ Also handles C++ lambda capture by reference."
 
 ;;; Other major mode tweaks
 
-(apply #'electric-operator-add-rules-for-mode 'ruby-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'ruby-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'ruby-mode
                      (cons "=~" " =~ ") ; regex equality
                      )
 
-(apply #'electric-operator-add-rules-for-mode 'perl-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'perl-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'perl-mode
                      (cons "=~" " =~ ") ; regex equality
                      )
@@ -964,7 +965,7 @@ Also handles C++ lambda capture by reference."
 (apply #'electric-operator-add-rules-for-mode 'cperl-mode (electric-operator-get-rules-for-mode 'perl-mode))
 
 ;; This is based on a syntax guide and hasn't been tested.
-(apply #'electric-operator-add-rules-for-mode 'java-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'java-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'java-mode
 
                      ;; ternary operator
@@ -1060,7 +1061,7 @@ Also handles C++ lambda capture by reference."
         (electric-operator-prog-mode--)
       base)))
 
-(apply #'electric-operator-add-rules-for-mode 'haskell-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'haskell-mode (electric-operator-get-rules-for-mode 'prog-mode))
 
 ;; Make rules for partially evaluated binary operators inside parens
 (apply #'electric-operator-add-rules-for-mode 'haskell-mode
@@ -1093,7 +1094,7 @@ Also handles C++ lambda capture by reference."
 
 
 
-(apply #'electric-operator-add-rules-for-mode 'php-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'php-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'php-mode
                      (cons "**" " ** ")
                      (cons "%=" " %= ")
@@ -1115,7 +1116,7 @@ Also handles C++ lambda capture by reference."
 
 
 ;; Coffee script support based on http://coffeescript.org/#operators
-(apply #'electric-operator-add-rules-for-mode 'coffee-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'coffee-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'coffee-mode
                      (cons "**" " ** ")
                      (cons "//" " // ")
@@ -1128,7 +1129,7 @@ Also handles C++ lambda capture by reference."
                      (cons "=>" " => ")
                      )
 
-(apply #'electric-operator-add-rules-for-mode 'sql-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'sql-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'sql-mode
                      (cons "-" nil)
                      (cons "=" nil)
@@ -1154,7 +1155,7 @@ Also handles C++ lambda capture by reference."
    ((eq (electric-operator-enclosing-paren) ?\() "=")
    (t " = ")))
 
-(apply #'electric-operator-add-rules-for-mode 'julia-mode electric-operator-prog-mode-rules)
+(apply #'electric-operator-add-rules-for-mode 'julia-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'julia-mode
 
                      (cons "=" #'electric-operator-julia-mode-kwargs-=)
