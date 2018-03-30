@@ -43,7 +43,6 @@
   (assoc key (electric-operator--trie-arcs trie)))
 
 
-
 (defun electric-operator--trie-find (key on-fail trie)
   (cond
    ((null trie) nil)
@@ -65,9 +64,15 @@
      (t (error "Unknown on-fail value: %s" on-fail)))))
 
 (defun electric-operator--trie-put (key trie value)
+  "Insert value for KEY into the trie.
+
+KEY is a list of symbols,"
   (setf (electric-operator--trie-value (electric-operator--trie-find key 'extend trie)) value))
 
 (defun electric-operator--trie-get (key trie)
+  "Get the value for KEY in the trie.
+
+KEY is a list of symbols."
   (let ((key-trie (electric-operator--trie-find key 'return-nil trie)))
     (when key-trie
       (electric-operator--trie-value key-trie))))
@@ -83,9 +88,12 @@
        (reverse it)))
 
 (defun electric-operator--trie-put-operator (operator value trie)
+  "Like trie-put but works with operator strings"
   (electric-operator--trie-put (electric-operator--string-to-trie-key operator) trie value))
 
 (defun electric-operator--trie-get-operator (operator trie)
+  "Like trie-get, but with buffer substrings (looking backwards
+from point) as the key."
   (let ((key-trie (electric-operator--trie-find
                    (electric-operator--string-to-trie-key operator)
                    'longest-match
