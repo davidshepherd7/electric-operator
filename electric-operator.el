@@ -22,6 +22,52 @@
 (require 'dash)
 (require 'names)
 
+
+
+;;; Trie implementation, heavily based on code from PAIP
+
+;; Outside the namespace becuaes defstruct doesn't seem to work correctly
+
+(cl-defstruct electric-operator--trie
+  (value nil)
+  (arcs (electric-operator--trie-arcs-make)))
+
+;; arcs as alists
+(defun electric-operator--trie-arcs-make () nil)
+(defun electric-operator--trie-arcs-put (key trie)
+  (let ((new-trie (make-electric-operator--trie)))
+    (push (cons key new-trie)
+          (electric-operator--trie-arcs trie))
+    new-trie))
+(defun electric-operator--trie-arcs-get (key trie)
+  (assoc key (electric-operator--trie-arcs trie)))
+
+
+
+(defun electric-operator--trie-find (key on-fail trie)
+  (cond
+   ((null trie) nil)
+   ((atom key) (electric-operator--trie-follow-arc key on-fail trie))
+   (t (electric-operator--trie-find (cdr key) on-fail
+                   (electric-operator--trie-find (car key) on-fail trie)))))
+
+(defun electric-operator--trie-follow-arc (key-component on-fail trie)
+  (let ((arc (electric-operator--trie-arcs-get key-component trie)))
+    (cond
+     ((not (null arc)) (cdr arc))
+     ((equal on-fail 'return-nil) nil)
+     ((equal on-fail 'extend) (electric-operator--trie-arcs-put key-component trie))
+     (t (error "Unknown on-fail value: %s" on-fail)))))
+
+(defun electric-operator--trie-put (key trie value)
+  (setf (electric-operator--trie-value (electric-operator--trie-find key 'extend trie)) value))
+
+(defun electric-operator--trie-get (key trie)
+  (let ((key-trie (electric-operator--trie-find key 'return-nil trie)))
+    (when key-trie
+      (electric-operator--trie-value key-trie))))
+
+
 ;; namespacing using names.el:
 ;;;###autoload
 (define-namespace electric-operator-
