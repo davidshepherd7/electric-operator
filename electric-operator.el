@@ -81,6 +81,13 @@ KEY is a list of symbols."
     (when key-trie
       (electric-operator--trie-value key-trie))))
 
+(defun electric-operator--trie-get-all (trie)
+  "Extract all values into a list"
+  (cond
+   ((electric-operator--trie-value trie) (list (electric-operator--trie-value trie)))
+   (t (-mapcat #'electric-operator--trie-get-all
+               (-map #'cdr (electric-operator--trie-arcs trie))))))
+
 
 
 (defun electric-operator--string-to-trie-key (string)

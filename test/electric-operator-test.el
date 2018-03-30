@@ -49,6 +49,20 @@ Aenean in sem ac leo mollis blandit. xyz /=" trie) " /= "))
     ))
 
 
+(ert-deftest trie-get-all ()
+  (let ((trie (make-electric-operator--trie)))
+
+    (electric-operator--trie-put '(*) trie " * ")
+    (electric-operator--trie-put '(a b) trie '("1" "2" "3"))
+    (electric-operator--trie-put '(a b c) trie "6")
+    (electric-operator--trie-put '(a x) trie "xyz")
+    (electric-operator--trie-put '(a) trie "bar")
+
+    ;; We don't actually care about the order
+    (should (equal (electric-operator--trie-get-all trie)
+                   (nreverse '(" * " ("1" "2" "3") "6" "xyz" "bar"))))))
+
+
 ;; Local Variables:
 ;; nameless-current-name: "electric-operator"
 ;; End:
