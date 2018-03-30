@@ -961,7 +961,7 @@ Also handles C++ lambda capture by reference."
                      )
 
 ;; cperl mode is another perl mode, copy the rules
-(apply #'electric-operator-add-rules-for-mode 'cperl-mode (electric-operator-get-rules-for-mode 'cperl-mode))
+(apply #'electric-operator-add-rules-for-mode 'cperl-mode (electric-operator-get-rules-for-mode 'perl-mode))
 
 ;; This is based on a syntax guide and hasn't been tested.
 (apply #'electric-operator-add-rules-for-mode 'java-mode electric-operator-prog-mode-rules)
