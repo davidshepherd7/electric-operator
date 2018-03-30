@@ -19,13 +19,13 @@
       (garbage-collect)
       (--> (-repeat 20 0)
            (--map (benchmark-run-compiled 1000 (progn
-                                                 (insert "a->")
+                                                 (insert "a=")
                                                  (electric-operator-post-self-insert-function)
                                                  (delete-region 1 (point-max)))) it)
            (--min-by (< (car it) (car other)) it)))))
 
-;; (princ (other-benchmark))
-;; (terpri)
+(princ (other-benchmark))
+(terpri)
 
 
 (defun elp-benchmark (repeats &optional setup-fn)
