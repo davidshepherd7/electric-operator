@@ -69,15 +69,15 @@ working reliably enough for pointer types you would use
     (electric-operator-add-rules-for-mode 'c-mode
       (cons "*" nil))
 
-Rules for new modes can be added in exactly the same way. To use the default
-rules for a new programming mode use `apply` to add all rules from
-`electric-operator-prog-mode-rules`:
+Rules for new modes can be added in exactly the same way. To add all the default
+prog-mode rules to a new mode use:
 
     (apply #'electric-operator-add-rules-for-mode 'my-new-mode
-           electric-operator-prog-mode-rules)
+           (electric-operator-get-rules-for-mode 'prog-mode))
 
-The default rules for text modes can be added in the same way from the list
-`electric-operator-prose-rules`.
+Or similarly to add all existing rules for another mode. The default rules for
+text modes can be added in the same way using
+`(electric-operator-get-rules-for-mode text-mode)`.
 
 
 Other customisation options are available to tweak behaviour for some
@@ -172,6 +172,28 @@ to be too heavy to add to electric-spacing.
 
 
 ## Changelog
+
+### Version 2.0
+
+BREAKING:
+
+* `electric-operator-prog-mode-rules` and `electric-operator-prose-mode-rules`
+  are now deprecated, please use `(get-rules-for-mode 'prog-mode)` to get the
+  rules and `(add-rules-for-mode 'prog-mode ...rules... )` to set rules.
+
+  The old variables still exist for compatibility, but they are not read by
+  `electric-operator`.
+
+  TODO: add the variables again.
+
+* Electric operator now uses a trie data structure instead of a list of rules
+  internally. This shouldn't have any effect on configs that only use
+  non-private functions (i.e. those without `--` in their name).
+
+Other changes:
+
+* Major performance improvements!
+
 
 ### Unstable
 
