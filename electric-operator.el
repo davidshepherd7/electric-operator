@@ -30,7 +30,9 @@
 
 (cl-defstruct electric-operator--trie
   (value nil)
-  (arcs (electric-operator--trie-arcs-make)))
+  (arcs (electric-operator--trie-arcs-make))
+  ;; Used internally to implement longest-matching, don't set this by hand
+  (terminal nil))
 
 ;; arcs as alists
 (defun electric-operator--trie-arcs-make () nil)
@@ -46,6 +48,7 @@
 (defun electric-operator--trie-find (key on-fail trie)
   (cond
    ((null trie) nil)
+   ((electric-operator--trie-terminal trie) (electric-operator--trie-follow-arc nil on-fail trie))
    ((atom key) (electric-operator--trie-follow-arc key on-fail trie))
    (t (electric-operator--trie-find (cdr key) on-fail
                    (electric-operator--trie-find (car key) on-fail trie)))))
@@ -58,9 +61,10 @@
      ((equal on-fail 'extend) (electric-operator--trie-arcs-put key-component trie))
      ((equal on-fail 'longest-match)
       (make-electric-operator--trie
-       ;; HACK: Construct a trie such that when find is (eventually) called with
-       ;; key-component nil it will pick this value
-       :arcs (list (electric-operator--trie-arcs-get nil trie))))
+       ;; HACK: Construct a trie such that the next call to find will stop and
+       ;; return this value
+       :arcs (list (electric-operator--trie-arcs-get nil trie))
+       :terminal t))
      (t (error "Unknown on-fail value: %s" on-fail)))))
 
 (defun electric-operator--trie-put (key trie value)

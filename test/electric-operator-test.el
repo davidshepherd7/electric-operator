@@ -32,7 +32,20 @@
     (should (equal (electric-operator--trie-get-operator "*=" trie) " *= "))
     (should (equal (electric-operator--trie-get-operator "++" trie) nil))
     (should (equal (electric-operator--trie-get-operator "a*=" trie) " *= "))
-    (should (equal (electric-operator--trie-get-operator "xyz /=" trie) " /= "))
+
+    ;; This should only recurse down the trie a few times despite the long
+    ;; input, to check this use `(trace-function #'electric-operator--trie-find)'.
+    (should (equal (electric-operator--trie-get-operator
+                    "Nam a sapien.
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Mauris mollis tincidunt felis.
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+Nulla posuere. Aliquam posuere. Phasellus purus. Aliquam posuere.
+Fusce suscipit, wisi nec facilisis facilisis, est dui fermentum leo, quis tempor ligula erat quis odio.
+Proin neque massa, cursus ut, gravida ut, lobortis eget, lacus.
+Aliquam erat volutpat.
+Aenean in sem ac leo mollis blandit. xyz /=" trie) " /= "))
+
     ))
 
 
