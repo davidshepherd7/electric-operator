@@ -57,6 +57,11 @@
      ((not (null arc)) (cdr arc))
      ((equal on-fail 'return-nil) nil)
      ((equal on-fail 'extend) (electric-operator--trie-arcs-put key-component trie))
+     ((equal on-fail 'longest-match)
+      (make-electric-operator--trie
+       ;; HACK: Construct a trie such that when find is (eventually) called with
+       ;; key-component nil it will pick this value
+       :arcs (list (electric-operator--trie-arcs-get nil trie))))
      (t (error "Unknown on-fail value: %s" on-fail)))))
 
 (defun electric-operator--trie-put (key trie value)
@@ -83,7 +88,7 @@
 (defun electric-operator--trie-get-operator (operator trie)
   (let ((key-trie (electric-operator--trie-find
                    (electric-operator--string-to-trie-key operator)
-                   'return-nil
+                   'longest-match
                    trie)))
     (when key-trie
       (electric-operator--trie-value key-trie))))

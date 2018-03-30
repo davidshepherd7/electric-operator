@@ -30,7 +30,10 @@
     (electric-operator--trie-put-operator "*=" " *= " trie)
     (electric-operator--trie-put-operator "/=" " /= " trie)
     (should (equal (electric-operator--trie-get-operator "*=" trie) " *= "))
-    (should (equal (electric-operator--trie-get-operator "++" trie) nil))))
+    (should (equal (electric-operator--trie-get-operator "++" trie) nil))
+    (should (equal (electric-operator--trie-get-operator "a*=" trie) " *= "))
+    (should (equal (electric-operator--trie-get-operator "xyz /=" trie) " /= "))
+    ))
 
 
 ;; Local Variables:
