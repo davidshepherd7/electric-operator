@@ -10,8 +10,13 @@ build :
 clean :
 	@rm -f *.elc
 
-test: build
-	./test.sh
+test: unit integration
+
+unit: build
+	${CASK} exec ert-runner
+
+integration: build
+	./integration-test.sh
 
 benchmark: build
 	${CASK} emacs -Q --batch -l ./electric-operator.el -l ./electric-operator-benchmark.el

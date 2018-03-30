@@ -149,8 +149,9 @@ in python which works well with `electric-operator-mode`:
 
 I'm using [Cask](https://github.com/cask/cask.el) to manage dependencies, so to
 run the tests you'll need to install cask then run `cask install` to install
-dependencies. Then the tests can be run with `./test.sh` (or manually with
-`ecukes`, but make sure you exclude tests tagged with `@known-failure`).
+dependencies. Then the tests can be run with `make test` (or manually with
+`ecukes` and `ert-runner`, but make sure you exclude ecukes tests tagged with
+`@known-failure`).
 
 Bug reports are also welcome!
 
