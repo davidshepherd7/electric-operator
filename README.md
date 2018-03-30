@@ -167,8 +167,7 @@ also by William Xu.
 Electric-operator uses simpler and more flexible rules to define how
 operators should be treated, and also adds a full suite of tests. However
 it has some additional dependencies (in particular the excellent
-[`dash`](https://github.com/magnars/dash.el) and
-[`names`](https://github.com/Malabarba/names) packages) which were decided
+[`dash`](https://github.com/magnars/dash.el)) which were decided
 to be too heavy to add to electric-spacing.
 
 
