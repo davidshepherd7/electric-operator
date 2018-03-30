@@ -68,6 +68,28 @@
       (electric-operator--trie-value key-trie))))
 
 
+
+(defun electric-operator--string-to-trie-key (string)
+  ;; TODO: this is probably too slow long-term
+  (--> string
+       (split-string it "" t)
+       (-map #'string-to-char it)
+       (-filter (lambda (s) (not (or (= ?\s s) (= ?\t s)))) it)
+       (reverse it)))
+
+(defun electric-operator--trie-put-operator (operator value trie)
+  (electric-operator--trie-put (electric-operator--string-to-trie-key operator) trie value))
+
+(defun electric-operator--trie-get-operator (operator trie)
+  (let ((key-trie (electric-operator--trie-find
+                   (electric-operator--string-to-trie-key operator)
+                   'return-nil
+                   trie)))
+    (when key-trie
+      (electric-operator--trie-value key-trie))))
+
+
+
 ;; namespacing using names.el:
 ;;;###autoload
 (define-namespace electric-operator-
