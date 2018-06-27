@@ -105,9 +105,9 @@ For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
 
 Whitespace before the operator is captured for possible use later.
 "
-  (concat "\\(\\s-*\\)"
+  (concat "\\([ \t]*\\)"
           (mapconcat #'regexp-quote (split-string op "" t) "\\s-*")
-          "\\(\\s-*\\)"))
+          "\\([ \t]*\\)"))
 
 (defun -add-rule (initial new-rule)
   "Replace or append a new rule
