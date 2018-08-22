@@ -180,6 +180,8 @@ the given major mode."
         (cons "+=" " += ")
         (cons "/=" " /= ")
         (cons "-=" " -= ")
+        (cons "|=" " |= ")
+        (cons "&=" " &= ")
 
         (cons "&&" " && ")
         (cons "||" " || ")
