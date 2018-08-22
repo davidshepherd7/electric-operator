@@ -180,8 +180,6 @@ the given major mode."
         (cons "+=" " += ")
         (cons "/=" " /= ")
         (cons "-=" " -= ")
-        (cons "|=" " |= ")
-        (cons "&=" " &= ")
 
         (cons "&&" " && ")
         (cons "||" " || ")
@@ -701,6 +699,8 @@ Also handles C++ lambda capture by reference."
                     (cons "=" #'python-mode-kwargs-=)
                     (cons "-" #'python-mode-negative-slices)
                     (cons "->" " -> ") ; function return types
+                    (cons "|=" " |= ")
+                    (cons "&=" " &= ")
                     )
 
 (defun python-mode-in-lambda-args? ()
@@ -785,6 +785,8 @@ Also handles C++ lambda capture by reference."
                     (cons "//" " // ")
                     (cons "/*" " /* ")
                     (cons "=>" " => ") ; ES6 arrow functions
+                    (cons "|=" " |= ")
+                    (cons "&=" " &= ")
                     )
 
 (apply #'add-rules-for-mode 'js2-mode (get-rules-for-mode 'js-mode))
