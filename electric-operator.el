@@ -701,6 +701,14 @@ Also handles C++ lambda capture by reference."
                     (cons "->" " -> ") ; function return types
                     (cons "|=" " |= ")
                     (cons "&=" " &= ")
+                    (cons "^=" " ^= ")
+                    (cons "%=" " %= ")
+                    (cons "<<" " << ")
+                    (cons ">>" " >> ")
+                    (cons "//=" " //= ")
+                    (cons "**=" " **= ")
+                    (cons ">>=" " >>= ")
+                    (cons "<<=" " <<= ")
                     )
 
 (defun python-mode-in-lambda-args? ()
