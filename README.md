@@ -69,15 +69,15 @@ working reliably enough for pointer types you would use
     (electric-operator-add-rules-for-mode 'c-mode
       (cons "*" nil))
 
-Rules for new modes can be added in exactly the same way. To use the default
-rules for a new programming mode use `apply` to add all rules from
-`electric-operator-prog-mode-rules`:
+Rules for new modes can be added in exactly the same way. To add all the default
+prog-mode rules to a new mode use:
 
     (apply #'electric-operator-add-rules-for-mode 'my-new-mode
-           electric-operator-prog-mode-rules)
+           (electric-operator-get-rules-for-mode 'prog-mode))
 
-The default rules for text modes can be added in the same way from the list
-`electric-operator-prose-rules`.
+Or similarly to add all existing rules for another mode. The default rules for
+text modes can be added in the same way using
+`(electric-operator-get-rules-for-mode text-mode)`.
 
 
 Other customisation options are available to tweak behaviour for some
@@ -149,8 +149,9 @@ in python which works well with `electric-operator-mode`:
 
 I'm using [Cask](https://github.com/cask/cask.el) to manage dependencies, so to
 run the tests you'll need to install cask then run `cask install` to install
-dependencies. Then the tests can be run with `./test.sh` (or manually with
-`ecukes`, but make sure you exclude tests tagged with `@known-failure`).
+dependencies. Then the tests can be run with `make test` (or manually with
+`ecukes` and `ert-runner`, but make sure you exclude ecukes tests tagged with
+`@known-failure`).
 
 Bug reports are also welcome!
 
@@ -166,12 +167,29 @@ also by William Xu.
 Electric-operator uses simpler and more flexible rules to define how
 operators should be treated, and also adds a full suite of tests. However
 it has some additional dependencies (in particular the excellent
-[`dash`](https://github.com/magnars/dash.el) and
-[`names`](https://github.com/Malabarba/names) packages) which were decided
+[`dash`](https://github.com/magnars/dash.el)) which were decided
 to be too heavy to add to electric-spacing.
 
 
 ## Changelog
+
+### Version 2.0
+
+BREAKING:
+
+* `electric-operator-prog-mode-rules` and `electric-operator-prose-mode-rules`
+  have been removed, please use `(get-rules-for-mode 'prog-mode)` to get the
+  rules and `(add-rules-for-mode 'prog-mode ...rules... )` to set rules.
+
+Other changes:
+
+* Major performance improvements!
+
+* Electric operator now uses a trie data structure instead of a list of rules
+  internally. This shouldn't have any effect on configs that only use
+  non-private functions (i.e. those without `--` in their name).
+
+
 
 ### Unstable
 
