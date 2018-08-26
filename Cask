@@ -6,7 +6,9 @@
 ;; single file package).
 (package-file "electric-operator.el")
 
-(source melpa-stable)
+;; TODO: switch back to melpa stable once ess fixes the "julia mode failed to
+;; install" error
+(source melpa)
 
 (development
  (depends-on "ecukes")
