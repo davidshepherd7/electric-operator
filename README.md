@@ -182,6 +182,8 @@ to be too heavy to add to electric-spacing.
 * Better comment handling in C-like languages
 * Type annotations in Python
 * C++ lambda captures
+* Some additional python operators
+* Fix comma operator in R for current unstable version of ess-mode (July 2018)
 
 ### Version 1.0
 
