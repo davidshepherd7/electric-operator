@@ -179,7 +179,8 @@ BREAKING:
 
 * `electric-operator-prog-mode-rules` and `electric-operator-prose-mode-rules`
   have been removed, please use `(get-rules-for-mode 'prog-mode)` to get the
-  rules and `(add-rules-for-mode 'prog-mode ...rules... )` to set rules.
+  rules and `(add-rules-for-mode 'prog-mode ...rules... )` to set rules for
+  prog-mode. For prose rules use `'text-mode`.
 
 Other changes:
 
