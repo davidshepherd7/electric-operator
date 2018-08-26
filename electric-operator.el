@@ -870,10 +870,14 @@ Also handles C++ lambda capture by reference."
   (when mode
     (post-self-insert-function)))
 
-;; ess-mode binds comma to a function, so we need to advise that function
-;; to also run our code:
+;; ess-mode binds comma to a function, so we need to advise that function to
+;; also run our code. ess-mode.el was renamed to ess.el in July 2018, in a few
+;; years we can remove the old `ess-mode' form.
 (with-eval-after-load 'ess-mode
   (advice-add 'ess-smart-comma :after #'ess-comma-post-self-insert-function))
+(with-eval-after-load 'ess
+  (advice-add 'ess-smart-comma :after #'ess-comma-post-self-insert-function))
+
 
 
 
