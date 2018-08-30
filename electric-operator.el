@@ -370,7 +370,7 @@ the given major mode."
     (when (derived-mode-p 'haskell-mode)
       (electric-operator-haskell-mode-fixup-partial-operator-parens operator-just-inserted))))
 
-:autoload
+;;;###autoload
 (define-minor-mode electric-operator-mode
   "Toggle automatic insertion of spaces around operators (Electric Spacing mode).
 
