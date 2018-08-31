@@ -192,7 +192,7 @@ Other changes:
 
 
 
-### Unstable
+### Version 1.1.0
 
 * Major performance improvements
 * Expansions of operators at the start of a line now won't modify indentation
