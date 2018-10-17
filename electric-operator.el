@@ -1095,6 +1095,7 @@ Also handles C++ lambda capture by reference."
                      (cons "<-" " <- ") ; assignment
                      (cons "->" " -> ") ; lambdas and function types
                      (cons "=>" " => ") ; typeclasses
+                     (cons "==" " == ") ; equal
                      (cons "::" " :: ") ; type specification
                      (cons "!=" nil) ; unused
                      (cons "~" " ~") ; lazy pattern match
