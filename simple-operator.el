@@ -39,6 +39,28 @@ Return position if successful"
   (and (< 0 (abs (skip-chars-backward electric-operator-known-operator-chars-strg)))
        (point)))
 
+(defun electric-operator--setup-haskell-mode ()
+  )
+
+(defun electric-operator-setup ()
+  (pcase major-mode
+    (`inferior-sml-mode
+     (electric-operator--setup-inferior-sml))
+    (`sml-mode
+     (electric-operator--setup-sml pps))
+    (`python-mode
+     (electric-operator--setup-python-mode))
+    (`emacs-lisp-mode
+     (electric-operator--setup-emacs-lisp-mode))
+    (`ruby-mode
+     (electric-operator--setup-ruby-mode))
+    (`haskell-mode
+     (electric-operator--setup-haskell-mode))
+    (`haskell-interactive-mode
+     (electric-operator--setup-haskell-mode))
+    (`inferior-haskell-mode
+     (electric-operator--setup-haskell-mode))))
+
 (defun simple-operator-do ()
   ""
   (interactive "*")
