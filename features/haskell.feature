@@ -4,7 +4,6 @@ Feature: Haskell mode
     When I turn on haskell-mode
     When I turn on electric-operator-mode
 
-
   # Partially evaluated binary operators
   Scenario: Infix +
     When I type "1+2"
@@ -37,8 +36,6 @@ Feature: Haskell mode
  Scenario: multi character operator
     When I type "(++)"
     Then I should see "(++)"
-
-
 
   # Partially evaluated binary operators, with electric-pair mode
   Scenario: Infix + inside parens, brackets typed first
@@ -83,7 +80,6 @@ Feature: Haskell mode
     When I type "++"
     Then I should see "(++)"
 
-
   # Infix - doesn't break other things
   Scenario: Infix - operator
     When I type "e-b"
@@ -100,7 +96,6 @@ Feature: Haskell mode
   Scenario: Infix in brackets
     When I type "(1-2)"
     Then I should see "(1 - 2)"
-
 
   # Infix / doesn't break other things
   Scenario: #! / operator
@@ -119,8 +114,10 @@ Feature: Haskell mode
     When I type "(1/2)"
     Then I should see "(1 / 2)"
 
-
-
   Scenario: Comments don't change the current indentation
     When I type "            --"
     Then I should see "            -- "
+
+  Scenario: Equal sing
+    When I type "asdf=="
+    Then I should see "asdf == "
