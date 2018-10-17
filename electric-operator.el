@@ -25,7 +25,7 @@
 
 ;;; Trie implementation, heavily based on code from PAIP
 
-;; Outside the namespace becuaes defstruct doesn't seem to work correctly
+;; Outside the namespace because defstruct doesn't seem to work correctly
 
 (cl-defstruct electric-operator--trie
   (value nil)
