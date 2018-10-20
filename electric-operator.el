@@ -18,6 +18,8 @@
 (require 'cc-mode)
 (require 'thingatpt)
 (require 'subr-x)
+(require 'cl-lib)
+(require 'cl-macs)
 
 (require 'dash)
 
