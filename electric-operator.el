@@ -278,118 +278,6 @@ the given major mode."
 
 
 
-;;; Core functions
-
-;; Borrowed from s.el
-(defun electric-operator--trim-left (s)
-  "Remove whitespace at the beginning of S."
-  (save-match-data
-    (if (string-match "\\`[ \t\n\r]+" s)
-        (replace-match "" t t s)
-      s)))
-
-(defun electric-operator-get-rules-list ()
-  "Pick which rule list is appropriate for spacing just before point"
-  (save-excursion
-    ;; We want to look one character before point because this is called
-    ;; via post-self-insert-hook (there is no pre-self-insert-hook). This
-    ;; allows us to correctly handle cases where the just-inserted
-    ;; character ended a comment/string/...
-    (forward-char -1)
-
-    (cond
-     ;; In comment or string?
-     ((electric-operator-in-docs?) (if electric-operator-enable-in-docs
-                                       (electric-operator-get-rules-trie-for-mode 'text-mode)
-                                     (make-electric-operator--trie)))
-
-     ;; Try to find an entry for this mode in the table
-     ((electric-operator-get-rules-trie-for-mode major-mode))
-
-     ;; Default modes
-     ((derived-mode-p 'prog-mode) (electric-operator-get-rules-trie-for-mode 'prog-mode))
-     (t (electric-operator-get-rules-trie-for-mode 'text-mode)))))
-
-(defun electric-operator-longest-matching-rule (rule-list)
-  "Return the rule with the most characters that applies to text before point"
-  (electric-operator--trie-get-operator (buffer-substring-no-properties (max (point-min) (- (point) 20))
-                                                                        (point))
-                                        rule-list))
-
-(defun electric-operator-eval-action (action point)
-  (cond
-   ((functionp action)
-    (save-excursion (goto-char point) (funcall action)))
-   ((stringp action) action)
-   (t (error "Unrecognised action: %s" action))))
-
-(defun electric-operator-post-self-insert-function ()
-  "Check for a matching rule and apply it"
-  (-let* ((rule (electric-operator-longest-matching-rule (electric-operator-get-rules-list)))
-          (operator-regex (and rule (electric-operator-compiled-rule-regex rule)))
-          (action (and rule (electric-operator-compiled-rule-action rule)))
-          (operator-just-inserted nil))
-    (when (and rule action)
-
-      ;; Find point where operator starts
-      (electric-operator-looking-back-locally operator-regex t)
-
-      ;; Capture operator include all leading and *trailing* whitespace
-      (save-excursion
-        (goto-char (match-beginning 0))
-        (looking-at operator-regex))
-
-      (let* ((pre-whitespace (match-string 1))
-             (op-match-beginning (match-beginning 0))
-             (op-match-end (match-end 0))
-             (spaced-string (electric-operator-eval-action action op-match-beginning)))
-
-        ;; If action was a function which eval-d to nil then we do nothing.
-        (when spaced-string
-
-          ;; Record the fact we are inserting something for passing to fixup
-          ;; functions
-          (setq operator-just-inserted t)
-
-          ;; Set an undo boundary for easy undo-ing of the automatic insertion
-          (undo-boundary)
-
-          ;; Delete the characters matching this rule before point
-          (delete-region op-match-beginning op-match-end)
-
-          (if (electric-operator-looking-back-locally "^\\s-*")
-
-              ;; This is the first thing in a line: leave the indentation alone.
-              (progn
-                (insert pre-whitespace)
-                (insert (electric-operator--trim-left spaced-string)))
-
-            ;; Insert correctly spaced operator
-            (insert spaced-string)))))
-
-    (when (derived-mode-p 'haskell-mode)
-      (electric-operator-haskell-mode-fixup-partial-operator-parens operator-just-inserted))))
-
-;;;###autoload
-(define-minor-mode electric-operator-mode
-  "Toggle automatic insertion of spaces around operators (Electric Spacing mode).
-
-With a prefix argument ARG, enable Electric Spacing mode if ARG is
-positive, and disable it otherwise.  If called from Lisp, enable
-the mode if ARG is omitted or nil.
-
-This is a local minor mode.  When enabled, typing an operator automatically
-inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
-  :global nil
-  :group 'electricity
-  :lighter " _+_"
-
-  ;; body
-  (if electric-operator-mode
-      (add-hook 'post-self-insert-hook
-                #'electric-operator-post-self-insert-function nil t)
-    (remove-hook 'post-self-insert-hook
-                 #'electric-operator-post-self-insert-function t)))
 
 
 
@@ -1250,6 +1138,119 @@ Also handles C++ lambda capture by reference."
                      (cons ".%=" " .%= "))
 
 
+
+;;; Core functions
+
+;; Borrowed from s.el
+(defun electric-operator--trim-left (s)
+  "Remove whitespace at the beginning of S."
+  (save-match-data
+    (if (string-match "\\`[ \t\n\r]+" s)
+        (replace-match "" t t s)
+      s)))
+
+(defun electric-operator-get-rules-list ()
+  "Pick which rule list is appropriate for spacing just before point"
+  (save-excursion
+    ;; We want to look one character before point because this is called
+    ;; via post-self-insert-hook (there is no pre-self-insert-hook). This
+    ;; allows us to correctly handle cases where the just-inserted
+    ;; character ended a comment/string/...
+    (forward-char -1)
+
+    (cond
+     ;; In comment or string?
+     ((electric-operator-in-docs?) (if electric-operator-enable-in-docs
+                                       (electric-operator-get-rules-trie-for-mode 'text-mode)
+                                     (make-electric-operator--trie)))
+
+     ;; Try to find an entry for this mode in the table
+     ((electric-operator-get-rules-trie-for-mode major-mode))
+
+     ;; Default modes
+     ((derived-mode-p 'prog-mode) (electric-operator-get-rules-trie-for-mode 'prog-mode))
+     (t (electric-operator-get-rules-trie-for-mode 'text-mode)))))
+
+(defun electric-operator-longest-matching-rule (rule-list)
+  "Return the rule with the most characters that applies to text before point"
+  (electric-operator--trie-get-operator (buffer-substring-no-properties (max (point-min) (- (point) 20))
+                                                                        (point))
+                                        rule-list))
+
+(defun electric-operator-eval-action (action point)
+  (cond
+   ((functionp action)
+    (save-excursion (goto-char point) (funcall action)))
+   ((stringp action) action)
+   (t (error "Unrecognised action: %s" action))))
+
+(defun electric-operator-post-self-insert-function ()
+  "Check for a matching rule and apply it"
+  (-let* ((rule (electric-operator-longest-matching-rule (electric-operator-get-rules-list)))
+          (operator-regex (and rule (electric-operator-compiled-rule-regex rule)))
+          (action (and rule (electric-operator-compiled-rule-action rule)))
+          (operator-just-inserted nil))
+    (when (and rule action)
+
+      ;; Find point where operator starts
+      (electric-operator-looking-back-locally operator-regex t)
+
+      ;; Capture operator include all leading and *trailing* whitespace
+      (save-excursion
+        (goto-char (match-beginning 0))
+        (looking-at operator-regex))
+
+      (let* ((pre-whitespace (match-string 1))
+             (op-match-beginning (match-beginning 0))
+             (op-match-end (match-end 0))
+             (spaced-string (electric-operator-eval-action action op-match-beginning)))
+
+        ;; If action was a function which eval-d to nil then we do nothing.
+        (when spaced-string
+
+          ;; Record the fact we are inserting something for passing to fixup
+          ;; functions
+          (setq operator-just-inserted t)
+
+          ;; Set an undo boundary for easy undo-ing of the automatic insertion
+          (undo-boundary)
+
+          ;; Delete the characters matching this rule before point
+          (delete-region op-match-beginning op-match-end)
+
+          (if (electric-operator-looking-back-locally "^\\s-*")
+
+              ;; This is the first thing in a line: leave the indentation alone.
+              (progn
+                (insert pre-whitespace)
+                (insert (electric-operator--trim-left spaced-string)))
+
+            ;; Insert correctly spaced operator
+            (insert spaced-string)))))
+
+    (when (derived-mode-p 'haskell-mode)
+      (electric-operator-haskell-mode-fixup-partial-operator-parens operator-just-inserted))))
+
+;;;###autoload
+(define-minor-mode electric-operator-mode
+  "Toggle automatic insertion of spaces around operators (Electric Spacing mode).
+
+With a prefix argument ARG, enable Electric Spacing mode if ARG is
+positive, and disable it otherwise.  If called from Lisp, enable
+the mode if ARG is omitted or nil.
+
+This is a local minor mode.  When enabled, typing an operator automatically
+inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
+  :global nil
+  :group 'electricity
+  :lighter " _+_"
+
+  ;; body
+  (if electric-operator-mode
+      (add-hook 'post-self-insert-hook
+                #'electric-operator-post-self-insert-function nil t)
+    (remove-hook 'post-self-insert-hook
+                 #'electric-operator-post-self-insert-function t)))
 
 (provide 'electric-operator)
 
