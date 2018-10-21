@@ -840,18 +840,6 @@ Also handles C++ lambda capture by reference."
                      (cons "=" #'electric-operator-ess-mode-keyword-args-=)
                      )
 
-(defun electric-operator-ess-comma-post-self-insert-function ()
-  (when electric-operator-mode
-    (electric-operator-post-self-insert-function)))
-
-;; ess-mode binds comma to a function, so we need to advise that function to
-;; also run our code. ess-mode.el was renamed to ess.el in July 2018, in a few
-;; years we can remove the old `ess-mode' form.
-(with-eval-after-load 'ess-mode
-  (advice-add 'ess-smart-comma :after #'electric-operator-ess-comma-post-self-insert-function))
-(with-eval-after-load 'ess
-  (advice-add 'ess-smart-comma :after #'electric-operator-ess-comma-post-self-insert-function))
-
 
 
 
@@ -1253,6 +1241,19 @@ inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
                 #'electric-operator-post-self-insert-function nil t)
     (remove-hook 'post-self-insert-hook
                  #'electric-operator-post-self-insert-function t)))
+
+
+(defun electric-operator-ess-comma-post-self-insert-function ()
+  (when electric-operator-mode
+    (electric-operator-post-self-insert-function)))
+
+;; ess-mode binds comma to a function, so we need to advise that function to
+;; also run our code. ess-mode.el was renamed to ess.el in July 2018, in a few
+;; years we can remove the old `ess-mode' form.
+(with-eval-after-load 'ess-mode
+  (advice-add 'ess-smart-comma :after #'electric-operator-ess-comma-post-self-insert-function))
+(with-eval-after-load 'ess
+  (advice-add 'ess-smart-comma :after #'electric-operator-ess-comma-post-self-insert-function))
 
 (provide 'electric-operator)
 
