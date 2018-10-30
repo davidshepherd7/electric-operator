@@ -17,6 +17,7 @@
 
 (require 'cc-mode)
 (require 'thingatpt)
+(require 'cl-macs)
 (eval-when-compile (require 'subr-x))
 
 (require 'dash)
