@@ -17,7 +17,7 @@
 
 (require 'cc-mode)
 (require 'thingatpt)
-(require 'subr-x)
+(eval-when-compile (require 'subr-x))
 
 (require 'dash)
 
