@@ -1252,6 +1252,16 @@ Also handles C++ lambda capture by reference."
 
 
 
+;;; Swift mode
+
+(apply #'electric-operator-add-rules-for-mode 'swift-mode (electric-operator-get-rules-for-mode 'prog-mode))
+(electric-operator-add-rules-for-mode 'swift-mode
+                                      (cons "//" " // ")
+                                      (cons "/*" " /* ")
+                                      (cons "..<" nil))
+
+
+
 (provide 'electric-operator)
 
 ;;; electric-operator.el ends here
