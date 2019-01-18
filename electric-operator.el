@@ -933,23 +933,26 @@ Also handles C++ lambda capture by reference."
     " = "))
 
 (apply #'electric-operator-add-rules-for-mode 'ess-mode (electric-operator-get-rules-for-mode 'prog-mode))
-(electric-operator-add-rules-for-mode 'ess-mode
-                     (cons "." nil) ; word separator
-                     (cons "<-" " <- ") ; assignment
-                     (cons "->" " -> ") ; Right assignment
-                     (cons "%%" " %% ") ; Modulus
-                     (cons "%/%" " %/% ") ; Integer divide
-                     (cons "%*%" " %*% ") ; Matrix product
-                     (cons "%o%" " %o% ") ; Outer product
-                     (cons "%x%" " %x% ") ; Kronecker product
-                     (cons "%in%" " %in% ") ; Matching operator
-                     (cons "~" " ~ ") ; "is modeled by"
-                     (cons "%>%" " %>% ") ; Pipe (magrittr)
-                     (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
-                     (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
-                     (cons "%T>%" " %T>% ") ; Tee operator (magrittr)
-                     (cons "=" #'electric-operator-ess-mode-keyword-args-=)
-                     )
+(apply #'electric-operator-add-rules-for-mode 'ess-mode (electric-operator-get-rules-for-mode 'prog-mode))
+(dolist (mode '(ess-mode ess-r-mode))
+  (electric-operator-add-rules-for-mode mode
+					(cons "." nil) ; word separator
+					(cons "<-" " <- ") ; assignment
+					(cons "->" " -> ") ; Right assignment
+					(cons "%%" " %% ") ; Modulus
+					(cons "%/%" " %/% ") ; Integer divide
+					(cons "%*%" " %*% ") ; Matrix product
+					(cons "%o%" " %o% ") ; Outer product
+					(cons "%x%" " %x% ") ; Kronecker product
+					(cons "%in%" " %in% ") ; Matching operator
+					(cons "~" " ~ ") ; "is modeled by"
+					(cons "%>%" " %>% ") ; Pipe (magrittr)
+					(cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
+					(cons "%$%" " %$% ") ; Exposition pipe (magrittr)
+					(cons "%T>%" " %T>% ") ; Tee operator (magrittr)
+					(cons "=" #'electric-operator-ess-mode-keyword-args-=)
+					))
+
 
 (defun electric-operator-ess-comma-post-self-insert-function ()
   (when electric-operator-mode
