@@ -103,7 +103,6 @@ Good support is implemented for:
 * C++
 * Java
 * Rust
-* Haskell
 * PHP
 * Julia
 * CSS
