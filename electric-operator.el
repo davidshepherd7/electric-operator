@@ -24,6 +24,51 @@
 
 
 
+;;; Customisable variables
+
+(defcustom electric-operator-double-space-docs nil
+  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
+  :type 'boolean
+  :group 'electricity)
+
+(defcustom electric-operator-enable-in-docs nil
+  "Enable electric-operator in strings and comments."
+  :type 'boolean
+  :group 'electricity)
+
+(defcustom electric-operator-c-pointer-type-style 'variable
+  "Defines how C/C++ mode pointer and reference types are spaced.
+
+If set to 'variable' then the operator is touching the variable
+name, as in `int *x'.
+
+If set to 'type' then the operator is touching the type name , as
+in `int* x'."
+  :group 'electricity
+  :type 'symbol
+  :options '(variable type))
+
+(defcustom electric-operator-R-named-argument-style 'unspaced
+  "Defines whether = in R named function arguments should be
+spaced.
+
+Setting the value to 'spaced' results in f(foo = 1), 'unspaced'
+results in f(foo=1)."
+  :group 'electricity
+  :type 'symbol
+  :options '(spaced unspaced))
+
+
+
+;;; Other variables
+
+(defvar electric-operator--mode-rules-table
+  (make-hash-table)
+  "A hash table of replacement rule lists for specific major modes")
+
+
+
+
 ;;; Trie implementation, heavily based on code from PAIP
 
 ;; Outside the namespace because defstruct doesn't seem to work correctly
@@ -111,50 +156,6 @@ from point) as the key."
                    trie)))
     (when key-trie
       (electric-operator--trie-value key-trie))))
-
-
-
-;;; Customisable variables
-
-(defcustom electric-operator-double-space-docs nil
-  "Enable double spacing of . in document lines - e,g, type '.' => get '.  '."
-  :type 'boolean
-  :group 'electricity)
-
-(defcustom electric-operator-enable-in-docs nil
-  "Enable electric-operator in strings and comments."
-  :type 'boolean
-  :group 'electricity)
-
-(defcustom electric-operator-c-pointer-type-style 'variable
-  "Defines how C/C++ mode pointer and reference types are spaced.
-
-If set to 'variable' then the operator is touching the variable
-name, as in `int *x'.
-
-If set to 'type' then the operator is touching the type name , as
-in `int* x'."
-  :group 'electricity
-  :type 'symbol
-  :options '(variable type))
-
-(defcustom electric-operator-R-named-argument-style 'unspaced
-  "Defines whether = in R named function arguments should be
-spaced.
-
-Setting the value to 'spaced' results in f(foo = 1), 'unspaced'
-results in f(foo=1)."
-  :group 'electricity
-  :type 'symbol
-  :options '(spaced unspaced))
-
-
-
-;;; Other variables
-
-(defvar electric-operator--mode-rules-table
-  (make-hash-table)
-  "A hash table of replacement rule lists for specific major modes")
 
 
 
