@@ -239,6 +239,27 @@ the given major mode."
                                              new-rules)
            electric-operator--mode-rules-table))
 
+
+
+
+;;; Debugging helpers
+
+(defun electric-operator--buffer-context (p n)
+  "Print the contents of the buffer around p with n characters of context"
+  (let ((before (buffer-substring (max (point-min) (- p n)) p))
+        (after (buffer-substring p (min (point-max) (+ p n)))))
+    (concat before "|" after)))
+
+(defmacro electric-operator-debug-log (string &rest args)
+  "Log a debugging message.
+
+To enable debugging change the constant in the `when' t and
+recompile electric-operator. It's like this because doing the
+`when' at runtime introduces a 1.5x performance hit."
+  `(when nil
+     (message (funcall #'format (concat "ELO DEBUG: " ,string) ,@args))))
+
+
 
 
 ;;; Default rule lists
@@ -326,11 +347,13 @@ the given major mode."
 
 (defun electric-operator-post-self-insert-function ()
   "Check for a matching rule and apply it"
+  (electric-operator-debug-log "Electric operator ran with context: %s" (electric-operator--buffer-context (point) 10))
   (-let* ((rule (electric-operator-longest-matching-rule (electric-operator-get-rules-list)))
           (operator-regex (and rule (electric-operator-compiled-rule-regex rule)))
           (action (and rule (electric-operator-compiled-rule-action rule)))
           (operator-just-inserted nil))
     (when (and rule action)
+      (electric-operator-debug-log "Matched rule for operator: %S" (electric-operator-compiled-rule-operator rule))
 
       ;; Find point where operator starts
       (electric-operator-looking-back-locally operator-regex t)
@@ -357,6 +380,8 @@ the given major mode."
 
           ;; Delete the characters matching this rule before point
           (delete-region op-match-beginning op-match-end)
+
+          (electric-operator-debug-log "Inserting spaced operator: %S" spaced-string)
 
           (if (electric-operator-looking-back-locally "^\\s-*")
 
