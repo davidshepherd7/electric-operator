@@ -1,3 +1,5 @@
+;; To use this file run: make benchmark
+
 (require 'benchmark)
 (require 'elp)
 (require 'electric-operator)
@@ -57,9 +59,9 @@
 ;;                       (python-mode)
 ;;                       (insert "a=")))
 
-(elp-benchmark 1000 (lambda ()
-                      (c++-mode)
-                      (insert "a=")))
+;; (elp-benchmark 1000 (lambda ()
+;;                       (c++-mode)
+;;                       (insert "a=")))
 
 ;; (elp-benchmark 1000 (lambda ()
 ;;                       (c++-mode)
