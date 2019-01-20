@@ -957,9 +957,10 @@ Also handles C++ lambda capture by reference."
       "="
     " = "))
 
-(apply #'electric-operator-add-rules-for-mode 'ess-mode (electric-operator-get-rules-for-mode 'prog-mode))
-(apply #'electric-operator-add-rules-for-mode 'ess-mode (electric-operator-get-rules-for-mode 'prog-mode))
+;; ess-mode was renamed to ess-r-mode sometime in 2018, hopefully we can remove
+;; the old mode in a few years.
 (dolist (mode '(ess-mode ess-r-mode))
+  (apply #'electric-operator-add-rules-for-mode mode (electric-operator-get-rules-for-mode 'prog-mode))
   (electric-operator-add-rules-for-mode mode
 					(cons "." nil) ; word separator
 					(cons "<-" " <- ") ; assignment
