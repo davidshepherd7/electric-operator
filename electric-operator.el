@@ -330,7 +330,7 @@ recompile electric-operator. It's like this because doing the
      ((electric-operator-get-rules-trie-for-mode major-mode))
 
      ;; Default modes
-     ((derived-mode-p 'prog-mode) (electric-operator-get-rules-trie-for-mode 'prog-mode))
+     ((derived-mode-p 'prog-mode 'comint-mode) (electric-operator-get-rules-trie-for-mode 'prog-mode))
      (t (electric-operator-get-rules-trie-for-mode 'text-mode)))))
 
 (defun electric-operator-longest-matching-rule (rule-list)

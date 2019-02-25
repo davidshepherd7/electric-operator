@@ -172,6 +172,12 @@ to be too heavy to add to electric-spacing.
 
 ## Changelog
 
+
+### Unstable
+
+* Fix treating comint-based modes (typically called inferior-...) as plain text
+  modes by default.
+
 ### Version 2.0
 
 BREAKING:
