@@ -822,6 +822,8 @@ Also handles C++ lambda capture by reference."
                      (cons "<<=" " <<= ")
                      )
 
+(apply #'electric-operator-add-rules-for-mode 'inferior-python-mode (electric-operator-get-rules-for-mode 'python-mode))
+
 (defun electric-operator-python-mode-in-lambda-args? ()
     "Are we inside the arguments statement of a lambda?"
     (electric-operator-looking-back-locally "lambda[^:]*"))
@@ -979,6 +981,8 @@ Also handles C++ lambda capture by reference."
 					(cons "%T>%" " %T>% ") ; Tee operator (magrittr)
 					(cons "=" #'electric-operator-ess-mode-keyword-args-=)
 					))
+
+(apply #'electric-operator-add-rules-for-mode 'inferior-ess-r-mode (electric-operator-get-rules-for-mode 'ess-r-mode))
 
 
 (defun electric-operator-ess-comma-post-self-insert-function ()

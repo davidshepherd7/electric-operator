@@ -84,6 +84,14 @@ Other customisation options are available to tweak behaviour for some
 modes. Use `M-x customize-apropos <RET> electric-operator` to see the full
 list and set them as normal using `setq`, customize etc. as you prefer.
 
+Note that [inferior
+modes](https://stackoverflow.com/questions/25225131/whats-so-inferior-about-inferior-lisp)
+are implemented by Emacs as separate modes to their respective programming
+modes. So customisations to electric-operator for e.g. `python-mode` (or
+`ess-r-mode`) will not automatically apply to `inferior-python-mode`
+(respectively `inferior-ess-r-mode`).
+
+
 ## Programming language support
 
 A number of basic operator rules are defined for any major mode, so if your
@@ -177,6 +185,7 @@ to be too heavy to add to electric-spacing.
 
 * Fix treating comint-based modes (typically called inferior-...) as plain text
   modes by default.
+* Apply default python rules to inferior-python-mode, and similiarly for R.
 
 ### Version 2.0
 
