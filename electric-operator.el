@@ -71,6 +71,10 @@ results in f(foo=1)."
 
 ;;; Trie implementation, heavily based on code from PAIP
 
+;; Note: these data structures don't work very well with Emacs' builtin
+;; printing, so normally you would want to use
+;; `electric-operator-pretty-print-rules-for-mode' to inspect them.
+
 ;; Outside the namespace because defstruct doesn't seem to work correctly
 
 (cl-defstruct electric-operator--trie
@@ -259,6 +263,27 @@ recompile electric-operator. It's like this because doing the
 `when' at runtime introduces a 1.5x performance hit."
   `(when nil
      (message (funcall #'format (concat "ELO DEBUG: " ,string) ,@args))))
+
+
+(defun electric-operator--hash-table-keys (hash-table)
+  "Get a list of the keys of a hash table."
+  (let ((keys ()))
+    (maphash (lambda (k _) (push k keys)) hash-table)
+    keys))
+
+(defun electric-operator-pretty-print-rules-for-mode (major-mode-symbol)
+  "Print electric-operator rules for a major mode to the messages buffer."
+  (interactive (list (completing-read "Major mode: " (electric-operator--hash-table-keys electric-operator--mode-rules-table))))
+  (message "\n========================================")
+  (message "electric-operator rules for %s" major-mode-symbol)
+  (message "========================================")
+  (message "note: the longest match is used, so rule order is normally unimportant.\n")
+  (-each (electric-operator-get-rules-for-mode (intern major-mode-symbol))
+    (lambda (r) (message "%S %S"
+                    (electric-operator-compiled-rule-operator r)
+                    (or (electric-operator-compiled-rule-action r) "DISABLED"))))
+  (message "========================================\n")
+  nil)
 
 
 

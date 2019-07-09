@@ -62,6 +62,10 @@ automatically add spacing around `->` and `=>` in python mode you would use
       (cons "->" " -> ")
       (cons "=>" " => "))
 
+To print a list of the rules in use for a mode use `M-x
+electric-operator-pretty-print-rules-for-mode` (note: this displays in the
+`*Messages*` buffer).
+
 Rules can be disabled in a similar way by setting the second element of the
 rule to nil. For example if you find that the `*` operator in C is not
 working reliably enough for pointer types you would use
