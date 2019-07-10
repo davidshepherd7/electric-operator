@@ -190,6 +190,7 @@ to be too heavy to add to electric-spacing.
 * Fix treating comint-based modes (typically called inferior-...) as plain text
   modes by default.
 * Apply default python rules to inferior-python-mode, and similiarly for R.
+* Add rules pretty-printing function `electric-operator-pretty-print-rules-for-mode`.
 
 ### Version 2.0
 
