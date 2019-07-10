@@ -22,7 +22,6 @@
 (Setup
  ;; Before anything has run
  (load "rust-mode-autoloads")
- (load "ess-autoloads")
  (load "js2-mode-autoloads")
  (load "haskell-mode-autoloads")
  (load "julia-mode-autoloads")

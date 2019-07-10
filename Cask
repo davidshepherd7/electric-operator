@@ -17,7 +17,6 @@
 
  ;; For testing
  (depends-on "rust-mode")
- (depends-on "ess")
  (depends-on "js2-mode")
  (depends-on "haskell-mode")
  (depends-on "julia-mode")
