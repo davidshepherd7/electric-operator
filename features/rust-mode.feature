@@ -9,6 +9,11 @@ Feature: Rust specific operators
     When I type "//a comment"
     Then I should see "// a comment"
 
+  @known-failure
+  Scenario: Doc comments
+    When I type "///a comment"
+    Then I should see "/// a comment"
+
   Scenario: Division / still works
     When I type "int a = x/y"
     Then I should see "int a = x / y"
