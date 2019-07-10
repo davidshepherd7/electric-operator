@@ -262,7 +262,7 @@ To enable debugging change the constant in the `when' t and
 recompile electric-operator. It's like this because doing the
 `when' at runtime introduces a 1.5x performance hit."
   `(when nil
-     (message (funcall #'format (concat "ELO DEBUG: " ,string) ,@args))))
+     (funcall #'message (concat "ELO DEBUG: " ,string) ,@args)))
 
 
 (defun electric-operator--hash-table-keys (hash-table)
