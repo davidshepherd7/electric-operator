@@ -640,10 +640,11 @@ could be added here.")
    ;; Check for built-in types
    (electric-operator-looking-back-locally (concat c-primitive-type-key "?"))
 
-   ;; Check if previous word is struct/union/enum keyword
+   ;; Check if previous word is struct/union/enum keyword followed by a type name
    (electric-operator-looking-back-locally "\\b\\(struct\\|union\\|enum\\|const\\)[[:space:]]+[[:alnum:]\\|_\\|:]+")
 
-   (electric-operator-looking-back-locally "auto")
+   ;; Check for auto and types like `int const`
+   (electric-operator-looking-back-locally "\\bauto\\|const")
 
    ;; Check for any user-defined types
    (electric-operator-looking-back-locally electric-operator-c-user-types-regex)))

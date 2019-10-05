@@ -92,6 +92,10 @@ Feature: C basic operators
     When I type "char*a"
     Then I should see "char *a"
 
+  Scenario: Const pointer to const type
+    When I type "const char const*a"
+    Then I should see "const char const *a"
+
   Scenario: Non-builtin pointer type
     When I type "size_t*a"
     Then I should see "size_t *a"
