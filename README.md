@@ -191,6 +191,7 @@ to be too heavy to add to electric-spacing.
   modes by default.
 * Apply default python rules to inferior-python-mode, and similiarly for R.
 * Add rules pretty-printing function `electric-operator-pretty-print-rules-for-mode`.
+* Fix some C/C++ edge cases in declaring r-value references and pointer-to-pointers.
 
 ### Version 2.0
 
