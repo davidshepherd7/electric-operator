@@ -1211,7 +1211,18 @@ Also handles C++ lambda capture by reference."
                      (cons "-" nil)
                      (cons "=" nil)
                      (cons "%" nil)
-                     (cons "*" nil))
+                     (cons "*" nil)
+
+                     ;; postgres json operators
+                     (cons "->>" "->>")
+                     (cons "#>" "#>")
+                     (cons "#>>" "#>>")
+                     (cons "<@" " <@ ")
+                     (cons "@>" " @> ")
+                     (cons "#-" " #- ")
+                     (cons "?|" " ?| ")
+                     (cons "?&" " ?& ")
+                     )
 
 ;; Don't use either prog or text mode defaults, css is too different
 (electric-operator-add-rules-for-mode 'css-mode

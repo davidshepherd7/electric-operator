@@ -192,6 +192,7 @@ to be too heavy to add to electric-spacing.
 * Apply default python rules to inferior-python-mode, and similiarly for R.
 * Add rules pretty-printing function `electric-operator-pretty-print-rules-for-mode`.
 * Fix some C/C++ edge cases in declaring r-value references and pointer-to-pointers.
+* Add support for postgresql json operators
 
 ### Version 2.0
 
