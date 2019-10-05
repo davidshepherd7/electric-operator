@@ -784,7 +784,7 @@ Also handles C++ lambda capture by reference."
 (defun electric-operator-c-mode-** ()
   "C pointer to pointer or multiplication by pointer dereference.
   e.g. `res = a * *b;`'"
-  (if (electric-operator-c-after-type?)
+  (if (or (electric-operator-c-after-type?) (electric-operator-c-is-function-or-class-definition?))
       (electric-operator-c-space-pointer-type "**")
     " * *"))
 

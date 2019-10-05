@@ -8,6 +8,10 @@ Feature: Function declaration pointer/reference types
     When I type "void foo(my_struct*s"
     Then I should see "void foo(my_struct *s"
 
+  Scenario: Handle pointer to pointer type in function decl.
+    When I type "void foo(my_struct**s"
+    Then I should see "void foo(my_struct **s"
+
   Scenario: Handle reference type in function decl.
     When I type "void foo(my_struct&s"
     Then I should see "void foo(my_struct &s"
