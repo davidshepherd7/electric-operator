@@ -39,6 +39,21 @@ Feature: C++ specific operators
     When I type "A(A&&a)"
     Then I should see "A(A &&a)"
 
+  # Rvalue reference declarations and C pointer type style
+  Scenario: Const rvalue references
+    When I type "int const&&x"
+    Then I should see "int const &&x"
+
+  Scenario: Operator && on type
+    When I set electric-operator-c-pointer-type-style to type
+    When I type "int&&x"
+    Then I should see "int&& x"
+
+  Scenario: Operator && on variable
+    When I set electric-operator-c-pointer-type-style to variable
+    When I type "int&&x"
+    Then I should see "int &&x"
+
 
   # Templates
   @known-failure

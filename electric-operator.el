@@ -789,8 +789,8 @@ Also handles C++ lambda capture by reference."
     " * *"))
 
 (defun electric-operator-c++-mode-&& ()
-  "Handle move constructor"
-  (if (electric-operator-c-is-function-or-class-definition?)
+  "Handle move constructor, rvalue refs, and boolean AND."
+  (if (or (electric-operator-c-is-function-or-class-definition?) (electric-operator-c-after-type?))
       (electric-operator-c-space-pointer-type "&&")
     " && "))
 
