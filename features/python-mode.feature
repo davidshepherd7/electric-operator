@@ -195,3 +195,7 @@ Feature: Python mode basics
   Scenario: Don't space default args in lambda
     When I type "lambda x=1: print x"
     Then I should see "lambda x=1: print x"
+
+  Scenario: Default arguments after types in function declarations
+    When I type "def foo(x:int=timedelta(days=1))"
+    Then I should see "def foo(x: int = timedelta(days=1))"

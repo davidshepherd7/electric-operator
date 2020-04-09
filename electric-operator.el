@@ -898,7 +898,8 @@ Also handles C++ lambda capture by reference."
   (defun electric-operator-python-mode-kwargs-= ()
     (cond
      ((electric-operator-python-mode-in-lambda-args?) "=")
-     ((eq (electric-operator-enclosing-paren) ?\() "=")
+     ((and (eq (electric-operator-enclosing-paren) ?\()
+           (not (electric-operator-looking-back-locally ":[^,(]*"))) "=")
      (t " = ")))
 
   (defun electric-operator-python-mode-negative-slices ()
