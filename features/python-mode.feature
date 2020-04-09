@@ -153,8 +153,8 @@ Feature: Python mode basics
 
   # Types
   Scenario: Types in function declarations
-    When I type "def foo(x:int)->str:"
-    Then I should see "def foo(x: int) -> str:"
+    When I type "def foo(x:int=timedelta(days=1))->str:"
+    Then I should see "def foo(x: int = timedelta(days=1)) -> str:"
     Then I should not see "str: "
 
   @known-failure
