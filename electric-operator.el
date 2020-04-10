@@ -898,8 +898,13 @@ Also handles C++ lambda capture by reference."
   (defun electric-operator-python-mode-kwargs-= ()
     (cond
      ((electric-operator-python-mode-in-lambda-args?) "=")
+     ;; default argument after type annotation
      ((and (eq (electric-operator-enclosing-paren) ?\()
-           (not (electric-operator-looking-back-locally ":[^,(]*"))) "=")
+           (or (electric-operator-looking-back-locally ":[^,(]*") ; there's a : for this arg
+               (electric-operator-looking-back-locally "\\]"))) ; hack for types like Tuple[int, int]
+      " = ")
+     ;; normal default argument
+     ((eq (electric-operator-enclosing-paren) ?\() "=")
      (t " = ")))
 
   (defun electric-operator-python-mode-negative-slices ()

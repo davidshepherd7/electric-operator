@@ -199,3 +199,7 @@ Feature: Python mode basics
   Scenario: Default arguments after types in function declarations
     When I type "def foo(x:int=timedelta(days=1))"
     Then I should see "def foo(x: int = timedelta(days=1))"
+
+  Scenario: Default arguments after compound types in function declarations
+    When I type "def foo(x: Tuple[int,int,int]=timedelta(days=1))"
+    Then I should see "def foo(x: Tuple[int, int, int] = timedelta(days=1))"
