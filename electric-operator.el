@@ -858,13 +858,22 @@ Also handles C++ lambda capture by reference."
     "Handle python dict assignment"
     (cond
      ((electric-operator-python-mode-in-lambda-args?) ": ")
-     ((eq (electric-operator-enclosing-paren) ?\{) ": ")
-     ((and (eq (electric-operator-enclosing-paren) ?\() (electric-operator-looking-back-locally "def .*")) ": ") ; type definitions
 
-     ;; Probably a variable type definition or an end of a keyword line, leave it
-     ;; alone for now (possible TODO: variable type definitions properly by
-     ;; checking if this line matches any keywords, and if not treating it as a
-     ;; type definition).
+     ;; A keyword statement (we can't use \\b here because it matches _)
+     ((electric-operator-looking-back-locally "\\(\\s-\\|^\\)\\(if\\|elif\\|else\\|for\\|while\\|class\\|def\\|try\\|except\\|with\\)") ":")
+
+     ;; type definition inside a function
+     ((and (eq (electric-operator-enclosing-paren) ?\() (electric-operator-looking-back-locally "def .*")) ": ")
+
+     ;; type definition on a variable declaration
+     ((electric-operator-looking-back-locally "^\\s-*[a-zA-Z0-9_.]+") ": ")
+
+     ;; A dictionary
+     ((eq (electric-operator-enclosing-paren) ?\{) ": ")
+
+
+     ;; Unsure, but probably a multiline declaration of some sort that we can't
+     ;; understand, leave it alone.
      (t nil)))
 
   (defun electric-operator-python-mode-* ()

@@ -84,7 +84,7 @@ Feature: Python mode basics
   # keywords
   Scenario: Don't space : in ifs
     When I type "if x:"
-    Then I should see "if x:"
+    Then I should not see "if x: "
 
   Scenario: Leave any existing space after : in ifs
     When I type "if x: "
@@ -92,23 +92,31 @@ Feature: Python mode basics
 
   Scenario: Don't space : in else
     When I type "else:"
-    Then I should see "else:"
+    Then I should not see "else: "
 
   Scenario: Don't space : in elif
     When I type "elif y:"
-    Then I should see "elif y:"
+    Then I should not see "elif y: "
 
   Scenario: Don't space : in for
     When I type "for x in y:"
-    Then I should see "for x in y:"
+    Then I should not see "for x in y: "
 
   Scenario: Don't space : in while
     When I type "while x:"
-    Then I should see "while x:"
+    Then I should not see "while x: "
+
+  Scenario: Don't space : in try
+    When I type "try:"
+    Then I should not see "try: "
 
   Scenario: Don't space : in with
     When I type "with X as Y:"
-    Then I should see "with X as Y:"
+    Then I should not see "with X as Y: "
+
+  Scenario: Colon after multiline def is not spaced
+    When I type "    ):"
+    Then I should not see "): "
 
 
   # python dictionaries
@@ -161,15 +169,13 @@ Feature: Python mode basics
     Then I should see "def foo(x: int) -> str:"
     Then I should not see "str: "
 
-  @known-failure
-  Scenario: Types in variable declarations --auto insert space
+  Scenario: Types in variable declarations
     When I type "self._first_name:str = first_name"
     Then I should see "self._first_name: str = first_name"
 
-  Scenario: Types in variable declarations -- space is not removed
-    When I type "self._first_name: str = first_name"
-    Then I should see "self._first_name: str = first_name"
-
+  Scenario: Types in variable declarations with names ending in keywords
+    When I type "is_first_try:str ="
+    Then I should see "is_first_try: str ="
 
   ## Member access
   Scenario: Don't space accessing class members
