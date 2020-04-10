@@ -123,4 +123,4 @@ Feature: Haskell mode
 
   Scenario: Comments don't change the current indentation
     When I type "            --"
-    Then I should see "            -- "
+    Then I should see "            --"
