@@ -882,8 +882,8 @@ Also handles C++ lambda capture by reference."
     (cond
      ;; After a ',' we need a space before
      ((electric-operator-looking-back-locally ",")  " **")
-     ;; After a '(' or a newline we don't
-     ((electric-operator-looking-back-locally "\\((\\|^\\)")  "**")
+     ;; After a '(', a '{' or a newline we don't
+     ((electric-operator-looking-back-locally "\\((\\|^\\|{\\)")  "**")
      (t " ** ")))
 
   (defun electric-operator-python-mode-kwargs-= ()

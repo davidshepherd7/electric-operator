@@ -30,6 +30,10 @@ Feature: Python mode basics
     When I type "f(a**b)"
     Then I should see "f(a ** b)"
 
+  Scenario: kwargs expansion into dict
+    When I type "a = {**x,**y}"
+    Then I should see "a = {**x, **y}"
+
   # Check *args works ok
   Scenario: Space *args on its own
     When I type "f(*args)"
