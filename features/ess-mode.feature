@@ -44,3 +44,9 @@ Feature: R specific operators
     When I set electric-operator-R-named-argument-style to unspaced
     When I type "somefunc(a=1, b=2)"
     Then I should see "somefunc(a=1, b=2)"
+
+  Scenario: Lone dot does not force unary operators
+    When I turn on ess-r-mode
+    When I turn on electric-operator-mode
+    When I type "x~.+1"
+    Then I should see "x ~ . + 1"

@@ -471,7 +471,7 @@ if not inside any parens."
 
 (i.e. takes one argument). This is a bit of a fudge based on C-like syntax."
   (or
-   (electric-operator-looking-back-locally "[=,:\*\+-/><&^{;]\\s-*")
+   (electric-operator-looking-back-locally "[=,:\*\+/><&^{;-]\\s-*")
    (electric-operator-looking-back-locally "\\(return\\)\\s-*")
    (electric-operator-looking-back-locally "^\\s-*")))
 
