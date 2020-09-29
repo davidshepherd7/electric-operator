@@ -1016,6 +1016,7 @@ Also handles C++ lambda capture by reference."
 					(cons "%x%" " %x% ") ; Kronecker product
 					(cons "%in%" " %in% ") ; Matching operator
 					(cons "~" " ~ ") ; "is modeled by"
+                    (cons ":=" " := ")
 					(cons "%>%" " %>% ") ; Pipe (magrittr)
 					(cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
 					(cons "%$%" " %$% ") ; Exposition pipe (magrittr)
