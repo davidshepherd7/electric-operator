@@ -1274,6 +1274,7 @@ Also handles C++ lambda capture by reference."
                                       (cons "-" #'electric-operator-prog-mode--)
                                       (cons "*" " * ")
                                       (cons "," ", ")
+                                      (cons "&=" nil) ; Probably an alignment operator
                                       )
 
 
