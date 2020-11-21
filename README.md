@@ -124,11 +124,12 @@ for pointer types and for multiplication. Similiarly for `&` (reference types vs
 bitwise and), and `<`, `>` (comparision operators vs angle brackets).
 
 
-The following languages are supported but not extensively tested (as far as
-I know), please open an issue to let me know if you use them.
+The following languages are supported but not extensively tested, please open an
+issue to let me know how it goes if you use them.
 
 * Perl
 * Ruby
+* LaTeX
 
 ## Electric newlines
 
@@ -195,6 +196,7 @@ to be too heavy to add to electric-spacing.
 * Add support for postgresql json operators
 * Dropped Haskell support because it was essentially unusable and made
   everything more complex.
+* Add support for LaTeX math.
 
 ### Version 2.0
 
