@@ -9,6 +9,7 @@
 ;; TODO: switch back to melpa stable once ess fixes the "julia mode failed to
 ;; install" error
 (source melpa)
+(source gnu)
 
 (development
  (depends-on "ecukes")
@@ -22,4 +23,5 @@
  (depends-on "haskell-mode")
  (depends-on "julia-mode")
  (depends-on "php-mode")
+ (depends-on "auctex")
  )

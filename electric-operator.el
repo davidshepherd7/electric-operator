@@ -354,6 +354,14 @@ recompile electric-operator. It's like this because doing the
      ;; Try to find an entry for this mode in the table
      ((electric-operator-get-rules-trie-for-mode major-mode))
 
+     ;; LaTeX is special because we should use a different set of rules for math
+     ;; vs normal text.
+     ((derived-mode-p 'latex-mode) (if (electric-operator--latex-in-math?)
+                                       (electric-operator-get-rules-trie-for-mode 'latex-math)
+                                     (if electric-operator-enable-in-docs
+                                         (electric-operator-get-rules-trie-for-mode 'text-mode)
+                                       (make-electric-operator--trie))))
+
      ;; Default modes
      ((derived-mode-p 'prog-mode 'comint-mode) (electric-operator-get-rules-trie-for-mode 'prog-mode))
      (t (electric-operator-get-rules-trie-for-mode 'text-mode)))))
@@ -1247,6 +1255,26 @@ Also handles C++ lambda capture by reference."
                                       (cons "..<" nil))
 
 
+
+;; We'll load this if we need it, so disable the compiler warning
+(declare-function texmathp "texmathp")
+
+(defun electric-operator--latex-in-math? ()
+  ;; If you're using LaTeX you presumably have auctex installed? At least I hope
+  ;; so, this texmathp function is horribly complicated!
+  (unless (require 'texmathp nil t)
+    (user-error "Electric operator LaTeX support requires AUCTeX to be installed"))
+  (texmathp))
+
+;;; LaTeX mode
+(electric-operator-add-rules-for-mode 'latex-math
+                                      (cons "=" " = ")
+                                      (cons "~" " ~ ")
+                                      (cons "+" #'electric-operator-prog-mode-+)
+                                      (cons "-" #'electric-operator-prog-mode--)
+                                      (cons "*" " * ")
+                                       )
+
 
 (provide 'electric-operator)
 
