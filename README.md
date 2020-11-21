@@ -193,6 +193,8 @@ to be too heavy to add to electric-spacing.
 * Add rules pretty-printing function `electric-operator-pretty-print-rules-for-mode`.
 * Fix some C/C++ edge cases in declaring r-value references and pointer-to-pointers.
 * Add support for postgresql json operators
+* Dropped Haskell support because it was essentially unusable and made
+  everything more complex.
 
 ### Version 2.0
 
@@ -274,3 +276,14 @@ issue in practice because:
 It's difficult to solve because we would need to step over matching `{}` and
 `[]` while searching for a `lambda` to match the current `:`. I think this
 impossible with regexs so I would have to find something more powerful.
+
+### Haskell
+
+Whitespace in Haskell is significant, so automatically inserting whitespace is
+sketchy at best. On top of this operators can be used in all sorts of complex
+ways when being passed as arguments to functions or when partially evaluated.
+
+I made a few attempts at adding support but never really succeeded and what I
+did manage required substantial extra complexity. So Haskell support is now gone
+and probably won't be back unless someone can provide an elegant way to support
+the syntax.

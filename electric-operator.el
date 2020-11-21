@@ -376,8 +376,7 @@ recompile electric-operator. It's like this because doing the
   (electric-operator-debug-log "Electric operator ran with context: %s" (electric-operator--buffer-context (point) 10))
   (-let* ((rule (electric-operator-longest-matching-rule (electric-operator-get-rules-list)))
           (operator-regex (and rule (electric-operator-compiled-rule-regex rule)))
-          (action (and rule (electric-operator-compiled-rule-action rule)))
-          (operator-just-inserted nil))
+          (action (and rule (electric-operator-compiled-rule-action rule))))
     (when (and rule action)
       (electric-operator-debug-log "Matched rule for operator: %S" (electric-operator-compiled-rule-operator rule))
 
@@ -397,10 +396,6 @@ recompile electric-operator. It's like this because doing the
         ;; If action was a function which eval-d to nil then we do nothing.
         (when spaced-string
 
-          ;; Record the fact we are inserting something for passing to fixup
-          ;; functions
-          (setq operator-just-inserted t)
-
           ;; Set an undo boundary for easy undo-ing of the automatic insertion
           (undo-boundary)
 
@@ -417,10 +412,7 @@ recompile electric-operator. It's like this because doing the
                 (insert (electric-operator--trim-left spaced-string)))
 
             ;; Insert correctly spaced operator
-            (insert spaced-string)))))
-
-    (when (derived-mode-p 'haskell-mode)
-      (electric-operator-haskell-mode-fixup-partial-operator-parens operator-just-inserted))))
+            (insert spaced-string)))))))
 
 ;;;###autoload
 (define-minor-mode electric-operator-mode
@@ -1090,99 +1082,6 @@ Also handles C++ lambda capture by reference."
                      ;; Generics are hard
                      (cons "<" nil)
                      (cons ">" nil)
-                     )
-
-
-
-;; Haskell mode
-
-(defconst electric-operator-haskell-mode-infix-binary-operators
-  (list "=" "<" ">" "%" "+" "*" "&" "|" "==" "<=" ">=" "&&" "||"
-
-        "++" ; list concat
-        "!!"  ; indexing
-        ".|." ; bitwise OR
-        ".&." ; bitwise AND
-        "$" ; delay evaluation
-
-        ;; Monads or something like that
-        ">>" ">>=" "<$>" "<*>"
-
-        ;; Exponents, for some reason there are three of
-        ;; them!
-        "^" "**" "^^"
-        ))
-
-(defconst electric-operator-haskell-mode-special-infix-binary-operators
-  (list "/" "-"))
-
-(defun electric-operator-haskell-mode-infix-action (op)
-  (lambda ()
-    (let ((after-paren (electric-operator-looking-back-locally "(\\s-*"))
-          (before-paren (looking-at (concat (electric-operator-rule-regex-with-whitespace op) ")"))))
-      (cond
-       ;; only thing in the parens: no spaces
-       ((and after-paren before-paren) op)
-
-       (before-paren (concat " " op))
-       (after-paren (concat op " "))
-       (t (concat " " op " "))))))
-
-(defun electric-operator-haskell-mode-fixup-partial-operator-parens (operator-just-inserted)
-  (when (not operator-just-inserted)
-    (-each (-concat electric-operator-haskell-mode-infix-binary-operators electric-operator-haskell-mode-special-infix-binary-operators)
-      (lambda (op)
-        ;; If another character was typed between an operator and `)', make sure
-        ;; these's a single space there.
-        (when (and (looking-at "\\s-*)")
-                   (electric-operator-looking-back-locally (concat (electric-operator-rule-regex-with-whitespace op) "[^\\s-]")))
-          (save-excursion (replace-match " " nil nil nil 2)))
-
-        ;; When inserting a ) delete any whitespace between it and the operator
-        (when (electric-operator-looking-back-locally (concat "\\s-" op ")"))
-          (save-excursion (replace-match ")" nil nil nil 0)))))))
-
-(defun electric-operator-haskell-mode-/ ()
-  (let ((base (funcall (electric-operator-haskell-mode-infix-action "/"))))
-    (if (equal base " / ")
-        (electric-operator-prog-mode-/)
-      base)))
-
-(defun electric-operator-haskell-mode-- ()
-  (let ((base (funcall (electric-operator-haskell-mode-infix-action "-"))))
-    (if (equal base " - ")
-        (electric-operator-prog-mode--)
-      base)))
-
-(apply #'electric-operator-add-rules-for-mode 'haskell-mode (electric-operator-get-rules-for-mode 'prog-mode))
-
-;; Make rules for partially evaluated binary operators inside parens
-(apply #'electric-operator-add-rules-for-mode 'haskell-mode
-       (-map (lambda (op) (cons op (electric-operator-haskell-mode-infix-action op)))
-             electric-operator-haskell-mode-infix-binary-operators))
-
-(electric-operator-add-rules-for-mode 'haskell-mode
-
-                     ;; More complex infix operators
-                     (cons "-" #'electric-operator-haskell-mode--)
-                     (cons "/" #'electric-operator-haskell-mode-/)
-                     (cons ":" nil)  ; list constructor: no spaces needed in either
-
-                     (cons "--" "-- ") ; comment
-                     (cons "<-" " <- ") ; assignment
-                     (cons "->" " -> ") ; lambdas and function types
-                     (cons "=>" " => ") ; typeclasses
-                     (cons "::" " :: ") ; type specification
-                     (cons "!=" nil) ; unused
-                     (cons "~" " ~") ; lazy pattern match
-
-                     ;; Comments?
-                     (cons "{-" "{- ")
-                     (cons "-}" " -}")
-
-                     ;; Either function composition or function qualification,
-                     ;; can't tell so disable it
-                     (cons "." nil)
                      )
 
 
