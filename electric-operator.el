@@ -1266,15 +1266,75 @@ Also handles C++ lambda capture by reference."
     (user-error "Electric operator LaTeX support requires AUCTeX to be installed"))
   (texmathp))
 
+(defun electric-operator-latex-* ()
+  (cond
+   ((electric-operator-just-inside-bracket) "*")
+   (t " * ")))
+
+;; This is different to prog-mode because you can have things like a^* + 1
+(defun electric-operator-latex-probably-unary-operator? ()
+  (or
+   (electric-operator-looking-back-locally "[,:/><&^{;]\\s-*")
+   (electric-operator-looking-back-locally "[^_^][*+-=~]\\s-*")
+   (electric-operator-looking-back-locally "^\\s-*")))
+
+(defun electric-operator-latex-- ()
+  "Handle exponent and negative number notation"
+  (cond
+   ;; Exponent notation, e.g. 1e-10: don't space
+   ((electric-operator-looking-back-locally "[0-9.]+[eE]") "-")
+
+   ;; Space negative numbers as e.g. a = -1 (but don't space f(-1) or -1
+   ;; alone at all). This will probably need to be major mode specific
+   ;; eventually.
+   ((electric-operator-latex-probably-unary-operator?) " -")
+   ((electric-operator-just-inside-bracket) "-")
+
+   (t " - ")))
+
+(defun electric-operator-latex-+ ()
+"Handle +-prefix number notation"
+(cond
+ ;; Space positive numbers as e.g. a = +1 (but don't space f(+1) or +1
+ ;; alone at all). This will probably need to be major mode specific
+ ;; eventually.
+ ((electric-operator-latex-probably-unary-operator?) " +")
+ ((electric-operator-just-inside-bracket) "+")
+
+ (t " + ")))
+
 ;;; LaTeX mode
 (electric-operator-add-rules-for-mode 'latex-math
+                                      (cons "," ", ")
+
+                                      ;; Base operators
+                                      (cons "+" #'electric-operator-latex-+)
+                                      (cons "-" #'electric-operator-latex--)
+                                      (cons "*" #'electric-operator-latex-*)
                                       (cons "=" " = ")
                                       (cons "~" " ~ ")
-                                      (cons "+" #'electric-operator-prog-mode-+)
-                                      (cons "-" #'electric-operator-prog-mode--)
-                                      (cons "*" " * ")
-                                      (cons "," ", ")
-                                      (cons "&=" nil) ; Probably an alignment operator
+
+                                      ;; Exponents and subscripts TODO: might be
+                                      ;; worth autogenerating some of these things?
+                                      (cons "_*" "_*")
+                                      (cons "_+" "_+")
+                                      (cons "_-" "_-")
+                                      (cons "_=" "_=")
+                                      (cons "_~" "_~")
+                                      (cons "^*" "^*")
+                                      (cons "^+" "^+")
+                                      (cons "^-" "^-")
+                                      (cons "^=" "^=")
+                                      (cons "^~" "^~")
+
+                                      ;; Operators with alignment - don't space
+                                      ;; because they're probably carefully
+                                      ;; lined up
+                                      (cons "&+" nil)
+                                      (cons "&*" nil)
+                                      (cons "&-" nil)
+                                      (cons "&=" nil)
+                                      (cons "&~" nil)
                                       )
 
 

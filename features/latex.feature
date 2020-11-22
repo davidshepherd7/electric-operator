@@ -17,3 +17,19 @@ Feature: LaTeX support
   Scenario: Don't space + in text
     When I type "a+b"
     Then I should see "a+b"
+
+  Scenario: Exponents and subscripts
+    When I type "$a^+_*$"
+    Then I should see "a^+_*"
+
+  Scenario: Exponents with curly braces
+    When I type "$a^{*}+2$"
+    Then I should see "a^{*} + 2"
+
+  Scenario: Exponents followed by another operator
+    When I type "$a^*+2$"
+    Then I should see "a^* + 2"
+
+  Scenario: Normal unary operator situation
+    When I type "$a*+2$"
+    Then I should see "a * +2"
