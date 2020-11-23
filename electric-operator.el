@@ -1274,8 +1274,10 @@ Also handles C++ lambda capture by reference."
 ;; This is different to prog-mode because you can have things like a^* + 1
 (defun electric-operator-latex-probably-unary-operator? ()
   (or
-   (electric-operator-looking-back-locally "[,:><&^;]\\s-*")
-   (electric-operator-looking-back-locally "[^_^][*+=~-]\\s-*")
+   (electric-operator-looking-back-locally "[,:&^;]\\s-*")
+   ;; Remember: the - must be the last character in a regex [] for it to be
+   ;; treated as - rather than as a character range!
+   (electric-operator-looking-back-locally "[^_^][*+=~><-]\\s-*")
    (electric-operator-looking-back-locally "^\\s-*")))
 
 (defun electric-operator-latex-- ()
@@ -1313,6 +1315,8 @@ Also handles C++ lambda capture by reference."
                                       (cons "*" #'electric-operator-latex-*)
                                       (cons "=" " = ")
                                       (cons "~" " ~ ")
+                                      (cons "<" " < ")
+                                      (cons ">" " > ")
 
                                       ;; Exponents and subscripts TODO: might be
                                       ;; worth autogenerating some of these things?
@@ -1321,11 +1325,16 @@ Also handles C++ lambda capture by reference."
                                       (cons "_-" "_-")
                                       (cons "_=" "_=")
                                       (cons "_~" "_~")
+                                      (cons "_<" "_<")
+                                      (cons "_>" "_>")
+
                                       (cons "^*" "^*")
                                       (cons "^+" "^+")
                                       (cons "^-" "^-")
                                       (cons "^=" "^=")
                                       (cons "^~" "^~")
+                                      (cons "^<" "^<")
+                                      (cons "^>" "^>")
 
                                       ;; Operators with alignment - don't space
                                       ;; because they're probably carefully
@@ -1335,6 +1344,8 @@ Also handles C++ lambda capture by reference."
                                       (cons "&-" nil)
                                       (cons "&=" nil)
                                       (cons "&~" nil)
+                                      (cons "&<" nil)
+                                      (cons "&>" nil)
                                       )
 
 
