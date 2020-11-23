@@ -11,8 +11,9 @@ Feature: LaTeX support
     Then I should see "hello. World"
 
   Scenario: Space + in math mode
-    When I type "$a+b$"
+    When I type "$a+b$ or $1+2$"
     Then I should see "a + b"
+    Then I should see "1 + 2"
 
   Scenario: Don't space + in text
     When I type "a+b"
@@ -23,8 +24,8 @@ Feature: LaTeX support
     Then I should see "a^+_*"
 
   Scenario: Exponents with curly braces
-    When I type "$a^{*}+2$"
-    Then I should see "a^{*} + 2"
+    When I type "$a^{+}+2$"
+    Then I should see "a^{+} + 2"
 
   Scenario: Exponents followed by another operator
     When I type "$a^*+2$"

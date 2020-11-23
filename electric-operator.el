@@ -1274,8 +1274,8 @@ Also handles C++ lambda capture by reference."
 ;; This is different to prog-mode because you can have things like a^* + 1
 (defun electric-operator-latex-probably-unary-operator? ()
   (or
-   (electric-operator-looking-back-locally "[,:/><&^{;]\\s-*")
-   (electric-operator-looking-back-locally "[^_^][*+-=~]\\s-*")
+   (electric-operator-looking-back-locally "[,:><&^;]\\s-*")
+   (electric-operator-looking-back-locally "[^_^][*+=~-]\\s-*")
    (electric-operator-looking-back-locally "^\\s-*")))
 
 (defun electric-operator-latex-- ()
