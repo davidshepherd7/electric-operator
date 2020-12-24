@@ -4,6 +4,14 @@ Feature: Python mode basics
     When I turn on python-mode
     When I turn on electric-operator-mode
 
+  Scenario: don't modify string literal
+    When I set electric-operator-enable-in-docs to nil
+    When I type "'var+foo-1'"
+    Then I should see "'var+foo-1'"
+
+  Scenario: don't modify string literal after operator
+    When I type "a+''"
+    Then I should see "a + ''"
 
   ## * and ** operators
   Scenario: Space *
