@@ -1,6 +1,8 @@
 # Electric operator mode
 
-[![travis](https://travis-ci.org/davidshepherd7/electric-operator.svg?branch=master)](https://travis-ci.org/davidshepherd7/electric-operator) [![melpa](http://melpa.org/packages/electric-operator-badge.svg)](http://melpa.org/#/electric-operator) [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
+[![CI](https://github.com/davidshepherd7/electric-operator/workflows/CI/badge.svg)](https://github.com/davidshepherd7/electric-operator/actions)
+[![melpa](http://melpa.org/packages/electric-operator-badge.svg)](http://melpa.org/#/electric-operator)
+[![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
 
 [melpa-stable-link]: https://stable.melpa.org/#/electric-operator
 [melpa-stable-badge]: https://stable.melpa.org/packages/electric-operator-badge.svg
