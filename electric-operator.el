@@ -1007,6 +1007,7 @@ Also handles C++ lambda capture by reference."
   (apply #'electric-operator-add-rules-for-mode mode (electric-operator-get-rules-for-mode 'prog-mode))
   (electric-operator-add-rules-for-mode mode
 					(cons "." nil) ; word separator
+                    (cons "?" nil) ; R doesn't have ternary
 					(cons "<-" " <- ") ; assignment
 					(cons "->" " -> ") ; Right assignment
 					(cons "%%" " %% ") ; Modulus
