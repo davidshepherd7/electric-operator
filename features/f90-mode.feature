@@ -24,7 +24,7 @@ Feature: F90 mode basics
 
   Scenario: Exponentiation after a function
     When I type "f(x)**a"
-    Then I should see "f(x)**a"
+    Then I should see "f(x) ** a"
 
   Scenario: Write statements with default formatting and default output
     When I type "write(*,*)"
@@ -50,27 +50,11 @@ Feature: F90 mode basics
 
 
   ## Custom operators with .operator. syntax
-  Scenario: Writing a real number
-    When I type "1.23"
-    Then I should see "1.23"
-
-  Scenario: Writing a double precision real number
-    When I type "1.3d5"
-    Then I should see "1.3d5"
-
-  Scenario: Using .true.
-    When I type "a==.true."
-    Then I should see "a == .true."
-
-  Scenario: Using .false.
-    When I type "a==.false."
-    Then I should see "a == .false."
-
+  @known-failure
   Scenario: Using a generic operator
     When I type "a.operator_123.b"
     Then I should see "a .operator_123. b"
 
-  @known-failure
   Scenario: Number preceeding an operator
     When I type "1.eq.a"
     Then I should see "1 .eq. a"
