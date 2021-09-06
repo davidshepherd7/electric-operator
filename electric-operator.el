@@ -1355,12 +1355,8 @@ Also handles C++ lambda capture by reference."
                                           (cons "=" 'electric-operator-f90-mode-=)
 					  (cons "/=" " /= ")
 					  (cons "=>" " => ")
-					  (cons "(/" " (/ ")
-					  (cons "/)" " /)")
-                                          ;; (cons "." 'electric-operator-f90-mode-generic-operator)
                                           (cons "*" 'electric-operator-f90-mode-*)
-                                          ;; (cons "/" 'electric-operator-f90-mode-/)
-                                          (cons "/" " / ")
+                                          (cons "/" 'electric-operator-f90-mode-/)
                                           (cons "::" " :: ")
                                           (cons "**" " ** ")
                                           (cons "%" "%")
@@ -1385,32 +1381,6 @@ Also handles C++ lambda capture by reference."
       (cond
        ((eq (electric-operator-enclosing-paren) ?\() "=")
        (t " = ")))
-
-    ;; (defun electric-operator-f90-mode-generic-operator()
-    ;;   "Treat .<var>. as an operator, otherwise treat '.' as a decimal."
-    ;;   ;; (electric-operator-insert-space-around-operator)
-    ;;   (cond
-    ;;    ;; ((electric-operator-just-inside-bracket) ".")
-    ;;    ;; ((looking-back "\\.[[:alpha:]][[:alpha:][:digit:]_]*." nil)  " ")
-    ;;    ;; ((looking-back "[^[:digit:]+-]" nil) " .")
-    ;;    (t nil)))
-
-    ;; (defun electric-operator-insert-space-around-operator()
-    ;;   ;; (interactive)
-    ;;   (save-excursion
-    ;;     (save-restriction
-    ;;       (narrow-to-region (progn (move-beginning-of-line 1) (point))
-    ;;                         (progn (move-end-of-line 1) (point)))
-    ;;       ;; (setq mark )
-
-    ;;       (if (re-search-backward "\\.[[:alpha:]][[:alpha:][:digit:]_]*\\.[:blank:]" nil t 1)
-    ;;           (progn
-    ;; 		(insert " ")
-    ;; 		(goto-char (match-end 0))
-    ;; 		(forward-char)
-    ;; 		(insert " ")
-    ;; 		;; (forward-char)
-    ;; 		)))))
 
     (defun electric-operator-f90-mode-*()
       "Handle write(*,*) and print *, cases."
