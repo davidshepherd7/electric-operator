@@ -1393,6 +1393,8 @@ Also handles C++ lambda capture by reference."
   "Handle (/ /) style implicit array declaration."
   "Currently fails for fractions in implict declaration."
   (cond
+   ;; We do this instead of having separate (/ and /) operators so that it works
+   ;; with electric pairs. TODO: find a way to make this work more generally.
    ((electric-operator-just-inside-bracket) "/ ")
    ((eq (electric-operator-character-after-paren) ?\/) " /")
    (t " / ")))
