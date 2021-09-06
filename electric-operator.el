@@ -100,7 +100,7 @@ results in f(foo=1)."
    ((electric-operator--trie-terminal trie) (electric-operator--trie-follow-arc nil on-fail trie))
    ((atom key) (electric-operator--trie-follow-arc key on-fail trie))
    (t (electric-operator--trie-find (cdr key) on-fail
-                                    (electric-operator--trie-find (car key) on-fail trie)))))
+				                    (electric-operator--trie-find (car key) on-fail trie)))))
 
 (defun electric-operator--trie-follow-arc (key-component on-fail trie)
   (let ((arc (electric-operator--trie-arcs-get key-component trie)))
@@ -279,9 +279,9 @@ recompile electric-operator. It's like this because doing the
   (message "========================================")
   (message "note: the longest match is used, so rule order is normally unimportant.\n")
   (-each (electric-operator-get-rules-for-mode (intern major-mode-symbol))
-    (lambda (r) (message "%S %S"
-			 (electric-operator-compiled-rule-operator r)
-			 (or (electric-operator-compiled-rule-action r) "DISABLED"))))
+	(lambda (r) (message "%S %S"
+			             (electric-operator-compiled-rule-operator r)
+			             (or (electric-operator-compiled-rule-action r) "DISABLED"))))
   (message "========================================\n")
   nil)
 
@@ -385,21 +385,21 @@ recompile electric-operator. It's like this because doing the
   (-let* ((rule (electric-operator-longest-matching-rule (electric-operator-get-rules-list)))
           (operator-regex (and rule (electric-operator-compiled-rule-regex rule)))
           (action (and rule (electric-operator-compiled-rule-action rule))))
-    (when (and rule action)
-      (electric-operator-debug-log "Matched rule for operator: %S" (electric-operator-compiled-rule-operator rule))
+	(when (and rule action)
+	  (electric-operator-debug-log "Matched rule for operator: %S" (electric-operator-compiled-rule-operator rule))
 
-      ;; Find point where operator starts
-      (electric-operator-looking-back-locally operator-regex t)
+	  ;; Find point where operator starts
+	  (electric-operator-looking-back-locally operator-regex t)
 
-      ;; Capture operator include all leading and *trailing* whitespace
-      (save-excursion
+	  ;; Capture operator include all leading and *trailing* whitespace
+	  (save-excursion
         (goto-char (match-beginning 0))
         (looking-at operator-regex))
 
-      (let* ((pre-whitespace (match-string 1))
-             (op-match-beginning (match-beginning 0))
-             (op-match-end (match-end 0))
-             (spaced-string (electric-operator-eval-action action op-match-beginning)))
+	  (let* ((pre-whitespace (match-string 1))
+		     (op-match-beginning (match-beginning 0))
+		     (op-match-end (match-end 0))
+		     (spaced-string (electric-operator-eval-action action op-match-beginning)))
 
         ;; If action was a function which eval-d to nil then we do nothing.
         (when spaced-string
@@ -414,13 +414,13 @@ recompile electric-operator. It's like this because doing the
 
           (if (electric-operator-looking-back-locally "^\\s-*")
 
-              ;; This is the first thing in a line: leave the indentation alone.
-              (progn
+		      ;; This is the first thing in a line: leave the indentation alone.
+		      (progn
                 (insert pre-whitespace)
                 (insert (electric-operator--trim-left spaced-string)))
 
-            ;; Insert correctly spaced operator
-            (insert spaced-string)))))))
+		    ;; Insert correctly spaced operator
+		    (insert spaced-string)))))))
 
 ;;;###autoload
 (define-minor-mode electric-operator-mode
@@ -829,24 +829,24 @@ Also handles C++ lambda capture by reference."
 
 (apply #'electric-operator-add-rules-for-mode 'python-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'python-mode
-				      (cons "**" #'electric-operator-python-mode-**)
-				      (cons "*" #'electric-operator-python-mode-*)
-				      (cons ":" #'electric-operator-python-mode-:)
-				      (cons "//" " // ") ; integer division
-				      (cons "=" #'electric-operator-python-mode-kwargs-=)
-				      (cons "-" #'electric-operator-python-mode-negative-slices)
-				      (cons "->" " -> ") ; function return types
-				      (cons "|=" " |= ")
-				      (cons "&=" " &= ")
-				      (cons "^=" " ^= ")
-				      (cons "%=" " %= ")
-				      (cons "<<" " << ")
-				      (cons ">>" " >> ")
-				      (cons "//=" " //= ")
-				      (cons "**=" " **= ")
-				      (cons ">>=" " >>= ")
-				      (cons "<<=" " <<= ")
-				      )
+				                      (cons "**" #'electric-operator-python-mode-**)
+				                      (cons "*" #'electric-operator-python-mode-*)
+				                      (cons ":" #'electric-operator-python-mode-:)
+				                      (cons "//" " // ") ; integer division
+				                      (cons "=" #'electric-operator-python-mode-kwargs-=)
+				                      (cons "-" #'electric-operator-python-mode-negative-slices)
+				                      (cons "->" " -> ") ; function return types
+				                      (cons "|=" " |= ")
+				                      (cons "&=" " &= ")
+				                      (cons "^=" " ^= ")
+				                      (cons "%=" " %= ")
+				                      (cons "<<" " << ")
+				                      (cons ">>" " >> ")
+				                      (cons "//=" " //= ")
+				                      (cons "**=" " **= ")
+				                      (cons ">>=" " >>= ")
+				                      (cons "<<=" " <<= ")
+				                      )
 
 (apply #'electric-operator-add-rules-for-mode 'inferior-python-mode (electric-operator-get-rules-for-mode 'python-mode))
 
@@ -934,33 +934,33 @@ Also handles C++ lambda capture by reference."
 
 (apply #'electric-operator-add-rules-for-mode 'js-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'js-mode
-				      (cons "%=" " %= ")
-				      (cons "++" "++ ")
-				      (cons "--" "-- ")
-				      (cons "===" " === ")
-				      (cons "!==" " !== ")
-				      (cons "<<" " << ")
-				      (cons ">>" " >> ")
-				      (cons ":" #'electric-operator-js-mode-:)
-				      (cons "?" " ? ")
-				      (cons "/" #'electric-operator-js-mode-/)
-				      (cons "//" " // ")
-				      (cons "/*" " /* ")
-				      (cons "=>" " => ") ; ES6 arrow functions
-				      (cons "|=" " |= ")
-				      (cons "&=" " &= ")
-				      )
+				                      (cons "%=" " %= ")
+				                      (cons "++" "++ ")
+				                      (cons "--" "-- ")
+				                      (cons "===" " === ")
+				                      (cons "!==" " !== ")
+				                      (cons "<<" " << ")
+				                      (cons ">>" " >> ")
+				                      (cons ":" #'electric-operator-js-mode-:)
+				                      (cons "?" " ? ")
+				                      (cons "/" #'electric-operator-js-mode-/)
+				                      (cons "//" " // ")
+				                      (cons "/*" " /* ")
+				                      (cons "=>" " => ") ; ES6 arrow functions
+				                      (cons "|=" " |= ")
+				                      (cons "&=" " &= ")
+				                      )
 
 (apply #'electric-operator-add-rules-for-mode 'js2-mode (electric-operator-get-rules-for-mode 'js-mode))
 
 (apply #'electric-operator-add-rules-for-mode 'typescript-mode (electric-operator-get-rules-for-mode 'js-mode))
 (electric-operator-add-rules-for-mode 'typescript-mode
-				      (cons ":" nil)
-				      ;; Generics ruin everything
-				      (cons ">>" nil)
-				      (cons "<" nil)
-				      (cons ">" nil)
-				      (cons ">=" nil))
+				                      (cons ":" nil)
+				                      ;; Generics ruin everything
+				                      (cons ">>" nil)
+				                      (cons "<" nil)
+				                      (cons ">" nil)
+				                      (cons ">=" nil))
 
 
 
@@ -968,28 +968,28 @@ Also handles C++ lambda capture by reference."
 
 (apply #'electric-operator-add-rules-for-mode 'rust-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'rust-mode
-				      ;; templates are hard
-				      (cons "<" nil)
-				      (cons ">" nil)
+				                      ;; templates are hard
+				                      (cons "<" nil)
+				                      (cons ">" nil)
 
-				      ;; mut vs. bitwise and
-				      (cons "&" nil)
+				                      ;; mut vs. bitwise and
+				                      (cons "&" nil)
 
-				      ;; pointer deref vs multiplication
-				      (cons "*" nil)
+				                      ;; pointer deref vs multiplication
+				                      (cons "*" nil)
 
-				      (cons "/" #'electric-operator-prog-mode-/)
-				      (cons "/*" " /* ")
-				      (cons "//" " // ")
+				                      (cons "/" #'electric-operator-prog-mode-/)
+				                      (cons "/*" " /* ")
+				                      (cons "//" " // ")
 
-				      ;; Extra operators
-				      (cons "<<" " << ")
-				      (cons ">>" " >> ")
-				      (cons "->" " -> ")
-				      (cons "=>" " => ")
+				                      ;; Extra operators
+				                      (cons "<<" " << ")
+				                      (cons ">>" " >> ")
+				                      (cons "->" " -> ")
+				                      (cons "=>" " => ")
 
-				      ;; Bar is used for lambdas as well as or
-				      (cons "|" nil))
+				                      ;; Bar is used for lambdas as well as or
+				                      (cons "|" nil))
 
 
 
@@ -1006,23 +1006,23 @@ Also handles C++ lambda capture by reference."
 (dolist (mode '(ess-mode ess-r-mode))
   (apply #'electric-operator-add-rules-for-mode mode (electric-operator-get-rules-for-mode 'prog-mode))
   (electric-operator-add-rules-for-mode mode
-					(cons "." nil) ; word separator
-					(cons "<-" " <- ") ; assignment
-					(cons "->" " -> ") ; Right assignment
-					(cons "%%" " %% ") ; Modulus
-					(cons "%/%" " %/% ") ; Integer divide
-					(cons "%*%" " %*% ") ; Matrix product
-					(cons "%o%" " %o% ") ; Outer product
-					(cons "%x%" " %x% ") ; Kronecker product
-					(cons "%in%" " %in% ") ; Matching operator
-					(cons "~" " ~ ") ; "is modeled by"
-					(cons ":=" " := ")
-					(cons "%>%" " %>% ") ; Pipe (magrittr)
-					(cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
-					(cons "%$%" " %$% ") ; Exposition pipe (magrittr)
-					(cons "%T>%" " %T>% ") ; Tee operator (magrittr)
-					(cons "=" #'electric-operator-ess-mode-keyword-args-=)
-					))
+					                    (cons "." nil) ; word separator
+					                    (cons "<-" " <- ") ; assignment
+					                    (cons "->" " -> ") ; Right assignment
+					                    (cons "%%" " %% ") ; Modulus
+					                    (cons "%/%" " %/% ") ; Integer divide
+					                    (cons "%*%" " %*% ") ; Matrix product
+					                    (cons "%o%" " %o% ") ; Outer product
+					                    (cons "%x%" " %x% ") ; Kronecker product
+					                    (cons "%in%" " %in% ") ; Matching operator
+					                    (cons "~" " ~ ") ; "is modeled by"
+					                    (cons ":=" " := ")
+					                    (cons "%>%" " %>% ") ; Pipe (magrittr)
+					                    (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
+					                    (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
+					                    (cons "%T>%" " %T>% ") ; Tee operator (magrittr)
+					                    (cons "=" #'electric-operator-ess-mode-keyword-args-=)
+					                    ))
 
 (apply #'electric-operator-add-rules-for-mode 'inferior-ess-r-mode (electric-operator-get-rules-for-mode 'ess-r-mode))
 
@@ -1046,13 +1046,13 @@ Also handles C++ lambda capture by reference."
 
 (apply #'electric-operator-add-rules-for-mode 'ruby-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'ruby-mode
-				      (cons "=~" " =~ ") ; regex equality
-				      )
+				                      (cons "=~" " =~ ") ; regex equality
+				                      )
 
 (apply #'electric-operator-add-rules-for-mode 'perl-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'perl-mode
-				      (cons "=~" " =~ ") ; regex equality
-				      )
+				                      (cons "=~" " =~ ") ; regex equality
+				                      )
 
 ;; cperl mode is another perl mode, copy the rules
 (apply #'electric-operator-add-rules-for-mode 'cperl-mode (electric-operator-get-rules-for-mode 'perl-mode))
@@ -1061,100 +1061,100 @@ Also handles C++ lambda capture by reference."
 (apply #'electric-operator-add-rules-for-mode 'java-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'java-mode
 
-				      ;; ternary operator
-				      (cons "?" " ? ")
-				      (cons ":" #'electric-operator-c-mode-:) ; (or case label)
+				                      ;; ternary operator
+				                      (cons "?" " ? ")
+				                      (cons ":" #'electric-operator-c-mode-:) ; (or case label)
 
-				      ;; increment/decrement
-				      (cons "++" #'electric-operator-c-mode-++)
-				      (cons "--" #'electric-operator-c-mode---)
+				                      ;; increment/decrement
+				                      (cons "++" #'electric-operator-c-mode-++)
+				                      (cons "--" #'electric-operator-c-mode---)
 
-				      ;; bitshift operators
-				      (cons "<<" " << ")
-				      (cons ">>" " >> ")
-				      (cons ">>>" " >>> ")
+				                      ;; bitshift operators
+				                      (cons "<<" " << ")
+				                      (cons ">>" " >> ")
+				                      (cons ">>>" " >>> ")
 
-				      ;; Weirder assignment operators
-				      (cons "%=" " %= ")
-				      (cons "^=" " ^= ")
-				      (cons "&=" " &= ")
-				      (cons "|=" " |= ")
-				      (cons "<<=" " <<= ")
-				      (cons ">>=" " >>= ")
+				                      ;; Weirder assignment operators
+				                      (cons "%=" " %= ")
+				                      (cons "^=" " ^= ")
+				                      (cons "&=" " &= ")
+				                      (cons "|=" " |= ")
+				                      (cons "<<=" " <<= ")
+				                      (cons ">>=" " >>= ")
 
-				      ;; Comments
-				      (cons "/" #'electric-operator-prog-mode-/)
-				      (cons "/*" " /* ")
-				      (cons "//" " // ")
+				                      ;; Comments
+				                      (cons "/" #'electric-operator-prog-mode-/)
+				                      (cons "/*" " /* ")
+				                      (cons "//" " // ")
 
-				      ;; Generics are hard
-				      (cons "<" nil)
-				      (cons ">" nil)
-				      )
+				                      ;; Generics are hard
+				                      (cons "<" nil)
+				                      (cons ">" nil)
+				                      )
 
 
 
 (apply #'electric-operator-add-rules-for-mode 'php-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'php-mode
-				      (cons "**" " ** ")
-				      (cons "%=" " %= ")
-				      (cons "===" " === ")
-				      (cons "<>" " <> ") ; not-equal
-				      (cons "!==" " !== ")
-				      (cons "++" #'electric-operator-c-mode-++)
-				      (cons "--" #'electric-operator-c-mode---)
-				      (cons "." " . ")   ; string concat
-				      (cons ".=" " .= ")
-				      (cons "->" "->")
-				      (cons "=>" " => ")
-				      (cons "<?" "<?")
+				                      (cons "**" " ** ")
+				                      (cons "%=" " %= ")
+				                      (cons "===" " === ")
+				                      (cons "<>" " <> ") ; not-equal
+				                      (cons "!==" " !== ")
+				                      (cons "++" #'electric-operator-c-mode-++)
+				                      (cons "--" #'electric-operator-c-mode---)
+				                      (cons "." " . ")   ; string concat
+				                      (cons ".=" " .= ")
+				                      (cons "->" "->")
+				                      (cons "=>" " => ")
+				                      (cons "<?" "<?")
 
-				      (cons "/" #'electric-operator-prog-mode-/)
-				      (cons "/*" " /* ")
-				      (cons "//" " // ")
-				      )
+				                      (cons "/" #'electric-operator-prog-mode-/)
+				                      (cons "/*" " /* ")
+				                      (cons "//" " // ")
+				                      )
 
 
 ;; Coffee script support based on http://coffeescript.org/#operators
 (apply #'electric-operator-add-rules-for-mode 'coffee-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'coffee-mode
-				      (cons "**" " ** ")
-				      (cons "//" " // ")
-				      (cons "///" " /// ")
-				      (cons "%%" " %% ")
-				      (cons "?" "? ")
-				      (cons "?=" " ?= ")
-				      (cons "?." "?.")
-				      (cons "->" " -> ")
-				      (cons "=>" " => ")
-				      )
+				                      (cons "**" " ** ")
+				                      (cons "//" " // ")
+				                      (cons "///" " /// ")
+				                      (cons "%%" " %% ")
+				                      (cons "?" "? ")
+				                      (cons "?=" " ?= ")
+				                      (cons "?." "?.")
+				                      (cons "->" " -> ")
+				                      (cons "=>" " => ")
+				                      )
 
 (apply #'electric-operator-add-rules-for-mode 'sql-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'sql-mode
-				      (cons "-" nil)
-				      (cons "=" nil)
-				      (cons "%" nil)
-				      (cons "*" nil)
+				                      (cons "-" nil)
+				                      (cons "=" nil)
+				                      (cons "%" nil)
+				                      (cons "*" nil)
 
-				      ;; postgres json operators
-				      (cons "->>" "->>")
-				      (cons "#>" "#>")
-				      (cons "#>>" "#>>")
-				      (cons "<@" " <@ ")
-				      (cons "@>" " @> ")
-				      (cons "#-" " #- ")
-				      (cons "?|" " ?| ")
-				      (cons "?&" " ?& ")
-				      )
+				                      ;; postgres json operators
+				                      (cons "->>" "->>")
+				                      (cons "#>" "#>")
+				                      (cons "#>>" "#>>")
+				                      (cons "<@" " <@ ")
+				                      (cons "@>" " @> ")
+				                      (cons "#-" " #- ")
+				                      (cons "?|" " ?| ")
+				                      (cons "?&" " ?& ")
+				                      )
 
 ;; Don't use either prog or text mode defaults, css is too different
 (electric-operator-add-rules-for-mode 'css-mode
-				      (cons ":" ": ")
-				      (cons "," ", "))
+				                      (cons ":" ": ")
+				                      (cons "," ", "))
 
 (electric-operator-add-rules-for-mode 'scss-mode
-				      (cons ":" ": ")
-				      (cons "," ", "))
+				                      (cons ":" ": ")
+				                      (cons "," ", "))
 
 
 
@@ -1169,80 +1169,80 @@ Also handles C++ lambda capture by reference."
 (apply #'electric-operator-add-rules-for-mode 'julia-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'julia-mode
 
-				      (cons "=" #'electric-operator-julia-mode-kwargs-=)
-				      (cons ";" "; ")
+				                      (cons "=" #'electric-operator-julia-mode-kwargs-=)
+				                      (cons ";" "; ")
 
-				      ;; Subtype comparison
-				      (cons "<:" " <: ")
+				                      ;; Subtype comparison
+				                      (cons "<:" " <: ")
 
-				      ;; Cool! Unicode!
-				      (cons "÷" " ÷ ")
-				      (cons "≠" " ≠ ")
-				      (cons "≤" " ≤ ")
-				      (cons "≥" " ≥ ")
+				                      ;; Cool! Unicode!
+				                      (cons "÷" " ÷ ")
+				                      (cons "≠" " ≠ ")
+				                      (cons "≤" " ≤ ")
+				                      (cons "≥" " ≥ ")
 
-				      ;; something about fractions
-				      (cons "//" " // ")
-				      (cons ".//" " .// ")
-				      (cons "//=" " //= ")
+				                      ;; something about fractions
+				                      (cons "//" " // ")
+				                      (cons ".//" " .// ")
+				                      (cons "//=" " //= ")
 
-				      ;; pipe
-				      (cons "|>" " |> ")
+				                      ;; pipe
+				                      (cons "|>" " |> ")
 
-				      (cons "*" " * ")
-				      (cons "/" " / ")
-				      (cons "%" " % ")
-				      (cons "&" " & ")
+				                      (cons "*" " * ")
+				                      (cons "/" " / ")
+				                      (cons "%" " % ")
+				                      (cons "&" " & ")
 
-				      ;; \ (escaped), for solving matrix multiplies
-				      (cons "\\" " \\ ")
-				      (cons "\\=" " \\= ")
-				      (cons ".\\" " .\\ ")
+				                      ;; \ (escaped), for solving matrix multiplies
+				                      (cons "\\" " \\ ")
+				                      (cons "\\=" " \\= ")
+				                      (cons ".\\" " .\\ ")
 
-				      ;; XOR
-				      (cons "$" " $ ")
+				                      ;; XOR
+				                      (cons "$" " $ ")
 
-				      ;; Even more equal!
-				      (cons "===" " === ")
-				      (cons "!==" " !== ")
+				                      ;; Even more equal!
+				                      (cons "===" " === ")
+				                      (cons "!==" " !== ")
 
-				      ;; vector operations and assign-operators
-				      (cons ".^" " .^ ")
-				      (cons ".*" " .* ")
-				      (cons "./" " ./ ")
-				      (cons ".%" " .% ")
-				      (cons "<<" " << ")
-				      (cons ">>" " >> ")
-				      (cons ">>>" " >>> ")
-				      (cons ".<<" " .<< ")
-				      (cons ".>>" " .>> ")
-				      (cons ".>>>" " .>>> ")
-				      (cons ".+" " .+ ")
-				      (cons ".-" " .- ")
-				      (cons ".>" " .> ")
-				      (cons ".<" " .< ")
-				      (cons ".>=" " .>= ")
-				      (cons ".<=" " .<= ")
-				      (cons ".==" " .== ")
-				      (cons ".!=" " .!= ")
-				      (cons "^=" " ^= ")
-				      (cons "÷=" " ÷= ")
-				      (cons "%=" " %= ")
-				      (cons "|=" " |= ")
-				      (cons "&=" " &= ")
-				      (cons "$=" " $= ")
-				      (cons "<<=" " <<= ")
-				      (cons ">>=" " >>= ")
-				      (cons ">>>=" " >>>= ")
-				      (cons ".+=" " .+= ")
-				      (cons ".-=" " .-= ")
-				      (cons ".*=" " .*= ")
-				      (cons "./=" " ./= ")
-				      (cons ".//=" " .//= ")
-				      (cons ".\\=" " .\\= ")
-				      (cons ".^=" " .^= ")
-				      (cons ".÷=" " .÷= ")
-				      (cons ".%=" " .%= "))
+				                      ;; vector operations and assign-operators
+				                      (cons ".^" " .^ ")
+				                      (cons ".*" " .* ")
+				                      (cons "./" " ./ ")
+				                      (cons ".%" " .% ")
+				                      (cons "<<" " << ")
+				                      (cons ">>" " >> ")
+				                      (cons ">>>" " >>> ")
+				                      (cons ".<<" " .<< ")
+				                      (cons ".>>" " .>> ")
+				                      (cons ".>>>" " .>>> ")
+				                      (cons ".+" " .+ ")
+				                      (cons ".-" " .- ")
+				                      (cons ".>" " .> ")
+				                      (cons ".<" " .< ")
+				                      (cons ".>=" " .>= ")
+				                      (cons ".<=" " .<= ")
+				                      (cons ".==" " .== ")
+				                      (cons ".!=" " .!= ")
+				                      (cons "^=" " ^= ")
+				                      (cons "÷=" " ÷= ")
+				                      (cons "%=" " %= ")
+				                      (cons "|=" " |= ")
+				                      (cons "&=" " &= ")
+				                      (cons "$=" " $= ")
+				                      (cons "<<=" " <<= ")
+				                      (cons ">>=" " >>= ")
+				                      (cons ">>>=" " >>>= ")
+				                      (cons ".+=" " .+= ")
+				                      (cons ".-=" " .-= ")
+				                      (cons ".*=" " .*= ")
+				                      (cons "./=" " ./= ")
+				                      (cons ".//=" " .//= ")
+				                      (cons ".\\=" " .\\= ")
+				                      (cons ".^=" " .^= ")
+				                      (cons ".÷=" " .÷= ")
+				                      (cons ".%=" " .%= "))
 
 
 
@@ -1349,58 +1349,58 @@ Also handles C++ lambda capture by reference."
                                       )
 
 ;;; F90 mode tweaks
-    (apply #'electric-operator-add-rules-for-mode 'f90-mode
-           (electric-operator-get-rules-for-mode 'prog-mode))
-    (electric-operator-add-rules-for-mode 'f90-mode
-                                          (cons "=" 'electric-operator-f90-mode-=)
-					  (cons "/=" " /= ")
-					  (cons "=>" " => ")
-                                          (cons "*" 'electric-operator-f90-mode-*)
-                                          (cons "/" 'electric-operator-f90-mode-/)
-                                          (cons "::" " :: ")
-                                          (cons "**" " ** ")
-                                          (cons "%" "%")
-                                          (cons "//" "//")
+(apply #'electric-operator-add-rules-for-mode 'f90-mode
+       (electric-operator-get-rules-for-mode 'prog-mode))
+(electric-operator-add-rules-for-mode 'f90-mode
+                                      (cons "=" 'electric-operator-f90-mode-=)
+				                      (cons "/=" " /= ")
+				                      (cons "=>" " => ")
+                                      (cons "*" 'electric-operator-f90-mode-*)
+                                      (cons "/" 'electric-operator-f90-mode-/)
+                                      (cons "::" " :: ")
+                                      (cons "**" " ** ")
+                                      (cons "%" "%")
+                                      (cons "//" "//")
 
-					  ;; .op. version of operators
-					  (cons ".eq." " .eq. ")
-					  (cons ".ne." " .ne. ")
-					  (cons ".gt." " .gt. ")
-					  (cons ".lt." " .lt. ")
-					  (cons ".ge." " .ge. ")
-					  (cons ".le." " .le. ")
-					  (cons ".and." " .and. ")
-					  (cons ".or." " .or. ")
-					  (cons ".not." " .not. ")
-					  (cons ".eqv." " .eqv. ")
-					  (cons ".neqv." " .neqv. ")
-					  )
+				                      ;; .op. version of operators
+				                      (cons ".eq." " .eq. ")
+				                      (cons ".ne." " .ne. ")
+				                      (cons ".gt." " .gt. ")
+				                      (cons ".lt." " .lt. ")
+				                      (cons ".ge." " .ge. ")
+				                      (cons ".le." " .le. ")
+				                      (cons ".and." " .and. ")
+				                      (cons ".or." " .or. ")
+				                      (cons ".not." " .not. ")
+				                      (cons ".eqv." " .eqv. ")
+				                      (cons ".neqv." " .neqv. ")
+				                      )
 
-    (defun electric-operator-f90-mode-= ()
-      "Handle passing arguments to a function."
-      (cond
-       ((eq (electric-operator-enclosing-paren) ?\() "=")
-       (t " = ")))
+(defun electric-operator-f90-mode-= ()
+  "Handle passing arguments to a function."
+  (cond
+   ((eq (electric-operator-enclosing-paren) ?\() "=")
+   (t " = ")))
 
-    (defun electric-operator-f90-mode-*()
-      "Handle write(*,*) and print *, cases."
-      (cond
-       ((electric-operator-just-inside-bracket) "*")
-       ((eq (char-before) ?\,) " *")
-       (t " * ")))
+(defun electric-operator-f90-mode-*()
+  "Handle write(*,*) and print *, cases."
+  (cond
+   ((electric-operator-just-inside-bracket) "*")
+   ((eq (char-before) ?\,) " *")
+   (t " * ")))
 
-    (defun electric-operator-f90-mode-/()
-      "Handle (/ /) style implicit array declaration."
-      "Currently fails for fractions in implict declaration."
-      (cond
-       ((electric-operator-just-inside-bracket) "/ ")
-       ((eq (electric-operator-character-after-paren) ?\/) " /")
-       (t " / ")))
+(defun electric-operator-f90-mode-/()
+  "Handle (/ /) style implicit array declaration."
+  "Currently fails for fractions in implict declaration."
+  (cond
+   ((electric-operator-just-inside-bracket) "/ ")
+   ((eq (electric-operator-character-after-paren) ?\/) " /")
+   (t " / ")))
 
-    (defun electric-operator-character-after-paren()
-      "Return the character immediately after the opening brace of the current paren group."
-      (let ((ppss (syntax-ppss)))
-        (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1)))))
+(defun electric-operator-character-after-paren()
+  "Return the character immediately after the opening brace of the current paren group."
+  (let ((ppss (syntax-ppss)))
+    (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1)))))
 
 (provide 'electric-operator)
 
