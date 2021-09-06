@@ -34,7 +34,7 @@ Feature: F90 mode basics
     When I type "write(*, '(format)')"
     Then I should see "write(*, '(format)')"
 
-  Scenario: Write statements with custom formatting and default output
+  Scenario: Write statements with default formatting and file output
     When I type "write(101,*)"
     Then I should see "write(101, *)"
 
