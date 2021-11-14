@@ -1148,13 +1148,23 @@ Also handles C++ lambda capture by reference."
 				                      (cons "?&" " ?& ")
 				                      )
 
+(defun electric-operator-css-: ()
+  (cond
+   ((eq (electric-operator-enclosing-paren) ?\{) ": ")
+   (t ":")))
+
 ;; Don't use either prog or text mode defaults, css is too different
 (electric-operator-add-rules-for-mode 'css-mode
-				                      (cons ":" ": ")
+                                      (cons ":" #'electric-operator-css-:)
 				                      (cons "," ", "))
 
 (electric-operator-add-rules-for-mode 'scss-mode
-				                      (cons ":" ": ")
+                                      ;; Don't auto space ":" because we can't
+                                      ;; tell if it's a pseudo-class selector or
+                                      ;; a property. Unfortunately I think it
+                                      ;; might be impossible to distinguish
+                                      ;; these. See #103.
+				                      (cons ":" nil)
 				                      (cons "," ", "))
 
 
