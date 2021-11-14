@@ -120,6 +120,7 @@ Good support is implemented for:
 * PHP
 * Julia
 * CSS
+* Fortran
 
 In C-like languages there are some difficulties with distinguishing between `*`
 for pointer types and for multiplication. Similiarly for `&` (reference types vs
