@@ -1050,8 +1050,43 @@ Also handles C++ lambda capture by reference."
 				                      (cons "=~" " =~ ") ; regex equality
 				                      )
 
+;; From https://www.tutorialspoint.com/perl/perl_operators.htm and https://perldoc.perl.org/perlop
+;;
+;; Perl has words which are operators, but I'm not going to handle those becuase
+;; otherwise the `and` operator would make it hard to type e.g. `and_one`.
+;;
 (apply #'electric-operator-add-rules-for-mode 'perl-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'perl-mode
+                                      (cons "**" "**")
+                                      (cons "<=>" " <=> ")
+                                      (cons "<<" " << ")
+                                      (cons ">>" " >> ")
+                                      (cons "->" "->")
+                                      (cons "~~" " ~~ ")
+                                      (cons "//" " // ") ; Some kind of || like operator
+                                      (cons "=>" " => ")
+                                      (cons "|." "|." )
+                                      (cons "&." "&." )
+                                      (cons "^." "^." )
+
+                                      (cons "**=" " **= ")
+                                      (cons "&.=" " &.= ")
+                                      (cons "<<=" " <<= ")
+                                      (cons "|=" " |= ")
+                                      (cons "|.=" " |.= ")
+                                      (cons ">>=" " >>= ")
+                                      (cons ".=" " .= ")
+                                      (cons "%=" " %= ")
+                                      (cons "^=" " ^= ")
+                                      (cons "^.=" " ^.= ")
+                                      (cons "//=" " //= ")
+                                      (cons "x=" " x= ")
+
+                                      ;; TODO: these might not be good enough? I
+                                      ;; don't know enough about perl syntax
+                                      (cons "++" #'electric-operator-c-mode-++)
+                                      (cons "--" #'electric-operator-c-mode---)
+
 				                      (cons "=~" " =~ ") ; regex equality
 				                      )
 
