@@ -16,6 +16,6 @@ Feature: CSS mode
 
     }
     """
-    When I got to line "2"
+    When I go to line "2"
     When I type "text-decoration:underline;"
     Then I should see "text-decoration: underline;"
