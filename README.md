@@ -130,7 +130,6 @@ bitwise and), and `<`, `>` (comparision operators vs angle brackets).
 The following languages are supported but not extensively tested, please open an
 issue to let me know how it goes if you use them.
 
-* Perl
 * Ruby
 * LaTeX
 
