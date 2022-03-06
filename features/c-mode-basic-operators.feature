@@ -37,6 +37,10 @@ Feature: C basic operators
     When I type "b=++a+c"
     Then I should see "b = ++a + c"
 
+  Scenario: Pre-increment parens
+    When I type "while(++a < 2)"
+    Then I should see "while(++a < 2)"
+
   Scenario: Pre-increment at beginning of line
     When I turn off minor mode c-toggle-electric-state
     And  I press "TAB"
@@ -53,6 +57,10 @@ Feature: C basic operators
   Scenario: Pre-decrement
     When I type "b=--a-c"
     Then I should see "b = --a - c"
+
+  Scenario: Pre-decrement parens
+    When I type "while(--a < 2)"
+    Then I should see "while(--a < 2)"
 
   Scenario: Pre-decrement at beginning of line
     When I turn off minor mode c-toggle-electric-state

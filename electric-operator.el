@@ -719,14 +719,22 @@ Using `cc-mode''s syntactic analysis."
 (defun electric-operator-c-mode-++ ()
   "Handle ++ operator pre/postfix and c++ in include strings"
   (cond
+   ;; A header written using <> and containing the string ++
    ((electric-operator-c-mode-include-line?) "++")
+   ;; postfix case
    ((electric-operator-looking-back-locally "[a-zA-Z0-9_]\\s-*") "++ ")
+   ;; prefix cases
+   ((electric-operator-just-inside-bracket) "++")
    (t " ++")))
 
 (defun electric-operator-c-mode--- ()
   "Handle -- operator pre/postfix"
-  (cond ((electric-operator-looking-back-locally "[a-zA-Z0-9_]\\s-*") "-- ")
-        (t " --")))
+  (cond
+   ;; postfix case
+   ((electric-operator-looking-back-locally "[a-zA-Z0-9_]\\s-*") "-- ")
+   ;; prefix cases
+   ((electric-operator-just-inside-bracket) "--")
+   (t " --")))
 
 (defun electric-operator-c-mode-< ()
   "Handle #include brackets and templates"
