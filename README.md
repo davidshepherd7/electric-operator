@@ -284,13 +284,11 @@ It's difficult to solve because we would need to step over matching `{}` and
 `[]` while searching for a `lambda` to match the current `:`. I think this
 impossible with regexs so I would have to find something more powerful.
 
-### Haskell
+### Perl
 
-Whitespace in Haskell is significant, so automatically inserting whitespace is
-sketchy at best. On top of this operators can be used in all sorts of complex
-ways when being passed as arguments to functions or when partially evaluated.
+Perl has some extremely flexible operator behaviours which seem impossible to support:
 
-I made a few attempts at adding support but never really succeeded and what I
-did manage required substantial extra complexity. So Haskell support is now gone
-and probably won't be back unless someone can provide an elegant way to support
-the syntax.
+* Use of `x` as both an operator and a part of a variable name.
+* Defining your own operators
+* Defining your own regex quote charaters, e.g. `q#foo#b`.
+
