@@ -121,6 +121,7 @@ Good support is implemented for:
 * Julia
 * CSS
 * Fortran
+* Perl
 
 In C-like languages there are some difficulties with distinguishing between `*`
 for pointer types and for multiplication. Similiarly for `&` (reference types vs
@@ -199,6 +200,10 @@ to be too heavy to add to electric-spacing.
 * Dropped Haskell support because it was essentially unusable and made
   everything more complex.
 * Add support for LaTeX math.
+* Add Fortran support
+* Fix spacing of pseudo classes in CSS/SCSS
+* Add perl support
+
 
 ### Version 2.0
 
@@ -212,11 +217,9 @@ BREAKING:
 Other changes:
 
 * Major performance improvements!
-
 * Electric operator now uses a trie data structure instead of a list of rules
   internally. This shouldn't have any effect on configs that only use
   non-private functions (i.e. those without `--` in their name).
-
 
 
 ### Version 1.1.0
