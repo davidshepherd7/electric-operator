@@ -1051,21 +1051,43 @@ Also handles C++ lambda capture by reference."
 
 
 
-;;; Other major mode tweaks
+;;; Perl mode
 
-(apply #'electric-operator-add-rules-for-mode 'ruby-mode (electric-operator-get-rules-for-mode 'prog-mode))
-(electric-operator-add-rules-for-mode 'ruby-mode
-				                      (cons "=~" " =~ ") ; regex equality
-				                      )
+(defun electric-operator-perl-mode-++ ()
+  "Handle ++ operator pre/postfix and c++ in include strings"
+  (cond
+   ;; postfix case
+   ((electric-operator-looking-back-locally "[a-zA-Z0-9_]\\s-*") "++")
+   ;; prefix cases
+   ((electric-operator-just-inside-bracket) "++")
+   (t " ++")))
 
-;; From https://www.tutorialspoint.com/perl/perl_operators.htm and https://perldoc.perl.org/perlop
+(defun electric-operator-perl-mode--- ()
+  "Handle -- operator pre/postfix"
+  (cond
+   ;; postfix case
+   ((electric-operator-looking-back-locally "[a-zA-Z0-9_]\\s-*") "--")
+   ;; prefix cases
+   ((electric-operator-just-inside-bracket) "--")
+   (t " --")))
+
+
+
+;; Mostly from https://perldoc.perl.org/perlop
 ;;
 ;; Perl has words which are operators, but I'm not going to handle those becuase
 ;; otherwise the `and` operator would make it hard to type e.g. `and_one`.
 ;;
+;; It also lets you define your own rules for regex quoting operators, which
+;; seems impossible to handle well.
+;;
+;; Another caveat: it does something odd with using % as two different things
+;; depending on the context, but we can't write tests for strings containing %
+;; (see https://github.com/ecukes/ecukes/issues/58) so I can't really handle
+;; this.
 (apply #'electric-operator-add-rules-for-mode 'perl-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'perl-mode
-                                      (cons "**" "**")
+                                      (cons "**" " ** ") ; Exponentials
                                       (cons "<=>" " <=> ")
                                       (cons "<<" " << ")
                                       (cons ">>" " >> ")
@@ -1073,10 +1095,16 @@ Also handles C++ lambda capture by reference."
                                       (cons "~~" " ~~ ")
                                       (cons "//" " // ") ; Some kind of || like operator
                                       (cons "=>" " => ")
-                                      (cons "|." "|." )
-                                      (cons "&." "&." )
-                                      (cons "^." "^." )
+                                      (cons "|." " |. " )
+                                      (cons "&." " &. " )
+                                      (cons "^." " ^. " )
+                                      (cons "^^" " ^^ ") ; Logical XOR
+				                      (cons "=~" " =~ ") ; regex equality
+				                      (cons "!~" " !~ ") ; regex equality
 
+                                      (cons "&=" " &= ")
+                                      (cons "&&=" " &&= ")
+                                      (cons "||=" " ||= ")
                                       (cons "**=" " **= ")
                                       (cons "&.=" " &.= ")
                                       (cons "<<=" " <<= ")
@@ -1088,18 +1116,43 @@ Also handles C++ lambda capture by reference."
                                       (cons "^=" " ^= ")
                                       (cons "^.=" " ^.= ")
                                       (cons "//=" " //= ")
-                                      (cons "x=" " x= ")
+                                      (cons "++" #'electric-operator-perl-mode-++)
+                                      (cons "--" #'electric-operator-perl-mode---)
 
-                                      ;; TODO: these might not be good enough? I
-                                      ;; don't know enough about perl syntax
-                                      (cons "++" #'electric-operator-c-mode-++)
-                                      (cons "--" #'electric-operator-c-mode---)
+                                      ;; The x (string repetition) is not
+                                      ;; distinguishable from use of x in
+                                      ;; variable names (e.g. `foox` or `foox
+                                      ;; =`), so leave it alone.
+                                      (cons "x=" nil)
 
-				                      (cons "=~" " =~ ") ; regex equality
+                                      ;; Perl has things like <> and <STDIN> as
+                                      ;; well as x < y, we don't have a good way
+                                      ;; of handling this kind of thing yet so
+                                      ;; disable these. https://perldoc.perl.org/perlop#I/O-Operators
+                                      (cons "<" nil)
+                                      (cons ">" nil)
+
+                                      ;; We can't tell the difference between
+                                      ;; division and regexes, so don't try.
+                                      (cons "/" nil)
+
+                                      ;; Percent is used as both modulus and
+                                      ;; something about hash table
+                                      ;; dereferencing?
+                                      (cons "%" nil)
 				                      )
 
 ;; cperl mode is another perl mode, copy the rules
 (apply #'electric-operator-add-rules-for-mode 'cperl-mode (electric-operator-get-rules-for-mode 'perl-mode))
+
+
+
+;;; Other major mode tweaks
+
+(apply #'electric-operator-add-rules-for-mode 'ruby-mode (electric-operator-get-rules-for-mode 'prog-mode))
+(electric-operator-add-rules-for-mode 'ruby-mode
+				                      (cons "=~" " =~ ") ; regex equality
+				                      )
 
 ;; This is based on a syntax guide and hasn't been tested.
 (apply #'electric-operator-add-rules-for-mode 'java-mode (electric-operator-get-rules-for-mode 'prog-mode))
