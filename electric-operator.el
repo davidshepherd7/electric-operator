@@ -848,6 +848,7 @@ Also handles C++ lambda capture by reference."
 				                      (cons "&=" " &= ")
 				                      (cons "^=" " ^= ")
 				                      (cons "%=" " %= ")
+                                      (cons ":=" " := ")
 				                      (cons "<<" " << ")
 				                      (cons ">>" " >> ")
 				                      (cons "//=" " //= ")
