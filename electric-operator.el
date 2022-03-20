@@ -570,6 +570,7 @@ Any better ideas would be welcomed."
 
                                       ;; Comments
                                       (cons "/*" " /* ")
+                                      (cons "*/" "*/")
                                       (cons "//" " // ")
 
                                       ;; End of statement inc/decrement, handled separately
