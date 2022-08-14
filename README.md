@@ -101,8 +101,7 @@ modes. So customisations to electric-operator for e.g. `python-mode` (or
 ## Programming language support
 
 A number of basic operator rules are defined for any major mode, so if your
-language is "normal" (i.e C-like) then a good amount of functionality
-should just work.
+language is vaguely C-like then a good amount of functionality should just work.
 
 If you use `electric-operator` for a major mode not listed below here
 please open an issue to let me know what works.
@@ -121,7 +120,7 @@ Good support is implemented for:
 * Julia
 * CSS
 * Fortran
-* Perl
+* Perl (except `x`, `%`, `<`, `>`, and `/` operators)
 
 In C-like languages there are some difficulties with distinguishing between `*`
 for pointer types and for multiplication. Similiarly for `&` (reference types vs
