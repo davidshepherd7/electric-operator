@@ -50,3 +50,15 @@ Feature: R specific operators
     When I turn on electric-operator-mode
     When I type "x~.+1"
     Then I should see "x ~ . + 1"
+
+  Scenario: Colons for ranges are not spaced
+    When I turn on ess-r-mode
+    When I turn on electric-operator-mode
+    When I type "for (i in 1:100) {"
+    Then I should see "for (i in 1:100) {"
+
+  Scenario: bang-bang operator
+    When I turn on ess-r-mode
+    When I turn on electric-operator-mode
+    When I type "group_by(!!grouping_var)"
+    Then I should see "group_by(!!grouping_var)"

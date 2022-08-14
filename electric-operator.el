@@ -1028,6 +1028,7 @@ Also handles C++ lambda capture by reference."
 					                    (cons "%in%" " %in% ") ; Matching operator
 					                    (cons "~" " ~ ") ; "is modeled by"
 					                    (cons ":=" " := ")
+                                        (cons "|>" " |> ") ; R 4.0's built-in pipe
 					                    (cons "%>%" " %>% ") ; Pipe (magrittr)
 					                    (cons "%<>%" " %<>% ") ; Assignment pipe (magrittr)
 					                    (cons "%$%" " %$% ") ; Exposition pipe (magrittr)
