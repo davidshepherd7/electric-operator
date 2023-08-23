@@ -236,8 +236,8 @@ Returns a modified copy of the rule list."
 (defun electric-operator-add-rules-for-mode (major-mode-symbol &rest new-rules)
   "Replace or add spacing rules for major mode
 
-Destructively modifies `electric-operator--mode-rules-table' to use the new rules for
-the given major mode."
+Destructively modifies `electric-operator--mode-rules-table' to use the new
+rules for the given major mode."
   (puthash major-mode-symbol
            (electric-operator--add-rule-list (or (electric-operator-get-rules-trie-for-mode major-mode-symbol)
                                                  (make-electric-operator--trie))
@@ -1512,7 +1512,8 @@ Also handles C++ lambda capture by reference."
    (t " / ")))
 
 (defun electric-operator-character-after-paren()
-  "Return the character immediately after the opening brace of the current paren group."
+  "Return the character immediately after the opening brace of
+the current paren group."
   (let ((ppss (syntax-ppss)))
     (when (nth 1 ppss) (char-after (+ (nth 1 ppss) 1)))))
 
