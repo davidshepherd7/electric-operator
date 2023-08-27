@@ -1502,8 +1502,9 @@ Also handles C++ lambda capture by reference."
    (t " * ")))
 
 (defun electric-operator-f90-mode-/()
-  "Handle (/ /) style implicit array declaration."
-  "Currently fails for fractions in implict declaration."
+  "Handle (/ /) style implicit array declaration.
+
+Currently fails for fractions in implict declaration."
   (cond
    ;; We do this instead of having separate (/ and /) operators so that it works
    ;; with electric pairs. TODO: find a way to make this work more generally.
