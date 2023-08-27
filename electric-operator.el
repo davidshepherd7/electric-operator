@@ -39,10 +39,10 @@
 (defcustom electric-operator-c-pointer-type-style 'variable
   "Defines how C/C++ mode pointer and reference types are spaced.
 
-If set to 'variable' then the operator is touching the variable
+If set to \\='variable then the operator is touching the variable
 name, as in `int *x'.
 
-If set to 'type' then the operator is touching the type name , as
+If set to \\='type then the operator is touching the type name, as
 in `int* x'."
   :group 'electricity
   :type 'symbol
@@ -52,7 +52,7 @@ in `int* x'."
   "Defines whether = in R named function arguments should be
 spaced.
 
-Setting the value to 'spaced' results in f(foo = 1), 'unspaced'
+Setting the value to \\='spaced results in f(foo = 1), \\='unspaced
 results in f(foo=1)."
   :group 'electricity
   :type 'symbol
@@ -190,7 +190,7 @@ from point) as the key."
 (defun electric-operator-rule-regex-with-whitespace (op)
   "Construct regex matching operator and any whitespace before/inside/after.
 
-For example for the operator '+=' we allow '+=', ' +=', '+ ='. etc.
+For example for the operator `+=' we allow `+=', ` +=', `+ ='. etc.
 
 Whitespace before the operator is captured for possible use later.
 "
@@ -629,7 +629,7 @@ Any better ideas would be welcomed."
   "_t"
   "Regex used in looking-back-locally to check for C types
 
-For now we just assume that anything ending in '_t' is a type.
+For now we just assume that anything ending in \"_t\" is a type.
 I'm not sure if we can do any better by default.
 
 You could add your own type names to this if needed. Send pull
@@ -793,7 +793,7 @@ Also handles C++ lambda capture by reference."
 
 (defun electric-operator-c-mode-** ()
   "C pointer to pointer or multiplication by pointer dereference.
-  e.g. `res = a * *b;`'"
+  e.g. `res = a * *b;'"
   (if (or (electric-operator-c-after-type?) (electric-operator-c-is-function-or-class-definition?))
       (electric-operator-c-space-pointer-type "**")
     " * *"))
