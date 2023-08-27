@@ -862,14 +862,16 @@ Also handles C++ lambda capture by reference."
 
 (defun electric-operator-python-mode-in-lambda-args? ()
   "Are we inside the arguments statement of a lambda?"
-  (electric-operator-looking-back-locally "lambda[^:]*"))
+  ;; \\(\\s-\\|^\\) instead of just \\b because otherwise foo_lambda matches
+  (electric-operator-looking-back-locally "\\(\\s-\\|^\\)lambda[^:]*"))
 
 (defun electric-operator-python-mode-: ()
   "Handle python dict assignment"
   (cond
    ((electric-operator-python-mode-in-lambda-args?) ": ")
 
-   ;; A keyword statement (we can't use \\b here because it matches _)
+   ;; A keyword statement (we need \\(\\s-\\|^\\) instead of \\b here not not
+   ;; match _)
    ((electric-operator-looking-back-locally "\\(\\s-\\|^\\)\\(if\\|elif\\|else\\|for\\|while\\|class\\|def\\|try\\|except\\|with\\)") ":")
 
    ;; type definition inside a function
