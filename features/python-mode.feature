@@ -164,9 +164,17 @@ Feature: Python mode basics
     When I type "foolambdabar=1"
     Then I should see "foolambdabar = 1"
 
+  Scenario: Lambda at the start of another word doesn't affect spacing
+    When I type "lambdabar=1"
+    Then I should see "lambdabar = 1"
+
   Scenario: Lambda inside another word with _ doesn't affect spacing
     When I type "foo_lambdabar=1"
     Then I should see "foo_lambdabar = 1"
+
+  Scenario: Zero argument lambda
+    When I type "lambda: x, y=1"
+    Then I should see "lambda: x, y = 1"
 
   # Slice operator
   Scenario: Don't space : inside slices

@@ -863,7 +863,7 @@ Also handles C++ lambda capture by reference."
 (defun electric-operator-python-mode-in-lambda-args? ()
   "Are we inside the arguments statement of a lambda?"
   ;; \\(\\s-\\|^\\) instead of just \\b because otherwise foo_lambda matches
-  (electric-operator-looking-back-locally "\\(\\s-\\|^\\)lambda[^:]*"))
+  (electric-operator-looking-back-locally "\\(\\s-\\|^\\)lambda\\s-[^:]*"))
 
 (defun electric-operator-python-mode-: ()
   "Handle python dict assignment"
