@@ -176,6 +176,11 @@ Feature: Python mode basics
     When I type "lambda: x, y=1"
     Then I should see "lambda: x, y = 1"
 
+  Scenario: Space after lambda arguments even inside a function
+    When I type "foo(lambda x:x"
+    Then I should see "foo(lambda x: x"
+
+
   # Slice operator
   Scenario: Don't space : inside slices
     When I type "a[1:2]"
