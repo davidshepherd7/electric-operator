@@ -1153,12 +1153,97 @@ Also handles C++ lambda capture by reference."
 
 
 
-;;; Other major mode tweaks
+;;; Ruby mode
+
+(defun electric-operator-ruby-mode-| ()
+  (cond
+   ;; Start of block params
+   ;; arr.map { |a| a }
+   ;;          ^^
+   ;; arr.map do |a| a end
+   ;;           ^^
+   ((electric-operator-looking-back-locally (rx (or "do" "{") (* whitespace)))
+    " |")
+   ;; End of block params
+   ;; arr.map { |a| a }
+   ;;             ^^
+   ;; arr.map do |a| a end
+   ;;              ^^
+   ((electric-operator-looking-back-locally (rx (or "do" "{") (* whitespace) "|" (* (not (any "|" "\n")))))
+    "| ")
+   ;; Regular operator
+   ;; 3 | 4
+   ;;  ^^^
+   (t
+    " | ")))
+(defun electric-operator-ruby-mode-* ()
+  (cond
+   ;; splat
+   ((electric-operator-probably-unary-operator?) nil)
+   ((electric-operator-just-inside-bracket) "*")
+   ;; binary operator
+   (t " * ")))
+(defun electric-operator-ruby-mode-** ()
+  (cond
+   ;; keyword argument splat
+   ((electric-operator-probably-unary-operator?) nil)
+   ((electric-operator-just-inside-bracket) "**")
+   ;; binary operator
+   (t " ** ")))
+(defun electric-operator-ruby-mode-% ()
+  (cond
+   ;; e.g. %w(a b c)
+   ((electric-operator-probably-unary-operator?) nil)
+   ((electric-operator-just-inside-bracket) "%")
+   ;; binary operator
+   (t " % ")))
+(defun electric-operator-ruby-mode-<<- ()
+  ;; heredoc
+  (cond
+   ((electric-operator-just-inside-bracket) "<<-")
+   (t " <<-")))
+(defun electric-operator-ruby-mode-<<~ ()
+  ;; heredoc
+  (cond
+   ((electric-operator-just-inside-bracket) "<<~")
+   (t " <<~")))
 
 (apply #'electric-operator-add-rules-for-mode 'ruby-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'ruby-mode
-				                      (cons "=~" " =~ ") ; regex equality
-				                      )
+                                      (cons "|" #'electric-operator-ruby-mode-|)
+                                      (cons "*" #'electric-operator-ruby-mode-*)
+                                      (cons "**" #'electric-operator-ruby-mode-**)
+                                      (cons "%" #'electric-operator-ruby-mode-%)
+                                      (cons "<<-" #'electric-operator-ruby-mode-<<-)
+                                      (cons "<<~" #'electric-operator-ruby-mode-<<~)
+                                      (cons "&" nil) ;complicated by &. &: &block
+                                      (cons "?" nil) ;can be boolean_method?() or ternary
+                                      (cons "/" nil) ;complicated by regexes
+                                      (cons "=>" " => ")  ;in hashes
+                                      (cons "->(" " ->(") ;stabby lambda with arguments
+                                      (cons "->" " -> ")  ;stabby lambda (without arguments)
+                                      (cons ";" "; ")     ;statement separator
+                                      (cons "<<" " << ")
+                                      (cons ">>" " >> ")
+                                      (cons "===" " === ") ;case equality operator
+                                      (cons "=~" " =~ ")   ;regex equality
+                                      (cons "!~" " !~ ")   ;regex inequality
+                                      (cons "<=>" " <=> ") ;spaceship operator (comparison)
+                                      (cons "**=" " **= ")
+                                      (cons "%=" " %= ")
+                                      (cons "<<=" " <<= ")
+                                      (cons ">>=" " >>= ")
+                                      (cons "&&=" " &&= ")
+                                      (cons "&=" " &= ")
+                                      (cons "||=" " ||= ")
+                                      (cons "|=" " |= ")
+                                      (cons "^=" " ^= ")
+                                      )
+
+
+
+;;; Other major mode tweaks
+
 
 ;; This is based on a syntax guide and hasn't been tested.
 (apply #'electric-operator-add-rules-for-mode 'java-mode (electric-operator-get-rules-for-mode 'prog-mode))
