@@ -62,3 +62,7 @@ Feature: R specific operators
     When I turn on electric-operator-mode
     When I type "group_by(!!grouping_var)"
     Then I should see "group_by(!!grouping_var)"
+
+  Scenario: data.table := operator
+    When I type "DT[, V1 := exp(V1)]"
+    Then I should see "DT[, V1 := exp(V1)]"
