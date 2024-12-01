@@ -485,10 +485,7 @@ Apparently looking-back can be slow without a limit, and calling
 it without a limit is deprecated.
 
 Any better ideas would be welcomed."
-  (let ((two-lines-up (save-excursion
-                        (forward-line -2)
-                        (beginning-of-line)
-                        (point))))
+  (let ((two-lines-up (save-excursion (forward-line -2) (point))))
     (looking-back string two-lines-up greedy)))
 
 
