@@ -261,3 +261,11 @@ Feature: C basic operators
   Scenario: Multiplication with pointer deref
     When I type "result = foo * *bar"
     Then I should see "result = foo * *bar"
+
+  # We can't test this yet because emacs doesn't ship with treesitter grammars
+  # and there's no easy way to install them.
+  @known-failure
+  Scenario: Treesitter mode just works
+    When I turn on c-ts-mode
+    When I type "a-b"
+    Then I should see "a - b"

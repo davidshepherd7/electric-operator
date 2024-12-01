@@ -220,6 +220,13 @@ Returns a modified copy of the rule list."
 Returns a modified copy of the rule list."
   (electric-operator--add-rule-list initial new-rules))
 
+(defun electric-operator--convert-treesitter-mode (major-mode-symbol)
+  "Convert a treesitter mode name to the equivalent regular mode"
+  (let ((mode-string (symbol-name major-mode-symbol)))
+    (if (string-match-p "-ts-mode" mode-string)
+        (intern (replace-regexp-in-string "-ts-mode" "-mode" mode-string))
+      major-mode-symbol)))
+
 
 ;; All rule manipulation should be done through these functions and not by
 ;; using puthash/gethash directly because it's plausible that the
@@ -227,11 +234,11 @@ Returns a modified copy of the rule list."
 
 (defun electric-operator-get-rules-for-mode (major-mode-symbol)
   "Get the spacing rules for major mode"
-  (electric-operator--trie-get-all (electric-operator-get-rules-trie-for-mode major-mode-symbol)))
+  (electric-operator--trie-get-all (electric-operator-get-rules-trie-for-mode (electric-operator--convert-treesitter-mode major-mode-symbol))))
 
 (defun electric-operator-get-rules-trie-for-mode (major-mode-symbol)
   "Get the spacing rules for major mode"
-  (gethash major-mode-symbol electric-operator--mode-rules-table))
+  (gethash (electric-operator--convert-treesitter-mode major-mode-symbol) electric-operator--mode-rules-table))
 
 (defun electric-operator-add-rules-for-mode (major-mode-symbol &rest new-rules)
   "Replace or add spacing rules for major mode
