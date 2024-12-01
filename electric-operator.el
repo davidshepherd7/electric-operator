@@ -1158,24 +1158,13 @@ Also handles C++ lambda capture by reference."
 (defun electric-operator-ruby-mode-| ()
   (cond
    ;; Start of block params
-   ;; arr.map { |a| a }
-   ;;          ^^
-   ;; arr.map do |a| a end
-   ;;           ^^
    ((electric-operator-looking-back-locally (rx (or "do" "{") (* whitespace)))
     " |")
    ;; End of block params
-   ;; arr.map { |a| a }
-   ;;             ^^
-   ;; arr.map do |a| a end
-   ;;              ^^
    ((electric-operator-looking-back-locally (rx (or "do" "{") (* whitespace) "|" (* (not (any "|" "\n")))))
     "| ")
    ;; Regular operator
-   ;; 3 | 4
-   ;;  ^^^
-   (t
-    " | ")))
+   (t " | ")))
 (defun electric-operator-ruby-mode-* ()
   (cond
    ;; splat
