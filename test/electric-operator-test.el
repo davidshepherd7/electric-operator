@@ -62,6 +62,28 @@ Aenean in sem ac leo mollis blandit. xyz /=" trie) " /= "))
     (should (equal (electric-operator--trie-get-all trie)
                    (nreverse '(" * " ("1" "2" "3") "6" "xyz" "bar"))))))
 
+(ert-deftest rules-for-treesitter-modes ()
+  (should (equal
+           (electric-operator--convert-treesitter-mode 'c-mode)
+           'c-mode))
+
+  (should (equal
+           (electric-operator--convert-treesitter-mode 'c-ts-mode)
+           'c-mode))
+
+  (should (equal
+           (electric-operator--convert-treesitter-mode 'ts-mode)
+           'ts-mode))
+
+  (should (equal
+           (electric-operator--convert-treesitter-mode 'erts-mode)
+           'erts-mode))
+
+  (should (equal
+           (electric-operator--convert-treesitter-mode 'tsx-ts-mode)
+           'tsx-mode))
+
+  )
 
 ;; Local Variables:
 ;; nameless-current-name: "electric-operator"
