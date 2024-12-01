@@ -202,6 +202,8 @@ to be too heavy to add to electric-spacing.
 * Add Fortran support
 * Fix spacing of pseudo classes in CSS/SCSS
 * Add perl support
+* Improve ruby support
+* Add support for treesitter modes like c-ts-mode
 
 
 ### Version 2.0
