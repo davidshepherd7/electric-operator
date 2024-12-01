@@ -59,3 +59,9 @@
 (When "^I add a custom rule \"\\([^\"]+\\)\" \"\\([^\"]+\\)\" to \\(.*\\)$"
       (lambda (from to rule-list)
         (add-to-list (intern rule-list) (cons from to))))
+
+;; Ruby mode
+(When "^I turn off smie-blink-matching-open"
+      (lambda ()
+        (remove-hook 'post-self-insert-hook 'smie-blink-matching-open t)
+        ))
