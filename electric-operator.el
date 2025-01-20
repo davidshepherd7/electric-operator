@@ -1032,6 +1032,7 @@ Also handles C++ lambda capture by reference."
 					                    (cons "%*%" " %*% ") ; Matrix product
 					                    (cons "%o%" " %o% ") ; Outer product
 					                    (cons "%x%" " %x% ") ; Kronecker product
+					                    (cons "^" "^") ; Exponentiation (https://style.tidyverse.org/syntax.html#infix-operators)
 					                    (cons "%in%" " %in% ") ; Matching operator
 					                    (cons "~" " ~ ") ; "is modeled by"
 					                    (cons ":=" " := ")
