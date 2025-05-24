@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
 (require 'test-helper)
 
 ;; Make sure we actually managed to enable electric-operator-mode

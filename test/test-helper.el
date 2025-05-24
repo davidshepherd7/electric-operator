@@ -1,4 +1,3 @@
-(require 'cc-mode)
 (require 'ert)
 (require 'electric-operator)
 (require 'edmacro)

@@ -1,8 +1,9 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
-(require 'test-helper)
+(require 'electric-operator)
 (require 'julia-mode)
+(require 'test-helper)
 
 ;; Keyword argument =
 (ert-deftest julia-mode-space-standard-assignment-as-normal ()

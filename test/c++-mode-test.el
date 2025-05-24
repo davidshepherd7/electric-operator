@@ -1,6 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
+(require 'cc-mode)
 (require 'test-helper)
 
 (ert-deftest c++-assignment-at-beginning-of-line ()

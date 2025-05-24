@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
 (require 'test-helper)
 
 (ert-deftest fix-whitespace-adding-a-comma-in-the-middle-of-a-list ()

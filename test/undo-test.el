@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
 (require 'test-helper)
 
 (ert-deftest undo-undoing-the-electric-expansion-doesnt-undo-previous-text ()

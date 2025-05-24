@@ -1,6 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
+(require 'f90)
 (require 'test-helper)
 
 (ert-deftest f90-mode-dont-modify-string-literal ()
