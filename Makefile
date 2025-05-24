@@ -12,8 +12,14 @@ clean :
 
 test: unit 
 
-unit: build
+unit: build build-unit
 	${CASK} exec ert-runner
+
+build-unit :
+	cask exec $(EMACS) -Q --batch --eval             \
+	    "(progn                                \
+	      (setq byte-compile-error-on-warn t)  \
+	      (batch-byte-compile))" test-helper.el test/*-test.el
 
 benchmark: build
 	${CASK} emacs -Q --batch -l ./electric-operator.elc -l ./electric-operator-benchmark.el
