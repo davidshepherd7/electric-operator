@@ -27,9 +27,11 @@
 (defmacro test-with-mode (mode &rest body)
   (declare (indent 1))
   `(with-temp-buffer
-     (funcall ',mode)
-     (electric-operator-mode 1)
-     ,@body))
+     (save-window-excursion
+       (set-window-buffer nil (current-buffer))
+       (funcall ',mode)
+       (electric-operator-mode 1)
+       ,@body)))
 
 (defun electric-operator-test-type (string)
   "Type STRING character by character, simulating user input."
