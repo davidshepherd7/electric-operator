@@ -30,7 +30,7 @@
   `(with-temp-buffer
      (save-window-excursion
        (set-window-buffer nil (current-buffer))
-       (funcall ',mode)
+       (funcall ,mode)
        (electric-operator-mode 1)
        ,@body)))
 
