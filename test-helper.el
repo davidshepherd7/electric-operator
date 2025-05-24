@@ -34,8 +34,9 @@
 
 (defun th-should-see (expected)
   "Assert that buffer contents contain EXPECTED."
-  (let ((actual (buffer-string)))
-    (should (string-match-p (regexp-quote expected) actual))))
+  (let ((actual (buffer-string))
+        (expected-re (regexp-quote expected)))
+    (should (string-match-p expected-re actual))))
 
 (defun th-should-see-pattern (pattern)
   "Assert that buffer contents match regex PATTERN."
@@ -43,8 +44,9 @@
 
 (defun th-should-not-see (unexpected)
   "Assert that buffer contents do not contain UNEXPECTED."
-  (let ((actual (buffer-string)))
-    (should-not (string-match-p (regexp-quote unexpected) actual))))
+  (let ((actual (buffer-string))
+        (unexpected-re (regexp-quote unexpected)))
+    (should-not (string-match-p unexpected-re actual))))
 
 (defun th-press-keys (keystring)
   "Simulate pressing this key combo.
