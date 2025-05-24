@@ -1,8 +1,9 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
-(require 'test-helper)
+(require 'electric-operator)
 (require 'js2-mode)
+(require 'test-helper)
 
 (ert-deftest js2-mode-it-gets-the-javascript-rules ()
   (th-fixtures #'js2-mode

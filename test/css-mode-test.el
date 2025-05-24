@@ -1,6 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
+(require 'css-mode)
 (require 'test-helper)
 
 (ert-deftest css-mode-colon-for-pseudo-classes ()

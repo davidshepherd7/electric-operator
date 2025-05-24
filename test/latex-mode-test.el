@@ -1,6 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
+(require 'auctex)
 (require 'test-helper)
 
 (ert-deftest latex-mode-single-space-dot ()

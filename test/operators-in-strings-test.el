@@ -1,6 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
+(require 'python)
 (require 'test-helper)
 
 (ert-deftest strings-dont-space-unix-separators ()

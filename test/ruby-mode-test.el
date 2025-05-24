@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
 (require 'test-helper)
 
 (ert-deftest ruby-mode-dont-modify-string-literal ()

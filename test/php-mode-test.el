@@ -1,8 +1,9 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
-(require 'test-helper)
+(require 'electric-operator)
 (require 'php-mode)
+(require 'test-helper)
 
 (ert-deftest php-mode-division-/-still-works ()
   (th-fixtures #'php-mode

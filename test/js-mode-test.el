@@ -1,6 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
+(require 'js)
 (require 'test-helper)
 
 (ert-deftest js-colon-inside-objects ()

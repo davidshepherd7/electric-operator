@@ -1,6 +1,7 @@
 ;;; -*- lexical-binding: t; -*-
 
 (require 'ert)
+(require 'electric-operator)
 (require 'test-helper)
 
 ;; I'm testing with ',' here because , is spaced in both prose and prog
