@@ -16,8 +16,8 @@
     (electric-operator-test-type "/")
     (electric-operator-test-should-see "/a.foo/")))
 
-;; Known failure test commented out
-;; (ert-deftest js2-mode-regex-literals-without-time-for-a-reparse ()
-;;   (test-with-mode js2-mode
-;;     (electric-operator-test-type "/a.foo/")
-;;     (electric-operator-test-should-see "/a.foo/")))
+(ert-deftest js2-mode-regex-literals-without-time-for-a-reparse ()
+  :expected-result :failed
+  (test-with-mode js2-mode
+    (electric-operator-test-type "/a.foo/")
+    (electric-operator-test-should-see "/a.foo/")))

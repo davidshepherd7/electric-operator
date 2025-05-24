@@ -56,11 +56,11 @@
     (electric-operator-test-type "/*a comment */")
     (electric-operator-test-should-see "/* a comment */")))
 
-;; Known failure test (commented out)
-;; (ert-deftest js-comment-after-division ()
-;;   (test-with-mode js-mode
-;;     (electric-operator-test-type "x=a/ // divide x")
-;;     (electric-operator-test-should-see "x = a / // divide x")))
+(ert-deftest js-comment-after-division ()
+  :expected-result :failed
+  (test-with-mode js-mode
+    (electric-operator-test-type "x=a/ // divide x")
+    (electric-operator-test-should-see "x = a / // divide x")))
 
 (ert-deftest js-division-slash-still-works ()
   (test-with-mode js-mode
