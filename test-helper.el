@@ -45,4 +45,10 @@ e.g. (th-press-keys \"C-_\")
 "
   (execute-kbd-macro (edmacro-parse-keys keystring)))
 
+(defun th-goto-line (line)
+  "Normal goto-line is for interactive only, so define our own"
+  (goto-char (point-min))
+  (forward-line (- line 1)))
+
+
 (provide 'test-helper)
