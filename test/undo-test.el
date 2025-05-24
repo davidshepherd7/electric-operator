@@ -4,7 +4,7 @@
 (require 'test-helper)
 
 (ert-deftest undo-undoing-the-electric-expansion-doesnt-undo-previous-text ()
-  (th-fixtures prog-mode
+  (th-fixtures #'prog-mode
     (buffer-enable-undo)
     (th-type "const auto a=")
     (th-should-see "const auto a =")
