@@ -4,16 +4,6 @@
 ;; Don't load old byte-compiled versions!
 (setq load-prefer-newer t)
 
-(require 'f)
-
-(defun log-trace-buffer (&rest _)
-  (when (get-buffer trace-buffer)
-    (with-current-buffer trace-buffer
-      (message (buffer-substring-no-properties (point-min) (point-max))))))
-
-(defvar ert-runner-reporter-run-ended-functions) ;; shut up the byte commpiler
-(add-to-list 'ert-runner-reporter-run-ended-functions #'log-trace-buffer)
-
 ;;; Test helper functions for integration tests
 
 (defmacro th-fixtures (mode &rest body)
