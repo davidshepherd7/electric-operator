@@ -1,6 +1,7 @@
 (require 'cc-mode)
 (require 'ert)
 (require 'electric-operator)
+(require 'edmacro)
 
 ;; Don't load old byte-compiled versions!
 (setq load-prefer-newer t)
@@ -54,16 +55,11 @@
   (let ((actual (buffer-string)))
     (should-not (string-match-p (regexp-quote unexpected) actual))))
 
-(defun th-setup-c-main ()
-  "Set up a C main function context."
-  (insert "int main() {\n\n}\n")
-  (goto-char (point-min))
-  (forward-line 1))
+(defun th-press-keys (keystring)
+  "Simulate pressing this key combo.
 
-(defun th-setup-rust-function ()
-  "Set up a Rust function context."
-  (insert "fn foo() -> i32 {\n\n}\n")
-  (goto-char (point-min))
-  (forward-line 1))
+e.g. (th-press-keys \"C-_\")
+"
+  (execute-kbd-macro (edmacro-parse-keys keystring)))
 
 (provide 'test-helper)

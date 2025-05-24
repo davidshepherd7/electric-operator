@@ -4,6 +4,14 @@
 (require 'test-helper)
 (require 'rust-mode)
 
+
+(defun helper-setup-rust-function ()
+  "Set up a Rust function context."
+  (insert "fn foo() -> i32 {\n\n}\n")
+  (goto-char (point-min))
+  (forward-line 1))
+
+
 (ert-deftest rust-comments ()
   (th-fixtures rust-mode
     (th-type "//a comment")
@@ -47,7 +55,7 @@
 
 (ert-deftest rust-pattern-matching-fat-arrow ()
   (th-fixtures rust-mode
-    (th-setup-rust-function)
+    (helper-setup-rust-function)
     (insert "match x {\n")
     (th-type "1=>pri")
     (th-should-see "1 => pri")))
