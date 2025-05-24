@@ -1095,7 +1095,7 @@ Also handles C++ lambda capture by reference."
 ;; Another caveat: it does something odd with using % as two different things
 ;; depending on the context, but we can't write tests for strings containing %
 ;; (see https://github.com/ecukes/ecukes/issues/58) so I can't really handle
-;; this.
+;; this. TODO: now that we're using ert maybe this is fixable?
 (apply #'electric-operator-add-rules-for-mode 'perl-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'perl-mode
                                       (cons "**" " ** ") ; Exponentials
