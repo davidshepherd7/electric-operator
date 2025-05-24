@@ -60,7 +60,7 @@
   (goto-char (point-min))
   (forward-line 1))
 
-(defun electric-operator-test-setup-rust-function ()
+(defun th-setup-rust-function ()
   "Set up a Rust function context."
   (insert "fn foo() -> i32 {\n\n}\n")
   (goto-char (point-min))
