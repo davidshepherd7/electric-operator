@@ -4,28 +4,28 @@
 (require 'test-helper)
 
 (ert-deftest java-mode-division-/-still-works ()
-  (test-with-mode java-mode
-    (electric-operator-test-type "int a = x/y")
-    (electric-operator-test-should-see "int a = x / y")))
+  (th-fixtures java-mode
+    (th-type "int a = x/y")
+    (th-should-see "int a = x / y")))
 
 (ert-deftest java-mode-//-adds-space-before-if-not-on-empty-line ()
-  (test-with-mode java-mode
-    (electric-operator-test-type "expression;//")
-    (electric-operator-test-should-see "expression; //")))
+  (th-fixtures java-mode
+    (th-type "expression;//")
+    (th-should-see "expression; //")))
 
 (ert-deftest java-mode-//-does-not-add-space-before-when-at-indentation-of-line ()
-  (test-with-mode java-mode
+  (th-fixtures java-mode
     (let ((c-electric-flag nil))
-      (electric-operator-test-type "   //")
-      (electric-operator-test-should-see-pattern "^   // $"))))
+      (th-type "   //")
+      (th-should-see-pattern "^   // $"))))
 
 (ert-deftest java-mode-/*-adds-space-before-if-not-on-empty-line ()
-  (test-with-mode java-mode
-    (electric-operator-test-type "expression;/*")
-    (electric-operator-test-should-see "expression; /*")))
+  (th-fixtures java-mode
+    (th-type "expression;/*")
+    (th-should-see "expression; /*")))
 
 (ert-deftest java-mode-/*-does-not-add-space-before-when-at-indentation-of-line ()
-  (test-with-mode java-mode
+  (th-fixtures java-mode
     (let ((c-electric-flag nil))
-      (electric-operator-test-type "   /*")
-      (electric-operator-test-should-see-pattern "^   /\\* $"))))
+      (th-type "   /*")
+      (th-should-see-pattern "^   /\\* $"))))

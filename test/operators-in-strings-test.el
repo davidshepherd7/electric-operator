@@ -6,13 +6,13 @@
 (ert-deftest strings-dont-space-unix-separators ()
   ;; The second string checks that we did manage to turn on
   ;; electric-operator in strings.
-  (test-with-mode python-mode
+  (th-fixtures python-mode
     (let ((electric-operator-enable-in-docs t))
-      (electric-operator-test-type "a='/usr/bin/python3'")
-      (electric-operator-test-should-see "a = '/usr/bin/python3'"))))
+      (th-type "a='/usr/bin/python3'")
+      (th-should-see "a = '/usr/bin/python3'"))))
 
 (ert-deftest strings-dont-space-windows-separators ()
-  (test-with-mode python-mode
+  (th-fixtures python-mode
     (let ((electric-operator-enable-in-docs t))
-      (electric-operator-test-type "a='C:\\WINDOWS'")
-      (electric-operator-test-should-see "a = 'C:\\WINDOWS'"))))
+      (th-type "a='C:\\WINDOWS'")
+      (th-should-see "a = 'C:\\WINDOWS'"))))

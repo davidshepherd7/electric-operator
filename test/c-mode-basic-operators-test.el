@@ -5,341 +5,341 @@
 
 ;; Some simple cases
 (ert-deftest c-ternary-operator ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a?b:c")
-    (electric-operator-test-should-see "a ? b : c")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a?b:c")
+    (th-should-see "a ? b : c")))
 
 (ert-deftest c-label ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "error:")
-    (electric-operator-test-should-see "error:")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "error:")
+    (th-should-see "error:")))
 
 ;; Pointer dereference
 (ert-deftest c-space-> ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a>b")
-    (electric-operator-test-should-see "a > b")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a>b")
+    (th-should-see "a > b")))
 
 (ert-deftest c-space-- ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a-b")
-    (electric-operator-test-should-see "a - b")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a-b")
+    (th-should-see "a - b")))
 
 (ert-deftest c-dont-space--> ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a->b")
-    (electric-operator-test-should-see "a->b")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a->b")
+    (th-should-see "a->b")))
 
 ;; Increment/decrement
 (ert-deftest c-post-increment ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "b=c+a++")
-    (electric-operator-test-should-see "b = c + a++")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "b=c+a++")
+    (th-should-see "b = c + a++")))
 
 (ert-deftest c-pre-increment ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "b=++a+c")
-    (electric-operator-test-should-see "b = ++a + c")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "b=++a+c")
+    (th-should-see "b = ++a + c")))
 
 (ert-deftest c-pre-increment-parens ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "while(++a < 2)")
-    (electric-operator-test-should-see "while(++a < 2)")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "while(++a < 2)")
+    (th-should-see "while(++a < 2)")))
 
 (ert-deftest c-pre-increment-at-beginning-of-line ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
+  (th-fixtures c-mode
+    (th-setup-c-main)
     (insert "  ++a;\n  ")
-    (electric-operator-test-type "++b;")
-    (electric-operator-test-should-see-pattern "  \\+\\+b;$")))
+    (th-type "++b;")
+    (th-should-see-pattern "  \\+\\+b;$")))
 
 (ert-deftest c-post-decrement ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "b=c-a--")
-    (electric-operator-test-should-see "b = c - a--")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "b=c-a--")
+    (th-should-see "b = c - a--")))
 
 (ert-deftest c-pre-decrement ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "b=--a-c")
-    (electric-operator-test-should-see "b = --a - c")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "b=--a-c")
+    (th-should-see "b = --a - c")))
 
 (ert-deftest c-pre-decrement-parens ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "while(--a < 2)")
-    (electric-operator-test-should-see "while(--a < 2)")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "while(--a < 2)")
+    (th-should-see "while(--a < 2)")))
 
 (ert-deftest c-pre-decrement-at-beginning-of-line ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
+  (th-fixtures c-mode
+    (th-setup-c-main)
     (insert "  --a;\n  ")
-    (electric-operator-test-type "--b;")
-    (electric-operator-test-should-see-pattern "  --b;$")))
+    (th-type "--b;")
+    (th-should-see-pattern "  --b;$")))
 
 (ert-deftest c-post-increment-with-semi-colon ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a++;")
-    (electric-operator-test-should-see "a++;")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a++;")
+    (th-should-see "a++;")))
 
 (ert-deftest c-post-decrement-with-semi-colon ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a--;")
-    (electric-operator-test-should-see "a--;")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a--;")
+    (th-should-see "a--;")))
 
 ;; * operator
 (ert-deftest c-multiplication ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a*b")
-    (electric-operator-test-should-see "a * b")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a*b")
+    (th-should-see "a * b")))
 
 (ert-deftest c-pointer-type ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "char*a")
-    (electric-operator-test-should-see "char *a")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "char*a")
+    (th-should-see "char *a")))
 
 (ert-deftest c-const-pointer-to-const-type ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "const char const*a")
-    (electric-operator-test-should-see "const char const *a")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "const char const*a")
+    (th-should-see "const char const *a")))
 
 (ert-deftest c-non-builtin-pointer-type ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "size_t*a")
-    (electric-operator-test-should-see "size_t *a")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "size_t*a")
+    (th-should-see "size_t *a")))
 
 (ert-deftest c-assign-pointer-dereference ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a=*b")
-    (electric-operator-test-should-see "a = *b")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a=*b")
+    (th-should-see "a = *b")))
 
 (ert-deftest c-pointer-dereference-and-increment ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "*p++")
-    (electric-operator-test-should-see "*p++")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "*p++")
+    (th-should-see "*p++")))
 
 (ert-deftest c-function-call-with-dereference ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "f(*p,*q)")
-    (electric-operator-test-should-see "f(*p, *q)")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "f(*p,*q)")
+    (th-should-see "f(*p, *q)")))
 
 (ert-deftest c-pointer-to-pointer-type ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "char**a")
-    (electric-operator-test-should-see "char **a")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "char**a")
+    (th-should-see "char **a")))
 
 ;; & operator
 (ert-deftest c-bitwise-and ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a&b")
-    (electric-operator-test-should-see "a & b")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a&b")
+    (th-should-see "a & b")))
 
 (ert-deftest c-reference-type ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "char&a")
-    (electric-operator-test-should-see "char &a")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "char&a")
+    (th-should-see "char &a")))
 
 (ert-deftest c-assign-address-of ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "a=&b")
-    (electric-operator-test-should-see "a = &b")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "a=&b")
+    (th-should-see "a = &b")))
 
 (ert-deftest c-address-of-at-beginning-of-line ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "&a")
-    (electric-operator-test-should-see-pattern "^&a$")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "&a")
+    (th-should-see-pattern "^&a$")))
 
 (ert-deftest c-address-of-at-beginning-of-line-with-indentation ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
+  (th-fixtures c-mode
+    (th-setup-c-main)
     (insert "  ")
-    (electric-operator-test-type "&a")
-    (electric-operator-test-should-see-pattern "  &a$")))
+    (th-type "&a")
+    (th-should-see-pattern "  &a$")))
 
 (ert-deftest c-function-call-with-address-of ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "f(&p,&q)")
-    (electric-operator-test-should-see "f(&p, &q)")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "f(&p,&q)")
+    (th-should-see "f(&p, &q)")))
 
 ;; Respect option to have pointer operators touching the type or the variable name
 (ert-deftest c-operator-*-on-type ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'type))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "int*x")
-      (electric-operator-test-should-see "int* x"))))
+      (th-setup-c-main)
+      (th-type "int*x")
+      (th-should-see "int* x"))))
 
 (ert-deftest c-operator-*-on-variable ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "int*x")
-      (electric-operator-test-should-see "int *x"))))
+      (th-setup-c-main)
+      (th-type "int*x")
+      (th-should-see "int *x"))))
 
 (ert-deftest c-operator-&-on-type ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'type))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "int&x")
-      (electric-operator-test-should-see "int& x"))))
+      (th-setup-c-main)
+      (th-type "int&x")
+      (th-should-see "int& x"))))
 
 (ert-deftest c-operator-&-on-variable ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "int&x")
-      (electric-operator-test-should-see "int &x"))))
+      (th-setup-c-main)
+      (th-type "int&x")
+      (th-should-see "int &x"))))
 
 (ert-deftest c-operator-**-on-type ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'type))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "int**x")
-      (electric-operator-test-should-see "int** x"))))
+      (th-setup-c-main)
+      (th-type "int**x")
+      (th-should-see "int** x"))))
 
 (ert-deftest c-operator-**-on-variable ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "int**x")
-      (electric-operator-test-should-see "int **x"))))
+      (th-setup-c-main)
+      (th-type "int**x")
+      (th-should-see "int **x"))))
 
 ;; Comments
 (ert-deftest c-division-/-still-works ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "int a = x/y")
-    (electric-operator-test-should-see "int a = x / y")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "int a = x/y")
+    (th-should-see "int a = x / y")))
 
 (ert-deftest c-//-is-not-spaced-internally ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "//")
-    (electric-operator-test-should-see "//")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "//")
+    (th-should-see "//")))
 
 (ert-deftest c-//-adds-space-before-if-not-on-empty-line ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "expression;//")
-    (electric-operator-test-should-see "expression; //")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "expression;//")
+    (th-should-see "expression; //")))
 
 (ert-deftest c-//-does-not-add-space-before-when-at-indentation-of-line ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
+  (th-fixtures c-mode
+    (th-setup-c-main)
     (insert "  expression;\n  ")
-    (electric-operator-test-type "//")
-    (electric-operator-test-should-see-pattern "  expression;$")
-    (electric-operator-test-should-see-pattern "  // $")))
+    (th-type "//")
+    (th-should-see-pattern "  expression;$")
+    (th-should-see-pattern "  // $")))
 
 (ert-deftest c-/*-is-not-spaced-internally ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "/*")
-    (electric-operator-test-should-see "/*")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "/*")
+    (th-should-see "/*")))
 
 (ert-deftest c-/*-*/-is-not-spaced-internally ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "/**/")
-    (electric-operator-test-should-see "/* */")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "/**/")
+    (th-should-see "/* */")))
 
 (ert-deftest c-/*-adds-space-before-if-not-on-empty-line ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "expression;/*")
-    (electric-operator-test-should-see "expression; /*")))
+  (th-fixtures c-mode
+    (th-setup-c-main)
+    (th-type "expression;/*")
+    (th-should-see "expression; /*")))
 
 (ert-deftest c-/*-does-not-add-space-before-when-at-indentation-of-line ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
+  (th-fixtures c-mode
+    (th-setup-c-main)
     (insert "  expression;\n  ")
-    (electric-operator-test-type "/*")
-    (electric-operator-test-should-see-pattern "  expression;$")
-    (electric-operator-test-should-see-pattern "  /\\* $")))
+    (th-type "/*")
+    (th-should-see-pattern "  expression;$")
+    (th-should-see-pattern "  /\\* $")))
 
 ;; Type keywords for pointers vs multiplication
 (ert-deftest c-pointer-to-struct ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "struct s*foo")
-      (electric-operator-test-should-see "struct s *foo"))))
+      (th-setup-c-main)
+      (th-type "struct s*foo")
+      (th-should-see "struct s *foo"))))
 
 (ert-deftest c-variable-with-struct-in-the-name ()
-  (test-with-mode c-mode
+  (th-fixtures c-mode
     (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "struct_ure*foo")
-      (electric-operator-test-should-see "struct_ure * foo"))))
+      (th-setup-c-main)
+      (th-type "struct_ure*foo")
+      (th-should-see "struct_ure * foo"))))
 
 (ert-deftest c-another-variable-with-struct-in-the-name ()
-  (test-with-mode c-mode
-    (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "a_struct*foo")
-      (electric-operator-test-should-see "a_struct * foo"))))
+  (th-fixtures c-mode
+               (let ((electric-operator-c-pointer-type-style 'variable))
+                 (th-setup-c-main)
+                 (th-type "a_struct*foo")
+                 (th-should-see "a_struct * foo"))))
 
 (ert-deftest c-pointer-to-struct-then-multiply ()
-  (test-with-mode c-mode
-    (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "struct s*foo=a*b")
-      (electric-operator-test-should-see "struct s *foo = a * b"))))
+  (th-fixtures c-mode
+               (let ((electric-operator-c-pointer-type-style 'variable))
+                 (th-setup-c-main)
+                 (th-type "struct s*foo=a*b")
+                 (th-should-see "struct s *foo = a * b"))))
 
 (ert-deftest c-pointer-to-oddly-named-struct ()
-  (test-with-mode c-mode
-    (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "struct my_type_2*foo")
-      (electric-operator-test-should-see "struct my_type_2 *foo"))))
+  (th-fixtures c-mode
+               (let ((electric-operator-c-pointer-type-style 'variable))
+                 (th-setup-c-main)
+                 (th-type "struct my_type_2*foo")
+                 (th-should-see "struct my_type_2 *foo"))))
 
 (ert-deftest c-pointer-to-union ()
-  (test-with-mode c-mode
-    (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "union s*foo")
-      (electric-operator-test-should-see "union s *foo"))))
+  (th-fixtures c-mode
+               (let ((electric-operator-c-pointer-type-style 'variable))
+                 (th-setup-c-main)
+                 (th-type "union s*foo")
+                 (th-should-see "union s *foo"))))
 
 (ert-deftest c-pointer-to-enum ()
-  (test-with-mode c-mode
-    (let ((electric-operator-c-pointer-type-style 'variable))
-      (electric-operator-test-setup-c-main)
-      (electric-operator-test-type "enum s*foo=a*b")
-      (electric-operator-test-should-see "enum s *foo = a * b"))))
+  (th-fixtures c-mode
+               (let ((electric-operator-c-pointer-type-style 'variable))
+                 (th-setup-c-main)
+                 (th-type "enum s*foo=a*b")
+                 (th-should-see "enum s *foo = a * b"))))
 
 (ert-deftest c-multiplication-with-pointer-deref ()
-  (test-with-mode c-mode
-    (electric-operator-test-setup-c-main)
-    (electric-operator-test-type "result = foo * *bar")
-    (electric-operator-test-should-see "result = foo * *bar")))
+  (th-fixtures c-mode
+               (th-setup-c-main)
+               (th-type "result = foo * *bar")
+               (th-should-see "result = foo * *bar")))
 
 ;; Not all tested emacs versions have the grammar installed so we can't test
 ;;
 ;; (ert-deftest c-treesitter-mode-just-works ()
-;;   (test-with-mode c-ts-mode
-;;     (electric-operator-test-type "a-b")
-;;     (electric-operator-test-should-see "a - b")))
+;;   (th-fixtures c-ts-mode
+;;     (th-type "a-b")
+;;     (th-should-see "a - b")))
