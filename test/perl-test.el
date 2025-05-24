@@ -51,10 +51,9 @@
     (th-should-see "/foo/bar")
     ))
 
-;; ;; This is probably impossible without writing a full on perl parser?
-;; ;; @known-failure
-;; (ert-deftest division ()
-;;   (th-fixtures perl-mode
-;;     (th-type "$a/3")
-;;     (th-should-see "$a / 3")
-;;     ))
+(ert-deftest division ()
+  :expected-result :failed
+  (th-fixtures perl-mode
+    (th-type "$a/3")
+    (th-should-see "$a / 3")
+    ))
