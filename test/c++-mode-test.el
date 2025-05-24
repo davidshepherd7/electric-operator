@@ -36,7 +36,7 @@
   :expected-result :failed
   (th-fixtures #'c++-mode
     (insert "struct A {\n\n}")
-    (goto-line 2)
+    (th-goto-line 2)
     (th-type "A(A&&a)")
     (th-should-see "A(A &&a)")))
 

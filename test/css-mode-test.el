@@ -13,6 +13,6 @@
 (ert-deftest css-mode-colon-for-properties ()
   (th-fixtures #'css-mode
     (insert "button.foo {\n\n}")
-    (goto-line 2)
+    (th-goto-line 2)
     (th-type "text-decoration:underline;")
     (th-should-see "button.foo {\ntext-decoration: underline;\n}")))
