@@ -4,100 +4,100 @@
 (require 'test-helper)
 
 (ert-deftest f90-mode-dont-modify-string-literal ()
-  (test-with-mode f90-mode
+  (th-fixtures f90-mode
     (let ((electric-operator-enable-in-docs nil))
-      (electric-operator-test-type "'var+foo-1'")
-      (electric-operator-test-should-see "'var+foo-1'"))))
+      (th-type "'var+foo-1'")
+      (th-should-see "'var+foo-1'"))))
 
 (ert-deftest f90-mode-dont-modify-string-literal-after-operator ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "a+''")
-    (electric-operator-test-should-see "a + ''")))
+  (th-fixtures f90-mode
+    (th-type "a+''")
+    (th-should-see "a + ''")))
 
 ;; * and ** operators
 (ert-deftest f90-mode-space-* ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "a*b")
-    (electric-operator-test-should-see "a * b")))
+  (th-fixtures f90-mode
+    (th-type "a*b")
+    (th-should-see "a * b")))
 
 (ert-deftest f90-mode-multiplication-after-a-function ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "f(x)*a")
-    (electric-operator-test-should-see "f(x) * a")))
+  (th-fixtures f90-mode
+    (th-type "f(x)*a")
+    (th-should-see "f(x) * a")))
 
 (ert-deftest f90-mode-exponentiation-after-a-function ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "f(x)**a")
-    (electric-operator-test-should-see "f(x) ** a")))
+  (th-fixtures f90-mode
+    (th-type "f(x)**a")
+    (th-should-see "f(x) ** a")))
 
 (ert-deftest f90-mode-write-statements-with-default-formatting-and-default-output ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "write(*,*)")
-    (electric-operator-test-should-see "write(*, *)")))
+  (th-fixtures f90-mode
+    (th-type "write(*,*)")
+    (th-should-see "write(*, *)")))
 
 (ert-deftest f90-mode-write-statements-with-custom-formatting-and-default-output ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "write(*, '(format)')")
-    (electric-operator-test-should-see "write(*, '(format)')")))
+  (th-fixtures f90-mode
+    (th-type "write(*, '(format)')")
+    (th-should-see "write(*, '(format)')")))
 
 (ert-deftest f90-mode-write-statements-with-default-formatting-and-file-output ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "write(101,*)")
-    (electric-operator-test-should-see "write(101, *)")))
+  (th-fixtures f90-mode
+    (th-type "write(101,*)")
+    (th-should-see "write(101, *)")))
 
 (ert-deftest f90-mode-print-statements-with-default-formatting ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "print*,")
-    (electric-operator-test-should-see "print *, ")))
+  (th-fixtures f90-mode
+    (th-type "print*,")
+    (th-should-see "print *, ")))
 
 ;; Variable declaration
 (ert-deftest f90-mode-declaring-a-variable ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "type::A")
-    (electric-operator-test-should-see "type :: A")))
+  (th-fixtures f90-mode
+    (th-type "type::A")
+    (th-should-see "type :: A")))
 
 ;; Custom operators with .operator. syntax
 (ert-deftest f90-mode-using-a-generic-operator ()
   :expected-result :failed
-  (test-with-mode f90-mode
-    (electric-operator-test-type "a.operator_123.b")
-    (electric-operator-test-should-see "a .operator_123. b")))
+  (th-fixtures f90-mode
+    (th-type "a.operator_123.b")
+    (th-should-see "a .operator_123. b")))
 
 (ert-deftest f90-mode-number-preceeding-an-operator ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "1.eq.a")
-    (electric-operator-test-should-see "1 .eq. a")))
+  (th-fixtures f90-mode
+    (th-type "1.eq.a")
+    (th-should-see "1 .eq. a")))
 
 ;; Keyword argument =
 (ert-deftest f90-mode-space-standard-assignment-as-normal ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "a=b")
-    (electric-operator-test-should-see "a = b")))
+  (th-fixtures f90-mode
+    (th-type "a=b")
+    (th-should-see "a = b")))
 
 (ert-deftest f90-mode-dont-space-assignment-inside-function-call ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "f(a=b)")
-    (electric-operator-test-should-see "f(a=b)")))
+  (th-fixtures f90-mode
+    (th-type "f(a=b)")
+    (th-should-see "f(a=b)")))
 
 ;; Implicit array declaration
 (ert-deftest f90-mode-dividing-numbers-as-usual ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "1/2")
-    (electric-operator-test-should-see "1 / 2")))
+  (th-fixtures f90-mode
+    (th-type "1/2")
+    (th-should-see "1 / 2")))
 
 (ert-deftest f90-mode-single-line-array-declaration ()
-  (test-with-mode f90-mode
-    (electric-operator-test-type "(/1,2,3/)")
-    (electric-operator-test-should-see "(/ 1, 2, 3 /)")))
+  (th-fixtures f90-mode
+    (th-type "(/1,2,3/)")
+    (th-should-see "(/ 1, 2, 3 /)")))
 
 (ert-deftest f90-mode-single-line-array-declaration-with-fraction ()
   :expected-result :failed
-  (test-with-mode f90-mode
-    (electric-operator-test-type "(/1,2/5,3/)")
-    (electric-operator-test-should-see "(/ 1, 2 / 5, 3 /)")))
+  (th-fixtures f90-mode
+    (th-type "(/1,2/5,3/)")
+    (th-should-see "(/ 1, 2 / 5, 3 /)")))
 
 (ert-deftest f90-mode-multi-line-array-declaration ()
-  (test-with-mode f90-mode
+  (th-fixtures f90-mode
     (insert "(/1, 2, 3, &\n\n")
-    (electric-operator-test-type "4,5,6/)")
-    (electric-operator-test-should-see "(/1, 2, 3, &\n\n4, 5, 6 /)")))
+    (th-type "4,5,6/)")
+    (th-should-see "(/1, 2, 3, &\n\n4, 5, 6 /)")))
