@@ -159,16 +159,17 @@
     (electric-operator-test-type "lambda x:x[1:2]")
     (electric-operator-test-should-see "lambda x: x[1:2]")))
 
-;; Known failure tests (commented out)
-;; (ert-deftest python-lambda-with-default-argument-containing-dict ()
-;;   (test-with-mode python-mode
-;;     (electric-operator-test-type "lambda x={a:1}:print x")
-;;     (electric-operator-test-should-see "lambda x={a: 1}: print x")))
+(ert-deftest python-lambda-with-default-argument-containing-dict ()
+  :expected-result :failed
+  (test-with-mode python-mode
+    (electric-operator-test-type "lambda x={a:1}:print x")
+    (electric-operator-test-should-see "lambda x={a: 1}: print x")))
 
-;; (ert-deftest python-lambda-with-default-argument-containing-slice ()
-;;   (test-with-mode python-mode
-;;     (electric-operator-test-type "lambda x=y[1:5]:print x")
-;;     (electric-operator-test-should-see "lambda x=y[1:5]: print x")))
+(ert-deftest python-lambda-with-default-argument-containing-slice ()
+  :expected-result :failed
+  (test-with-mode python-mode
+    (electric-operator-test-type "lambda x=y[1:5]:print x")
+    (electric-operator-test-should-see "lambda x=y[1:5]: print x")))
 
 (ert-deftest python-lambda-inside-another-word-doesnt-affect-spacing ()
   (test-with-mode python-mode

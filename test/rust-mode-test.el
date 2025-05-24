@@ -9,11 +9,11 @@
     (electric-operator-test-type "//a comment")
     (electric-operator-test-should-see "// a comment")))
 
-;; Known failure test (commented out)
-;; (ert-deftest rust-doc-comments ()
-;;   (test-with-mode rust-mode
-;;     (electric-operator-test-type "///a comment")
-;;     (electric-operator-test-should-see "/// a comment")))
+(ert-deftest rust-doc-comments ()
+  :expected-result :failed
+  (test-with-mode rust-mode
+    (electric-operator-test-type "///a comment")
+    (electric-operator-test-should-see "/// a comment")))
 
 (ert-deftest rust-division-slash-still-works ()
   (test-with-mode rust-mode

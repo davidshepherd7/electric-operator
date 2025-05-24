@@ -337,7 +337,8 @@
     (electric-operator-test-type "result = foo * *bar")
     (electric-operator-test-should-see "result = foo * *bar")))
 
-;; Known failure test (commented out)
+;; Not all tested emacs versions have the grammar installed so we can't test
+;;
 ;; (ert-deftest c-treesitter-mode-just-works ()
 ;;   (test-with-mode c-ts-mode
 ;;     (electric-operator-test-type "a-b")

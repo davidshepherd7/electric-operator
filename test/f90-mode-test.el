@@ -57,11 +57,11 @@
     (electric-operator-test-should-see "type :: A")))
 
 ;; Custom operators with .operator. syntax
-;; Known failure test commented out
-;; (ert-deftest f90-mode-using-a-generic-operator ()
-;;   (test-with-mode f90-mode
-;;     (electric-operator-test-type "a.operator_123.b")
-;;     (electric-operator-test-should-see "a .operator_123. b")))
+(ert-deftest f90-mode-using-a-generic-operator ()
+  :expected-result :failed
+  (test-with-mode f90-mode
+    (electric-operator-test-type "a.operator_123.b")
+    (electric-operator-test-should-see "a .operator_123. b")))
 
 (ert-deftest f90-mode-number-preceeding-an-operator ()
   (test-with-mode f90-mode
@@ -90,11 +90,11 @@
     (electric-operator-test-type "(/1,2,3/)")
     (electric-operator-test-should-see "(/ 1, 2, 3 /)")))
 
-;; Known failure test commented out
-;; (ert-deftest f90-mode-single-line-array-declaration-with-fraction ()
-;;   (test-with-mode f90-mode
-;;     (electric-operator-test-type "(/1,2/5,3/)")
-;;     (electric-operator-test-should-see "(/ 1, 2 / 5, 3 /)")))
+(ert-deftest f90-mode-single-line-array-declaration-with-fraction ()
+  :expected-result :failed
+  (test-with-mode f90-mode
+    (electric-operator-test-type "(/1,2/5,3/)")
+    (electric-operator-test-should-see "(/ 1, 2 / 5, 3 /)")))
 
 (ert-deftest f90-mode-multi-line-array-declaration ()
   (test-with-mode f90-mode

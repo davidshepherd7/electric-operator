@@ -30,13 +30,13 @@
     (electric-operator-test-type "A(A&&a)")
     (electric-operator-test-should-see "A(A &&a)")))
 
-;; Type detection works inside classes - known failure, commented out
-;; (ert-deftest c++-move-constructor-inside-class ()
-;;   (test-with-mode c++-mode
-;;     (insert "struct A {\n\n}")
-;;     (goto-line 2)
-;;     (electric-operator-test-type "A(A&&a)")
-;;     (electric-operator-test-should-see "A(A &&a)")))
+(ert-deftest c++-move-constructor-inside-class ()
+  :expected-result :failed
+  (test-with-mode c++-mode
+    (insert "struct A {\n\n}")
+    (goto-line 2)
+    (electric-operator-test-type "A(A&&a)")
+    (electric-operator-test-should-see "A(A &&a)")))
 
 ;; Rvalue reference declarations and C pointer type style
 (ert-deftest c++-const-rvalue-references ()
@@ -56,51 +56,54 @@
       (electric-operator-test-type "int&&x")
       (electric-operator-test-should-see "int &&x"))))
 
-;; Templates - known failures, commented out
-;; (ert-deftest c++-greater-than-still-works ()
-;;   (test-with-mode c++-mode
-;;     (insert "int main() {\n")
-;;     (electric-operator-test-type "bool x=0>1")
-;;     (electric-operator-test-should-see "bool x = 0 > 1")))
+(ert-deftest c++-greater-than-still-works ()
+  :expected-result :failed
+  (test-with-mode c++-mode
+    (insert "int main() {\n")
+    (electric-operator-test-type "bool x=0>1")
+    (electric-operator-test-should-see "bool x = 0 > 1")))
 
-;; (ert-deftest c++-less-than-still-works ()
-;;   (test-with-mode c++-mode
-;;     (insert "int main() {\n")
-;;     (electric-operator-test-type "bool x=0<1")
-;;     (electric-operator-test-should-see "bool x = 0 < 1")))
+(ert-deftest c++-less-than-still-works ()
+  :expected-result :failed
+  (test-with-mode c++-mode
+    (insert "int main() {\n")
+    (electric-operator-test-type "bool x=0<1")
+    (electric-operator-test-should-see "bool x = 0 < 1")))
 
-;; (ert-deftest c++->>-still-works ()
-;;   (test-with-mode c++-mode
-;;     (insert "int main() {\n")
-;;     (electric-operator-test-type "std::cin>>x;")
-;;     (electric-operator-test-should-see "std::cin>>x;")))
+(ert-deftest c++->>-still-works ()
+  :expected-result :failed
+  (test-with-mode c++-mode
+    (insert "int main() {\n")
+    (electric-operator-test-type "std::cin>>x;")
+    (electric-operator-test-should-see "std::cin>>x;")))
 
-;; (ert-deftest c++-template-in-function-rvalue ()
-;;   (test-with-mode c++-mode
-;;     (electric-operator-test-type "MyType<double> f()")
-;;     (electric-operator-test-should-see "MyType<double> f()")))
+(ert-deftest c++-template-in-function-rvalue ()
+  (test-with-mode c++-mode
+    (electric-operator-test-type "MyType<double> f()")
+    (electric-operator-test-should-see "MyType<double> f()")))
 
-;; (ert-deftest c++-template-in-function-argument ()
-;;   (test-with-mode c++-mode
-;;     (electric-operator-test-type "void f(MyType<double> x)")
-;;     (electric-operator-test-should-see "void f(MyType<double> x)")))
+(ert-deftest c++-template-in-function-argument ()
+  (test-with-mode c++-mode
+    (electric-operator-test-type "void f(MyType<double> x)")
+    (electric-operator-test-should-see "void f(MyType<double> x)")))
 
-;; (ert-deftest c++-nested-template-in-function-argument ()
-;;   (test-with-mode c++-mode
-;;     (electric-operator-test-type "void f(MyType<d<int>> x)")
-;;     (electric-operator-test-should-see "void f(MyType<d<int>> x)")))
+(ert-deftest c++-nested-template-in-function-argument ()
+  (test-with-mode c++-mode
+    (electric-operator-test-type "void f(MyType<d<int>> x)")
+    (electric-operator-test-should-see "void f(MyType<d<int>> x)")))
 
-;; (ert-deftest c++-template-type-definition ()
-;;   (test-with-mode c++-mode
-;;     (insert "int main() {\n")
-;;     (electric-operator-test-type "MyType<double> x")
-;;     (electric-operator-test-should-see "MyType<double> x")))
+(ert-deftest c++-template-type-definition ()
+  (test-with-mode c++-mode
+    (insert "int main() {\n")
+    (electric-operator-test-type "MyType<double> x")
+    (electric-operator-test-should-see "MyType<double> x")))
 
-;; (ert-deftest c++-nested-template-type-definition ()
-;;   (test-with-mode c++-mode
-;;     (insert "int main() {\n")
-;;     (electric-operator-test-type "MyType<Template<double>> x")
-;;     (electric-operator-test-should-see "MyType<Template<double>> x")))
+(ert-deftest c++-nested-template-type-definition ()
+  :expected-result :failed
+  (test-with-mode c++-mode
+    (insert "int main() {\n")
+    (electric-operator-test-type "MyType<Template<double>> x")
+    (electric-operator-test-should-see "MyType<Template<double>> x")))
 
 ;; Colon operator
 (ert-deftest c++-for-each-loops ()
