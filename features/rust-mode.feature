@@ -9,7 +9,6 @@ Feature: Rust specific operators
     When I type "//a comment"
     Then I should see "// a comment"
 
-  @known-failure
   Scenario: Doc comments
     When I type "///a comment"
     Then I should see "/// a comment"

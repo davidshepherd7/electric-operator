@@ -50,9 +50,6 @@ Feature: Javascript specific operators
     When I type "/*a comment */"
     Then I should see "/* a comment */"
 
-  # We can't really handle this at the moment, we need some kind of special case
-  # for comments "operators".
-  @known-failure
   Scenario: Comment after division
     When I type "x=a/ // divide x"
     Then I should see "x = a / // divide x"

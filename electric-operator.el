@@ -66,6 +66,12 @@ results in f(foo=1)."
   (make-hash-table)
   "A hash table of replacement rule lists for specific major modes")
 
+(defvar electric-operator--mode-comment-prefixes
+  (make-hash-table)
+  "Per-mode overrides for comment prefixes.
+When set for a mode, these are used instead of deriving prefixes
+from `comment-start'.  Each value is a list of prefix strings.")
+
 
 
 
@@ -353,10 +359,13 @@ recompile electric-operator. It's like this because doing the
     (forward-char -1)
 
     (cond
-     ;; In comment or string?
-     ((electric-operator-in-docs?) (if electric-operator-enable-in-docs
-                                       (electric-operator-get-rules-trie-for-mode 'text-mode)
-                                     (make-electric-operator--trie)))
+     ;; In comment or string? When still in the comment prefix (e.g. //
+     ;; -> /// for Rust doc comments), fall through to use major mode rules.
+     ((and (electric-operator-in-docs?)
+           (not (electric-operator--in-comment-prefix?)))
+      (if electric-operator-enable-in-docs
+          (electric-operator-get-rules-trie-for-mode 'text-mode)
+        (make-electric-operator--trie)))
 
      ;; Try to find an entry for this mode in the table
      ((electric-operator-get-rules-trie-for-mode major-mode))
@@ -457,6 +466,44 @@ inserts surrounding spaces, e.g., `=' becomes ` = ',`+=' becomes ` += '."
 (defun electric-operator-in-docs? ()
   "Check if we are inside a string or comment"
   (nth 8 (syntax-ppss)))
+
+(defun electric-operator-add-comment-prefixes-for-mode (mode &rest prefixes)
+  "Set comment PREFIXES for MODE.
+These override the default `comment-start' detection."
+  (puthash mode prefixes electric-operator--mode-comment-prefixes))
+
+(defun electric-operator--comment-prefixes ()
+  "Get comment prefixes for the current mode.
+Uses per-mode overrides if set, otherwise derives from `comment-start'."
+  (or (gethash major-mode electric-operator--mode-comment-prefixes)
+      (when (and (boundp 'comment-start) comment-start)
+        (let ((prefix (string-trim comment-start)))
+          ;; Only use comment-start when it is a single repeated character
+          ;; (e.g. //, --, #) to avoid block comment starters like /*
+          (when (and (> (length prefix) 0)
+                     (cl-every (lambda (c) (= c (aref prefix 0))) prefix))
+            (list prefix))))))
+
+(defun electric-operator--in-comment-prefix? ()
+  "Check if point is within a comment-opening prefix.
+For example, after typing // in Rust the third / of /// is inside a
+comment according to the syntax table, but should still be processed
+by electric-operator as part of the comment prefix."
+  (let* ((ppss (syntax-ppss))
+         (comment-start-pos (nth 8 ppss))
+         (prefixes (electric-operator--comment-prefixes)))
+    (and (nth 4 ppss)
+         comment-start-pos
+         prefixes
+         (let ((text (replace-regexp-in-string
+                      "[ \t]" ""
+                      (buffer-substring-no-properties comment-start-pos (1+ (point))))))
+           (-any? (lambda (prefix)
+                    (let ((prefix-chars (delete-dups (string-to-list prefix))))
+                      (and (>= (length text) (length prefix))
+                           (cl-every (lambda (c) (memq c prefix-chars))
+                                     (string-to-list text)))))
+                  prefixes)))))
 
 (defun electric-operator-hashbang-line? ()
   "Does the current line contain a UNIX hashbang?"
@@ -998,6 +1045,7 @@ Also handles C++ lambda capture by reference."
 				                      (cons "/" #'electric-operator-prog-mode-/)
 				                      (cons "/*" " /* ")
 				                      (cons "//" " // ")
+				                      (cons "///" " /// ")
 
 				                      ;; Extra operators
 				                      (cons "<<" " << ")
