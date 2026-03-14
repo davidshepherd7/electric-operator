@@ -370,8 +370,9 @@ recompile electric-operator. It's like this because doing the
                                                                         (point))
                                         rule-list))
 
-(defun electric-operator-eval-action (action point)
+(defun electric-operator-eval-action (action point operator)
   (cond
+   ((eq action 'electric-operator-comment-prefix) (concat " " operator " "))
    ((functionp action)
     (save-excursion (goto-char point) (funcall action)))
    ((stringp action) action)
@@ -397,7 +398,8 @@ recompile electric-operator. It's like this because doing the
 	  (let* ((pre-whitespace (match-string 1))
 		     (op-match-beginning (match-beginning 0))
 		     (op-match-end (match-end 0))
-		     (spaced-string (electric-operator-eval-action action op-match-beginning)))
+		     (spaced-string (electric-operator-eval-action action op-match-beginning
+		                                                  (electric-operator-compiled-rule-operator rule))))
 
         ;; If action was a function which eval-d to nil then we do nothing.
         (when spaced-string
@@ -564,9 +566,9 @@ Any better ideas would be welcomed."
                                       (cons ">>" " >> ")
 
                                       ;; Comments
-                                      (cons "/*" " /* ")
+                                      (cons "/*" 'electric-operator-comment-prefix)
                                       (cons "*/" "*/")
-                                      (cons "//" " // ")
+                                      (cons "//" 'electric-operator-comment-prefix)
 
                                       ;; End of statement inc/decrement, handled separately
                                       ;; because there is no space after the ++/--.
@@ -952,8 +954,8 @@ Also handles C++ lambda capture by reference."
 				                      (cons ":" #'electric-operator-js-mode-:)
 				                      (cons "?" " ? ")
 				                      (cons "/" #'electric-operator-js-mode-/)
-				                      (cons "//" " // ")
-				                      (cons "/*" " /* ")
+				                      (cons "//" 'electric-operator-comment-prefix)
+				                      (cons "/*" 'electric-operator-comment-prefix)
 				                      (cons "=>" " => ") ; ES6 arrow functions
 				                      (cons "|=" " |= ")
 				                      (cons "&=" " &= ")
@@ -987,8 +989,9 @@ Also handles C++ lambda capture by reference."
 				                      (cons "*" nil)
 
 				                      (cons "/" #'electric-operator-prog-mode-/)
-				                      (cons "/*" " /* ")
-				                      (cons "//" " // ")
+				                      (cons "/*" 'electric-operator-comment-prefix)
+				                      (cons "//" 'electric-operator-comment-prefix)
+				                      (cons "///" 'electric-operator-comment-prefix)
 
 				                      ;; Extra operators
 				                      (cons "<<" " << ")
@@ -1257,8 +1260,8 @@ Also handles C++ lambda capture by reference."
 
 				                      ;; Comments
 				                      (cons "/" #'electric-operator-prog-mode-/)
-				                      (cons "/*" " /* ")
-				                      (cons "//" " // ")
+				                      (cons "/*" 'electric-operator-comment-prefix)
+				                      (cons "//" 'electric-operator-comment-prefix)
 
 				                      ;; Generics are hard
 				                      (cons "<" nil)
@@ -1283,8 +1286,8 @@ Also handles C++ lambda capture by reference."
 				                      (cons "<?" "<?")
 
 				                      (cons "/" #'electric-operator-prog-mode-/)
-				                      (cons "/*" " /* ")
-				                      (cons "//" " // ")
+				                      (cons "/*" 'electric-operator-comment-prefix)
+				                      (cons "//" 'electric-operator-comment-prefix)
 				                      )
 
 
@@ -1433,8 +1436,8 @@ Also handles C++ lambda capture by reference."
 
 (apply #'electric-operator-add-rules-for-mode 'swift-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'swift-mode
-                                      (cons "//" " // ")
-                                      (cons "/*" " /* ")
+                                      (cons "//" 'electric-operator-comment-prefix)
+                                      (cons "/*" 'electric-operator-comment-prefix)
                                       (cons "..<" nil))
 
 
