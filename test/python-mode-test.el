@@ -6,9 +6,8 @@
 
 (ert-deftest python-dont-modify-string-literal ()
   (th-fixtures #'python-mode
-    (let ((electric-operator-enable-in-docs nil))
-      (th-type "'var+foo-1'")
-      (th-should-see "'var+foo-1'"))))
+    (th-type "'var+foo-1'")
+    (th-should-see "'var+foo-1'")))
 
 (ert-deftest python-dont-modify-string-literal-after-operator ()
   (th-fixtures #'python-mode

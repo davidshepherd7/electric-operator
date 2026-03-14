@@ -7,9 +7,8 @@
 
 (ert-deftest f90-mode-dont-modify-string-literal ()
   (th-fixtures #'f90-mode
-    (let ((electric-operator-enable-in-docs nil))
-      (th-type "'var+foo-1'")
-      (th-should-see "'var+foo-1'"))))
+    (th-type "'var+foo-1'")
+    (th-should-see "'var+foo-1'")))
 
 (ert-deftest f90-mode-dont-modify-string-literal-after-operator ()
   (th-fixtures #'f90-mode

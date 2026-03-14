@@ -8,8 +8,7 @@
   (th-fixtures #'ruby-mode
     ;; For some reason this is extremely slow in tests, like >1 second per |
     ;; character that it matches
-    (let ((blink-matching-paren nil)
-          (electric-operator-enable-in-docs nil))
+    (let ((blink-matching-paren nil))
       (th-type "'var+foo-1'")
       (th-should-see "'var+foo-1'"))))
 
