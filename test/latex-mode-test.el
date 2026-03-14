@@ -7,8 +7,7 @@
 
 (ert-deftest latex-mode-single-space-dot ()
   (th-fixtures #'latex-mode
-    (let ((electric-operator-enable-in-docs t)
-          (electric-operator-double-space-docs nil))
+    (let ((electric-operator-double-space-docs nil))
       (th-type "hello.World")
       (th-should-see "hello. World"))))
 

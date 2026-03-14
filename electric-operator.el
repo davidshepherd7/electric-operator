@@ -31,11 +31,6 @@
   :type 'boolean
   :group 'electricity)
 
-(defcustom electric-operator-enable-in-docs nil
-  "Enable electric-operator in strings and comments."
-  :type 'boolean
-  :group 'electricity)
-
 (defcustom electric-operator-c-pointer-type-style 'variable
   "Defines how C/C++ mode pointer and reference types are spaced.
 
@@ -354,9 +349,7 @@ recompile electric-operator. It's like this because doing the
 
     (cond
      ;; In comment or string?
-     ((electric-operator-in-docs?) (if electric-operator-enable-in-docs
-                                       (electric-operator-get-rules-trie-for-mode 'text-mode)
-                                     (make-electric-operator--trie)))
+     ((electric-operator-in-docs?) (make-electric-operator--trie))
 
      ;; Try to find an entry for this mode in the table
      ((electric-operator-get-rules-trie-for-mode major-mode))
@@ -365,9 +358,7 @@ recompile electric-operator. It's like this because doing the
      ;; vs normal text.
      ((derived-mode-p 'latex-mode) (if (electric-operator--latex-in-math?)
                                        (electric-operator-get-rules-trie-for-mode 'latex-math)
-                                     (if electric-operator-enable-in-docs
-                                         (electric-operator-get-rules-trie-for-mode 'text-mode)
-                                       (make-electric-operator--trie))))
+                                     (electric-operator-get-rules-trie-for-mode 'text-mode)))
 
      ;; Default modes
      ((derived-mode-p 'prog-mode 'comint-mode) (electric-operator-get-rules-trie-for-mode 'prog-mode))

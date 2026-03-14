@@ -189,6 +189,9 @@ to be too heavy to add to electric-spacing.
 
 ### Unstable
 
+* Remove `electric-operator-enable-in-docs` option. No one on github was using
+  this and it makes supporting custom comment prefixes (like ///) harder.
+
 ### Version 2.1
 
 * Fix treating comint-based modes (typically called inferior-...) as plain text
