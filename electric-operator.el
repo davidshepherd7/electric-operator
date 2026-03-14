@@ -368,6 +368,14 @@ recompile electric-operator. It's like this because doing the
                                         rule-list))
 
 (defun electric-operator-eval-action (action point operator)
+  "Evaluate a rule ACTION at POINT for OPERATOR and return the spaced string.
+
+ACTION can be:
+* A string: returned as-is.
+* A function: called with point at POINT, should return a string.
+* The symbol `electric-operator-comment-prefix': Rules using this action are
+  also allowed to fire inside comments, which is needed for
+  extended comment prefixes like ///."
   (cond
    ((eq action 'electric-operator-comment-prefix) (concat " " operator " "))
    ((functionp action)
