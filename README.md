@@ -68,6 +68,15 @@ To print a list of the rules in use for a mode use `M-x
 electric-operator-pretty-print-rules-for-mode` (note: this displays in the
 `*Messages*` buffer).
 
+For operators which indicate the start of a comment, like `//` or `--`, use the
+special action `'electric-operator-comment-prefix`. This spaces the operator and
+also allows the rule to work inside comments. This is important for custom
+comment prefixes like `///` (Rust doc-comments) or `/**` (Doxygen). For example:
+
+    (electric-operator-add-rules-for-mode 'my-mode
+      (cons "//" 'electric-operator-comment-prefix)
+      (cons "///" 'electric-operator-comment-prefix))
+
 Rules can be disabled in a similar way by setting the second element of the
 rule to nil. For example if you find that the `*` operator in C is not
 working reliably enough for pointer types you would use
@@ -191,6 +200,11 @@ to be too heavy to add to electric-spacing.
 
 * Remove `electric-operator-enable-in-docs` option. No one on github was using
   this and it makes supporting custom comment prefixes (like ///) harder.
+* Add `electric-operator-comment-prefix` action for comment-starting operators.
+  Supports extended comment prefixes like `///` (Rust doc-comments) and `--`
+  (SQL comments).
+* Add support for Rust `///` doc-comments (fixes #86).
+* Add SQL `-` operator spacing and `--` comment prefix.
 
 ### Version 2.1
 
