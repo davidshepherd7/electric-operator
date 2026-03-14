@@ -1318,10 +1318,11 @@ Also handles C++ lambda capture by reference."
 
 (apply #'electric-operator-add-rules-for-mode 'sql-mode (electric-operator-get-rules-for-mode 'prog-mode))
 (electric-operator-add-rules-for-mode 'sql-mode
-				                      (cons "-" nil)
 				                      (cons "=" nil)
 				                      (cons "%" nil)
 				                      (cons "*" nil)
+
+				                      (cons "--" 'electric-operator-comment-prefix)
 
 				                      ;; postgres json operators
 				                      (cons "->>" "->>")
