@@ -18,6 +18,11 @@
       (th-type "hello.World")
       (th-should-see "hello.  World"))))
 
+(ert-deftest text-other-operators-not-expanded ()
+  (th-fixtures #'text-mode
+    (th-type "a=b*c")
+    (th-should-see "a=b*c")))
+
 (ert-deftest text-typing-comma-before-an-empty-line-doesnt-ruin-everything ()
   (th-fixtures #'text-mode
     (let ((electric-operator-enable-in-docs t))
