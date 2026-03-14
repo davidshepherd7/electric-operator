@@ -238,3 +238,8 @@
     (th-type "return +1")
     (th-should-see "return +1")))
 
+(ert-deftest prog-operators-not-expanded-inside-comments ()
+  (th-fixtures #'c-mode
+    (th-type "//a=b*c")
+    (th-should-see "// a=b*c")))
+
