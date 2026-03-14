@@ -275,7 +275,12 @@
   (th-fixtures #'c-mode
     (helper-setup-c-main)
     (th-type "/**/")
-    (th-should-see "/* */")))
+    (th-should-see "/**/")))
+
+(ert-deftest c-doxygen-block-comment ()
+  (th-fixtures #'c++-mode
+    (th-type "/**a comment*/")
+    (th-should-see "/** a comment*/")))
 
 (ert-deftest c-/*-adds-space-before-if-not-on-empty-line ()
   (th-fixtures #'c-mode

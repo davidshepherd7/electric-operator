@@ -19,7 +19,6 @@
     (th-should-see "// a comment")))
 
 (ert-deftest rust-doc-comments ()
-  :expected-result :failed
   (th-fixtures #'rust-mode
     (th-type "///a comment")
     (th-should-see "/// a comment")))

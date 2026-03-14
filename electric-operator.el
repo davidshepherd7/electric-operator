@@ -348,9 +348,6 @@ recompile electric-operator. It's like this because doing the
     (forward-char -1)
 
     (cond
-     ;; In comment or string?
-     ((electric-operator-in-docs?) (make-electric-operator--trie))
-
      ;; Try to find an entry for this mode in the table
      ((electric-operator-get-rules-trie-for-mode major-mode))
 
@@ -384,7 +381,10 @@ recompile electric-operator. It's like this because doing the
   (-let* ((rule (electric-operator-longest-matching-rule (electric-operator-get-rules-list)))
           (operator-regex (and rule (electric-operator-compiled-rule-regex rule)))
           (action (and rule (electric-operator-compiled-rule-action rule))))
-	(when (and rule action)
+	(when (and rule action
+	           ;; In a comment/string: only allow comment-prefix actions.
+	           (or (not (save-excursion (forward-char -1) (electric-operator-in-docs?)))
+	               (eq action 'electric-operator-comment-prefix)))
 	  (electric-operator-debug-log "Matched rule for operator: %S" (electric-operator-compiled-rule-operator rule))
 
 	  ;; Find point where operator starts
@@ -567,8 +567,11 @@ Any better ideas would be welcomed."
 
                                       ;; Comments
                                       (cons "/*" 'electric-operator-comment-prefix)
+                                      (cons "/**" 'electric-operator-comment-prefix) ; doxygen
+                                      (cons "/**/" 'electric-operator-comment-prefix)
                                       (cons "*/" "*/")
                                       (cons "//" 'electric-operator-comment-prefix)
+                                      (cons "///" 'electric-operator-comment-prefix)
 
                                       ;; End of statement inc/decrement, handled separately
                                       ;; because there is no space after the ++/--.
@@ -954,8 +957,14 @@ Also handles C++ lambda capture by reference."
 				                      (cons ":" #'electric-operator-js-mode-:)
 				                      (cons "?" " ? ")
 				                      (cons "/" #'electric-operator-js-mode-/)
+
+                                      ;; Comments
 				                      (cons "//" 'electric-operator-comment-prefix)
 				                      (cons "/*" 'electric-operator-comment-prefix)
+                                      (cons "/**" 'electric-operator-comment-prefix) ; js-doc
+                                      (cons "/**/" 'electric-operator-comment-prefix)
+                                      (cons "///" 'electric-operator-comment-prefix)
+
 				                      (cons "=>" " => ") ; ES6 arrow functions
 				                      (cons "|=" " |= ")
 				                      (cons "&=" " &= ")
@@ -1261,6 +1270,8 @@ Also handles C++ lambda capture by reference."
 				                      ;; Comments
 				                      (cons "/" #'electric-operator-prog-mode-/)
 				                      (cons "/*" 'electric-operator-comment-prefix)
+                                      (cons "/**" 'electric-operator-comment-prefix) ; javadoc
+                                      (cons "/**/" 'electric-operator-comment-prefix)
 				                      (cons "//" 'electric-operator-comment-prefix)
 
 				                      ;; Generics are hard
