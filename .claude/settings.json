@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Bash(make *)"
+    ],
+    "deny": []
+  },
+  "enableAllProjectMcpServers": false
+}
