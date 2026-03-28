@@ -4,6 +4,10 @@
 (require 'electric-operator)
 (require 'test-helper)
 
+;; Suppress noisy "Can't guess indent offset" messages from empty test buffers
+(require 'python)
+(setq python-indent-guess-indent-offset-verbose nil)
+
 (ert-deftest python-dont-modify-string-literal ()
   (th-fixtures #'python-mode
     (th-type "'var+foo-1'")
