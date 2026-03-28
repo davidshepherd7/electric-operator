@@ -5,6 +5,9 @@
 (require 'test-helper)
 (require 'ess-r-mode)
 
+;; Prevent flymake from warning about R not being installed
+(setq ess-use-flymake nil)
+
 (ert-deftest ess-r-mode-dot-tilde-operator ()
   (th-fixtures #'ess-r-mode
     (th-type "Species~.")
