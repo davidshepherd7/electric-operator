@@ -596,6 +596,7 @@ Any better ideas would be welcomed."
 
                                       )
 
+(apply #'electric-operator-add-rules-for-mode 'c-ts-mode (electric-operator-get-rules-for-mode 'c-mode))
 
 ;; Use the same rules for c++
 (apply #'electric-operator-add-rules-for-mode 'c++-mode (electric-operator-get-rules-for-mode 'c-mode))
@@ -658,6 +659,26 @@ could be added here.")
    ;; Check for any user-defined types
    (electric-operator-looking-back-locally electric-operator-c-user-types-regex)))
 
+(defun electric-operator-c-ts-is-function-parameter? ()
+  "Try to guess if we are in function definition/declaration
+
+Using `c-ts-mode''s treesitter analysis."
+  (let ((node nil)
+        (value nil))
+    (if (and (fboundp 'treesit-node-at)
+             (fboundp 'treesit-node-top-level)
+             (fboundp 'treesit-node-start)
+             (fboundp 'treesit-node-end))
+        (progn
+          (setq node (treesit-node-at (point)))
+          (when (and (treesit-node-top-level node "^parameter_list$")
+                     (treesit-node-top-level node "^function_declarator$"))
+            (setq node (treesit-node-top-level node "^parameter_list$"))
+            (setq value (list (treesit-node-start node) (treesit-node-end node)))
+            (and (> (point) (nth 0 value))
+                 (<= (point) (nth 1 value)))))
+      nil)))
+
 (defvar electric-operator-c-function-definition-syntax-list
   '(topmost-intro
     topmost-intro-cont
@@ -674,9 +695,11 @@ Using `cc-mode''s syntactic analysis."
   ;; There are similar but different symbols for objective-C, but I'm not
   ;; going to try to support that now.
 
-  (--> (c-guess-basic-syntax)
-    (-map #'car it)
-    (-intersection electric-operator-c-function-definition-syntax-list it)))
+  (if (derived-mode-p 'c-ts-mode 'c++-ts-mode)
+      (electric-operator-c-ts-is-function-parameter?)
+    (--> (c-guess-basic-syntax)
+         (-map #'car it)
+         (-intersection electric-operator-c-function-definition-syntax-list it))))
 
 (defun electric-operator-c-mode-include-line-opening-quote? ()
   (electric-operator-looking-back-locally "#\\s-*include\\s-*"))
@@ -867,6 +890,7 @@ Also handles C++ lambda capture by reference."
 				                      )
 
 (apply #'electric-operator-add-rules-for-mode 'inferior-python-mode (electric-operator-get-rules-for-mode 'python-mode))
+(apply #'electric-operator-add-rules-for-mode 'python-ts-mode (electric-operator-get-rules-for-mode 'python-mode))
 
 (defun electric-operator-python-mode-in-lambda-args? ()
   "Are we inside the arguments statement of a lambda?"
@@ -1005,6 +1029,9 @@ Also handles C++ lambda capture by reference."
 				                      ;; pointer deref vs multiplication
 				                      (cons "*" nil)
 
+				                      (cons ":" ": ")
+				                      (cons "::" "::")
+
 				                      (cons "/" #'electric-operator-prog-mode-/)
 				                      (cons "/*" 'electric-operator-comment-prefix)
 				                      (cons "//" 'electric-operator-comment-prefix)
@@ -1018,6 +1045,8 @@ Also handles C++ lambda capture by reference."
 
 				                      ;; Bar is used for lambdas as well as or
 				                      (cons "|" nil))
+
+(apply #'electric-operator-add-rules-for-mode 'rust-ts-mode (electric-operator-get-rules-for-mode 'rust-mode))
 
 
 
